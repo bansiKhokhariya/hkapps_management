@@ -26,6 +26,7 @@ use Illuminate\Support\Str;
 
 class AllAppsController extends Controller
 {
+
     public function index()
     {
         $allApp = AllApps::all();

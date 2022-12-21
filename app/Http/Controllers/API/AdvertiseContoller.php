@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 
 class AdvertiseContoller extends Controller
 {
+
     public function index()
     {
         $advertise = Advertise::get();
