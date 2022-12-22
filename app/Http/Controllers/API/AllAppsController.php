@@ -167,7 +167,7 @@ class AllAppsController extends Controller
         }
 
         // call event
-        event(new RedisDataEvent());
+//        event(new RedisDataEvent());
 
 
         return $response;

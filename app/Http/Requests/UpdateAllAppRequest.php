@@ -205,7 +205,7 @@ class UpdateAllAppRequest extends FormRequest
 
         // ***************** view app response json ******************** //
         $getApp = new AllApps();
-        $result = $getApp->viewResponse($this->app_packageName,$this->app_apikey);
+        $result = $getApp->viewResponse($this->app_packageName);
 
         $redis = Redis::connection('RedisApp');
         $redis->set($this->app_packageName, json_encode($result));

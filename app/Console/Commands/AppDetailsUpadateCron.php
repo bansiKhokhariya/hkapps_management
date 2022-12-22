@@ -53,11 +53,10 @@ class AppDetailsUpadateCron extends Command
                     $value = json_decode($repo_response);
 
                     // **** update app_details **** //
-                    $get_app_details = AppDetails::where('allApps_id', $allApp->id)->first();
+                    $get_app_details = AppDetails::where('app_packageName', $allApp->app_packageName)->first();
                     if ($get_app_details) {
-
                         $appDetails = AppDetails::find($get_app_details->id);
-                        $appDetails->allApps_id = $allApp->id;
+                        $appDetails->app_packageName = $allApp->app_packageName;
                         $appDetails->description = $value->description;
                         $appDetails->descriptionHTML = $value->descriptionHTML;
                         $appDetails->summary = $value->summary;
@@ -102,7 +101,7 @@ class AppDetailsUpadateCron extends Command
                         $appDetails->save();
                     }else{
                         $appDetails = new AppDetails();
-                        $appDetails->allApps_id = $allApp->id;
+                        $appDetails->app_packageName = $allApp->app_packageName;
                         $appDetails->description = $value->description;
                         $appDetails->descriptionHTML = $value->descriptionHTML;
                         $appDetails->summary = $value->summary;
@@ -160,15 +159,7 @@ class AppDetailsUpadateCron extends Command
 
                     // **** //
 
-                    // **** update test_all_apps **** //
 
-                    $allApp = TestAllApp::find($allApp->id);
-                    $allApp->app_logo = $value->icon;
-                    $allApp->app_name = $value->title;
-                    $allApp->app_privacyPolicyLink = $value->privacyPolicy;
-                    $allApp->save();
-
-                    // **** //
                 }
             }
         }
