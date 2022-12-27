@@ -57,7 +57,7 @@ class AllAppResource extends JsonResource
             'monetize_setting' => $this->AdPlacement(),
             'app_parameter' => $app_parameter,
             'developer_name' => $developer_name,
-            'total_downloads' => $total_downloads,
+            'total_downloads' =>intval(str_replace(",","",$total_downloads)),
             'avg_per_day' => 0,
             'status' => $status,
             'unauthorize' => $this->TotalRequestCount(),

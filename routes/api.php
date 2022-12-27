@@ -8,13 +8,14 @@ use App\Http\Controllers\API\TaskController;
 use App\Http\Controllers\API\NotificationController;
 use App\Http\Controllers\API\AppsController;
 use App\Http\Controllers\API\AdvertiseContoller;
-use App\Http\Controllers\API\RedisController;
+//use App\Http\Controllers\API\RedisController;
 use App\Http\Controllers\API\RawDataController;
 use App\Http\Controllers\API\AllAppsController;
 use App\Http\Controllers\API\PlatformController;
 use App\Http\Controllers\API\ActivityHistoryController;
 use App\Http\Controllers\API\ApiKeyListController;
 use App\Http\Controllers\API\DummyPackageController;
+use App\Http\Controllers\API\ExpenseRevenueController;
 
 
 /*
@@ -172,5 +173,10 @@ Route::get('storePackage', [AllAppsController::class, 'storePackage']);
 Route::get('getTestData/{package_name}', [AllAppsController::class, 'getTestData']);
 Route::post('setTestData', [AllAppsController::class, 'setTestData']);
 
+// get developer name //
+Route::get('getDeveloperName', [AllAppsController::class, 'getDeveloperName']);
+Route::get('searchAppByDeveloper/{developer}', [AllAppsController::class, 'searchAppByDeveloper']);
 
+// expense revenue //
+Route::resource('expense_revenue', ExpenseRevenueController::class);
 

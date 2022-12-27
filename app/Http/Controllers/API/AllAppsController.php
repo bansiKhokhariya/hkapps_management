@@ -13,6 +13,7 @@ use App\Http\Resources\TestAllAppResource;
 use App\Models\AdPlacement;
 use App\Models\AllApps;
 use App\Models\ApikeyList;
+use App\Models\AppDetails;
 use App\Models\TestAdPlacement;
 use App\Models\TestAllApp;
 use App\Models\User;
@@ -562,5 +563,25 @@ class AllAppsController extends Controller
         return 'data set succesfully!';
 
     }
+
+    public function getDeveloperName(){
+
+        $app_details = AppDetails::groupBy('developer')->pluck('developer');
+        return $app_details;
+
+    }
+
+    public function searchAppByDeveloper($developer){
+
+         $app_details = AppDetails::where('developer',$developer)->pluck('app_packageName');
+
+         $all_apps = AllApps::whereIn('app_packageName',$app_details)->get();
+
+         return AllAppResource::collection($all_apps);
+
+    }
+
+
+
 
 }
