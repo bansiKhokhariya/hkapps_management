@@ -8,6 +8,7 @@ use App\Http\Requests\UpdatePlatformRequest;
 use App\Http\Resources\PlatformResource;
 use App\Models\PlatForm;
 use Illuminate\Http\Request;
+use App\Events\RedisDataEvent;
 
 class PlatformController extends Controller
 {
@@ -35,6 +36,8 @@ class PlatformController extends Controller
     public function destroy(PlatForm $platform)
     {
         $platform->delete();
+        // call event
+        // event(new RedisDataEvent());
         return response('PlatForm Deleted Successfully');
     }
 }

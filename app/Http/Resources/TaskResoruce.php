@@ -15,17 +15,17 @@ class TaskResoruce extends JsonResource
     public function toArray($request)
     {
 
-       if($this->attchments == null){
-           $attch_count = 0;
-       }else{
-           $attch_count = count(json_decode($this->attchments));
-       }
+        if($this->attchments == null){
+            $attch_count = 0;
+        }else{
+            $attch_count = count(json_decode($this->attchments));
+        }
 
-       if($this->attchments_link == null){
-           $attch_link_count = 0;
-       }else{
-           $attch_link_count = count(json_decode($this->attchments_link));
-       }
+        if($this->attchments_link == null){
+            $attch_link_count = 0;
+        }else{
+            $attch_link_count = count(json_decode($this->attchments_link));
+        }
 
         return [
             'id' =>$this->id,
@@ -46,14 +46,13 @@ class TaskResoruce extends JsonResource
             'deadline' =>$this->deadline,
             'remark' =>$this->remark,
             'priority'=>$this->priority,
+            'assigned_date' =>$this->assigned_date,
+            'completed_date' =>$this->completed_date,
             'assign_aso'=>$this->assign_aso,
             'aso_status'=>$this->aso_status,
-            'assigned_date' =>date('d-m-Y h:i:s', strtotime($this->assigned_date)),
-            'completed_date' =>$this->completed_date,
             'deleted_at'=>$this->deleted_at,
             'created_at' =>$this->created_at->format('d-m-Y h:i:s'),
             'updated_at' =>$this->updated_at->format('d-m-Y h:i:s'),
         ];
     }
 }
-

@@ -8,8 +8,8 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\URL;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\URL;
 
 class UpdateEmployeeRequest extends FormRequest
 {
@@ -56,18 +56,16 @@ class UpdateEmployeeRequest extends FormRequest
         } else {
             $file_path = null;
         }
-
         if($this->profile_image == null){
             $employee->profile_image = $employee->profile_image;
         }else{
             $employee->profile_image = $file_path;
         }
-
         $employee->assignRole($role);
         $employee->save();
 
         // call event
-        event(new UserEvent($auth_user));
+        // event(new UserEvent($auth_user));
 
         return $employee;
     }

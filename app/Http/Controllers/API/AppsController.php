@@ -14,15 +14,14 @@ use Illuminate\Support\Facades\Redis;
 
 class AppsController extends Controller
 {
-    public function index()
-    {
+    public function index(){
+
         $app = App::filter()->latest()->get();
         return response()->json($app);
 
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request){
 
         $app = new App();
         $app->title = $request->title;
@@ -35,14 +34,13 @@ class AppsController extends Controller
 
     }
 
-    public function fetchAppData($package_name)
-    {
+    public function fetchAppData($package_name){
 
         $app_link = "https://lplciltdwh6kd6qjl4ytd6tzoq0iaumr.lambda-url.us-east-1.on.aws/?id=" . $package_name;
 
         $res = Http::get($app_link);
 
-        if ($res->status() == 200) {
+        if($res->status() == 200){
 
             // for event
             $id = Auth::user()->id;
@@ -51,8 +49,8 @@ class AppsController extends Controller
 
             $app_response = json_decode($res->getBody()->getContents());
 
-            $get_app = App::where('package_name', $package_name)->first();
-            if (!($get_app)) {
+            $get_app = App::where('package_name',$package_name)->first();
+            if(!($get_app)){
                 $app = new App();
                 $app->title = $app_response->title;
                 $app->package_name = $package_name;
@@ -61,14 +59,14 @@ class AppsController extends Controller
                 $app->save();
 
                 //event call
-                event(new UserEvent($auth_user));
+                // event(new UserEvent($auth_user));
 
                 return response()->json($app);
             }
 
-        } else {
+        }else{
             $app_response = $res->getBody()->getContents();
-            return response()->json($app_response, 500);
+            return response()->json($app_response,500);
         }
 
     }
@@ -83,11 +81,10 @@ class AppsController extends Controller
 
     public function getCurrentPackage($package_name){
 
-        $app_link = "https://webcreon.com/direct/getcurrent?pkg=". $package_name;
+        $app_link = "https://webcreon.com/direct/getcurrent?pkg=". $package_name;;
         $res = Http::get($app_link);
         return $res;
     }
-
 
     public function getDB6Data($package_name){
 
@@ -95,7 +92,6 @@ class AppsController extends Controller
         $response = $redis->get($package_name);
         return json_decode($response);
 
-//        $redis->set($package_name . '_test', json_encode($response));
     }
 
     public function setData(Request $request){
@@ -104,7 +100,7 @@ class AppsController extends Controller
         $package_name = $request->package_name;
         $response = $request->jsonData;
 
-        $redis->set($package_name, json_encode($response));
+        $redis->set($package_name, $response);
 
         return 'Data set succesfully!';
 
@@ -117,6 +113,5 @@ class AppsController extends Controller
         return response()->json($response);
 
     }
-
 
 }

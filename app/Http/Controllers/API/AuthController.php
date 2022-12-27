@@ -20,7 +20,6 @@ class AuthController extends Controller
             $success['token'] = $user->createToken('login_token')->accessToken;
             $success['details'] = $users;
 
-
             $activity = new Activity();
             $activity->log_name = 'User';
             $activity->description = 'login';

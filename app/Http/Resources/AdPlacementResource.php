@@ -6,8 +6,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class AdPlacementResource extends JsonResource
 {
-
-//    public static $wrap = null;
     /**
      * Transform the resource into an array.
      *
@@ -31,8 +29,8 @@ class AdPlacementResource extends JsonResource
             'ad_RewardedVideo' => json_decode($this->ad_RewardedVideo),
             'ad_RewardedInterstitial' => json_decode($this->ad_RewardedInterstitial),
             'ad_AppOpen' => json_decode($this->ad_AppOpen),
-//            'created_at' => $this->created_at->format('d-m-Y'),
-//            'updated_at' => $this->updated_at->format('d-m-Y'),
+            // 'created_at' => $this->created_at->format('d-m-Y'),
+            // 'updated_at' => $this->updated_at->format('d-m-Y'),
         ];
     }
 }

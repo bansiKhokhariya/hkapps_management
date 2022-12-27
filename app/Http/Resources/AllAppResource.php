@@ -21,7 +21,7 @@ class AllAppResource extends JsonResource
             $app_parameter = json_decode($this->app_parameter);
         }
 
-        if($this->appDetails() == null){
+        if($this->appDetails()==null){
             $developer_name = '';
             $total_downloads = '';
             $status = '';

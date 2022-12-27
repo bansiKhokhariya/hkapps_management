@@ -208,7 +208,7 @@ class UpdateTestAllAppRequest extends FormRequest
         // ************** //
 
         // call event
-        event(new UserEvent($auth_user));
+        // event(new UserEvent($auth_user));
 
         return $testAllApps;
 

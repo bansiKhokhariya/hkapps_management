@@ -5,7 +5,6 @@ namespace App\Http\Requests;
 
 use App\Events\UserEvent;
 use App\Models\Task;
-use App\Models\Time;
 use App\Models\User;
 use App\Notifications\assignPersonNotification;
 use GuzzleHttp\Client;
@@ -92,7 +91,7 @@ class CreateTaskRequest extends FormRequest
         }
 
 
-       // attchments_link //
+        // attchments_link //
         if ($this->attchments_link == null) {
             $task->attchments_link = null;
         } else {
@@ -130,7 +129,6 @@ class CreateTaskRequest extends FormRequest
             }
         }
 
-
         $task->status = 'pending';
         $task->console_app = $this->console_app;
         $task->description = $this->description;
@@ -153,7 +151,7 @@ class CreateTaskRequest extends FormRequest
         }
 
         // call event
-        event(new UserEvent($auth_user));
+        // event(new UserEvent($auth_user));
 
         return $task;
 

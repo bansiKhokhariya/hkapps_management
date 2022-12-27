@@ -18,45 +18,41 @@ class DummyPackageController extends Controller
         }
         return $data;
     }
+    // public function store(Request $request){
 
-//    public function store(Request $request)
-//    {
-//
-//        $get_package = DummyPackage::where('package_name', $request->package_name)->get();
-//        if (!$get_package) {
-//            $dummy_package = new DummyPackage();
-//            $dummy_package->package_name = $request->package_name;
-//            $dummy_package->status_code = $request->status_code;
-//            $dummy_package->save();
-//            return $dummy_package;
-//        } else {
-//            $dummy_package = DummyPackage::find($get_package[0]->id);
-//            $dummy_package->package_name = $request->package_name;
-//            $dummy_package->status_code = $request->status_code;
-//            $dummy_package->save();
-//            return $dummy_package;
-//        }
-//    }
+    //       $get_package = DummyPackage::where('package_name',$request->package_name)->get();
+    //     if(!$get_package){
+    //         $dummy_package = new DummyPackage();
+    //         $dummy_package->package_name = $request->package_name;
+    //         $dummy_package->status_code = $request->status_code;
+    //         $dummy_package->save();
+    //         return $dummy_package;
+    //     }else{
+    //         $dummy_package = DummyPackage::find($get_package[0]->id);
+    //         $dummy_package->package_name = $request->package_name;
+    //         $dummy_package->status_code = $request->status_code;
+    //         $dummy_package->save();
+    //         return $dummy_package;
+    //     }
+    // }
+    public function store($package_name){
 
-    public function store($package_name)
-    {
-
-        $app_link = "https://play.google.com/store/apps/details?id=" . $package_name;
+        $app_link = "https://play.google.com/store/apps/details?id=".$package_name;
 
         $res = Http::get($app_link);
         // dd($res->status()==200);
-        if ($res->status() !== 200) {
+        if($res->status()!==200) {
             // dd('save');
 
-            $get_package = DummyPackage::where('package_name', $package_name)->first();
+            $get_package = DummyPackage::where('package_name',$package_name)->first();
             // dd($get_package);
-            if (!$get_package) {
+            if(!$get_package){
                 $dummy_package = new DummyPackage();
                 $dummy_package->package_name = $package_name;
                 $dummy_package->status_code = $res->status();
                 $dummy_package->save();
                 return response()->json($dummy_package);
-            } else {
+            }else{
                 $dummy_package = DummyPackage::find($get_package->id);
                 $dummy_package->package_name = $package_name;
                 $dummy_package->status_code = $res->status();
@@ -64,9 +60,10 @@ class DummyPackageController extends Controller
                 return response()->json($dummy_package);
             }
 
-        } else {
+        }
+        else {
             // dd('dont save');
-            return response()->json(['status' => $res->status()]);
+            return response()->json(['status'=>$res->status()]);
         }
     }
 

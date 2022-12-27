@@ -77,7 +77,7 @@ class UpdatePlatformRequest extends FormRequest
         $plateform->save();
 
         // call event
-//        event(new RedisDataEvent());
+        // event(new RedisDataEvent());
 
         return $plateform;
     }

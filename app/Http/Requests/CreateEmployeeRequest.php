@@ -61,7 +61,7 @@ class CreateEmployeeRequest extends FormRequest
         $employee->save();
 
         // CALL EVENT
-        event(new UserEvent($auth_user));
+        // event(new UserEvent($auth_user));
 
         return $employee;
     }

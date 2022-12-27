@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Filters\ApikeyFilters;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -19,5 +20,10 @@ class ApikeyList extends Model
     public function getDescriptionForEvent(string $eventName): string
     {
         return "{$eventName} apikey_list - ID:{$this->id}, app_apikey:{$this->apikey_text}";
+    }
+
+    public function scopeFilter($query)
+    {
+        return resolve(ApikeyFilters::class)->apply($query);
     }
 }

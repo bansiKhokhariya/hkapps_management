@@ -4,8 +4,8 @@ namespace App\Http\Requests;
 
 use App\Events\UserEvent;
 use App\Models\Task;
-use App\Models\Time;
 use App\Models\User;
+use App\Models\Time;
 use App\Notifications\assignPersonNotification;
 use GuzzleHttp\Client;
 use Illuminate\Foundation\Http\FormRequest;
@@ -69,7 +69,6 @@ class UpdateTaskRequest extends FormRequest
             }
         }
 
-
         if (!$task->attchments) {
             if (!$this->attchments) {
                 $task->attchments = NULL;
@@ -89,7 +88,7 @@ class UpdateTaskRequest extends FormRequest
             }
         }
 
-        //  attchments link //
+        // attchments link //
         if (!$task->attchments_link) {
             if (!$this->attchments_link) {
                 $task->attchments_link = NULL;
@@ -145,6 +144,7 @@ class UpdateTaskRequest extends FormRequest
             }
         }
 
+
         // assign_aso  and  aso_status //
         if ($task->assign_person !== null) {
             if ($task->User->designation == 'developer') {
@@ -170,13 +170,16 @@ class UpdateTaskRequest extends FormRequest
             $taskAttch->users()->attach($user);
         }
 
+
         $task->console_app = $this->console_app;
         $task->description = $this->description;
         $task->deadline = $this->deadline;
         $task->priority = $this->priority;
+        $task->save();
 
 
-        // add time for user//
+
+        // add time //
         if((int)$prev_preson !== (int)$this->assign_person){
             $time = new Time();
             $time->task_id = $task->id;
@@ -186,8 +189,6 @@ class UpdateTaskRequest extends FormRequest
             $time->assigned_date = $task->assigned_date;
             $time->save();
         }
-
-        $task->save();
 
 
         //  send notification assign user //
@@ -206,7 +207,7 @@ class UpdateTaskRequest extends FormRequest
         }
 
         // call event
-        event(new UserEvent($auth_user));
+        // event(new UserEvent($auth_user));
 
         return $task;
 

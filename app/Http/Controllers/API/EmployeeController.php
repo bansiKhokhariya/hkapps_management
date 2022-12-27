@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 
+
 class EmployeeController extends Controller
 {
     public function index()
@@ -38,6 +39,7 @@ class EmployeeController extends Controller
         $employee->delete();
         return response('Employee Deleted Successfully');
     }
+
     public function updateProfile(Request $request, $user_id){
 
         $profile = User::find($user_id);
@@ -61,5 +63,4 @@ class EmployeeController extends Controller
 
         return $profile;
     }
-
 }

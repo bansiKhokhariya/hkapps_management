@@ -16,7 +16,8 @@ use App\Notifications\TaskDoneNotification;
 use App\Notifications\TaskReWorkingNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Notifiable;
 
 
 class TaskController extends Controller
@@ -184,15 +185,16 @@ class TaskController extends Controller
         $get_time = Time::where('task_id', $request->task_id)->where('user_id', $request->user_id)->select('time')->get();
 
         $time = Time::where('task_id', $request->task_id)->where('user_id', $request->user_id)->get();
-//        if ($time[0]->end_date == null) {
-            $to = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $time[0]->assigned_date);
-            $from = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'));
-            $diff_in_days = $to->diffForHumans($from);
-//        } else {
-//            $to = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $time[0]->assigned_date);
-//            $from = $time[0]->end_date;
-//            $diff_in_days = $to->diffForHumans($from);
-//        }
+        // if ($time[0]->end_date == null) {
+        $to = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $time[0]->assigned_date);
+        $from = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'));
+        $diff_in_days = $to->diffForHumans($from);
+        // }
+        // else {
+        //     $to = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $time[0]->assigned_date);
+        //     $from = $time[0]->end_date;
+        //     $diff_in_days = $to->diffForHumans($from);
+        // }
 
         return response()->json(['time' => $get_time[0]->time, 'days' => $diff_in_days]);
     }
@@ -249,7 +251,7 @@ class TaskController extends Controller
                 $update_task_user->save();
 
                 //event call
-                event(new UserEvent($auth_user));
+                // event(new UserEvent($auth_user));
 
                 return response()->json($stopTime);
             }
@@ -301,7 +303,7 @@ class TaskController extends Controller
         $update_task_user->save();
 
         //event call
-        event(new UserEvent($auth_user));
+        // event(new UserEvent($auth_user));
 
         return response()->json($time);
 
@@ -423,7 +425,7 @@ class TaskController extends Controller
 
 
         //event call
-        event(new UserEvent($auth_user));
+        // event(new UserEvent($auth_user));
 
         return response()->json($time);
 
@@ -520,7 +522,7 @@ class TaskController extends Controller
 
 
         //event call
-        event(new UserEvent($auth_user));
+        // event(new UserEvent($auth_user));
 
         return response()->json($time);
     }
@@ -593,7 +595,7 @@ class TaskController extends Controller
 
 
             //event call
-            event(new UserEvent($auth_user));
+            // event(new UserEvent($auth_user));
 
             return response()->json(['message' => "task status change re-working"]);
         }
@@ -634,7 +636,7 @@ class TaskController extends Controller
         $task->save();
 
         //event call
-        event(new UserEvent($auth_user));
+        // event(new UserEvent($auth_user));
 
         return response()->json(['message' => "task status change"]);
 
@@ -757,7 +759,7 @@ class TaskController extends Controller
 
 
                 //event call
-                event(new UserEvent($auth_user));
+                // event(new UserEvent($auth_user));
 
                 return response()->json($stopTime);
             }
@@ -810,7 +812,7 @@ class TaskController extends Controller
 
 
         //event call
-        event(new UserEvent($auth_user));
+        // event(new UserEvent($auth_user));
 
         return response()->json($time);
 
@@ -881,7 +883,7 @@ class TaskController extends Controller
         }
 
         //event call
-        event(new UserEvent($auth_user));
+        // event(new UserEvent($auth_user));
 
         return response()->json($time);
     }

@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests;
 
-use App\Events\RedisDataEvent;
 use App\Models\Advertise;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\URL;
+use App\Events\RedisDataEvent;
 
 class CreateAdvertise extends FormRequest
 {
@@ -52,10 +52,10 @@ class CreateAdvertise extends FormRequest
             $file_path_logo = null;
         }
 
-        if(!$this->hasFile('app_logo')){
-            $advertise->app_logo = $this->app_logo;
-        }else{
+        if($this->hasFile('app_logo')){
             $advertise->app_logo = $file_path_logo;
+        }else{
+            $advertise->app_logo = $this->app_logo;
         }
         //
 
@@ -69,10 +69,10 @@ class CreateAdvertise extends FormRequest
             $file_path_banner = null;
         }
 
-        if(!$this->hasFile('app_banner')){
-            $advertise->app_banner = $this->app_banner;
-        }else{
+        if($this->hasFile('app_banner')){
             $advertise->app_banner = $file_path_banner;
+        }else{
+            $advertise->app_banner = $this->app_banner;
         }
         //
 
@@ -82,7 +82,7 @@ class CreateAdvertise extends FormRequest
         $advertise->save();
 
         // call event
-        event(new RedisDataEvent());
+        // event(new RedisDataEvent());
 
         return $advertise;
     }

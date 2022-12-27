@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Events\RedisDataEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateApiKeyListRequest;
 use App\Http\Requests\UpdateApiKeyListRequest;
@@ -10,12 +9,13 @@ use App\Http\Resources\ApiKeyListResource;
 use App\Models\AllApps;
 use App\Models\ApikeyList;
 use Illuminate\Http\Request;
+use App\Events\RedisDataEvent;
 
 class ApiKeyListController extends Controller
 {
     public function index()
     {
-        $apikey_list = ApikeyList::get();
+        $apikey_list = ApikeyList::filter()->latest()->get();
         return ApiKeyListResource::collection($apikey_list);
     }
 
@@ -39,7 +39,7 @@ class ApiKeyListController extends Controller
         $apikey_list->delete();
 
         // call event
-        event(new RedisDataEvent());
+        // event(new RedisDataEvent());
 
         return response('ApikeyList Deleted Successfully');
     }
@@ -63,12 +63,13 @@ class ApiKeyListController extends Controller
         }
         $allApps->save();
 
+
         // delete apikey list //
         $apikeyList = ApikeyList::where('apikey_packageName', $package_name)->where('apikey_text',$apikey)->first();
         $apikeyList->forceDelete();
 
         // call event
-        event(new RedisDataEvent());
+        // event(new RedisDataEvent());
 
         return response()->json('apikey assign succesfully!');
 

@@ -10,8 +10,7 @@ use Spatie\Activitylog\Models\Activity;
 
 class ActivityHistoryController extends Controller
 {
-    public function index()
-    {
+    public function index(){
         $activity = Activity::all();
         return ActivityHistoryResource::collection($activity);
     }
@@ -21,8 +20,6 @@ class ActivityHistoryController extends Controller
 
         $user_id = $request->user_id;
         $time = $request->time;
-        $start_date = $request->start_date;
-        $end_date = $request->end_date;
         $carbonNow = Carbon::now()->format('Y-m-d');
         $carbonYesterday = Carbon::yesterday()->format('Y-m-d');
         $carbon7Day = Carbon::now()->subDays(7);
@@ -31,7 +28,7 @@ class ActivityHistoryController extends Controller
         $carbonLastMonth = Carbon::now()->subMonth()->month;
 
 
-        if ($user_id && !$time) {
+        if ($user_id) {
 
             $activity = Activity::where('causer_id', $user_id)->get();
             return ActivityHistoryResource::collection($activity);
@@ -48,12 +45,12 @@ class ActivityHistoryController extends Controller
                 $activity = Activity::whereDate('created_at', $carbonYesterday)->get();
                 return ActivityHistoryResource::collection($activity);
 
-            } elseif ($time == 'last7day') {
+            } elseif ($time == 'last7days') {
 
                 $activity = Activity::where('created_at', '>=', $carbon7Day)->get();
                 return ActivityHistoryResource::collection($activity);
 
-            } elseif ($time == 'last30day') {
+            } elseif ($time == 'last30days') {
 
                 $activity = Activity::where('created_at', '>=', $carbon30Day)->get();
                 return ActivityHistoryResource::collection($activity);
@@ -70,7 +67,10 @@ class ActivityHistoryController extends Controller
                 )->get();
                 return ActivityHistoryResource::collection($activity);
 
-            } elseif ($start_date && $end_date) {
+            } elseif ($time=='customrange') {
+
+                $start_date = \Carbon\Carbon::createFromFormat('Y-m-d', $request->start_date);
+                $end_date = \Carbon\Carbon::createFromFormat('Y-m-d', $request->end_date);
 
                 $activity = Activity::whereBetween('created_at', [$start_date, $end_date])->get();
                 return ActivityHistoryResource::collection($activity);
@@ -89,12 +89,12 @@ class ActivityHistoryController extends Controller
                 $activity = Activity::whereDate('created_at', $carbonYesterday)->where('causer_id',$user_id)->get();
                 return ActivityHistoryResource::collection($activity);
 
-            } elseif ($time == 'last7day') {
+            } elseif ($time == 'last7days') {
 
                 $activity = Activity::where('created_at', '>=', $carbon7Day)->where('causer_id',$user_id)->get();
                 return ActivityHistoryResource::collection($activity);
 
-            } elseif ($time == 'last30day') {
+            } elseif ($time == 'last30days') {
 
                 $activity = Activity::where('created_at', '>=', $carbon30Day)->where('causer_id',$user_id)->get();
                 return ActivityHistoryResource::collection($activity);
@@ -111,7 +111,11 @@ class ActivityHistoryController extends Controller
                 )->where('causer_id',$user_id)->get();
                 return ActivityHistoryResource::collection($activity);
 
-            } elseif ($start_date && $end_date) {
+            } elseif ($time=='customrange') {
+
+
+                $start_date = \Carbon\Carbon::createFromFormat('Y-m-d', $request->start_date);
+                $end_date = \Carbon\Carbon::createFromFormat('Y-m-d', $request->end_date);
 
                 $activity = Activity::whereBetween('created_at', [$start_date, $end_date])->where('causer_id',$user_id)->get();
                 return ActivityHistoryResource::collection($activity);
@@ -124,5 +128,7 @@ class ActivityHistoryController extends Controller
         }
 
     }
+
+
 
 }

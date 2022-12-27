@@ -61,7 +61,7 @@ class CreatePlatformRequest extends FormRequest
         $platform->save();
 
         // call event
-//        event(new RedisDataEvent());
+        // event(new RedisDataEvent());
 
         return $platform;
     }

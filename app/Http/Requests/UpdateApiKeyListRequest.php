@@ -39,7 +39,7 @@ class UpdateApiKeyListRequest extends FormRequest
         $apikey_list->save();
 
         // call event
-        event(new RedisDataEvent());
+        // event(new RedisDataEvent());
 
         return $apikey_list;
     }
