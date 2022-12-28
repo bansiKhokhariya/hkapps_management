@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\SettingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
@@ -179,4 +180,8 @@ Route::get('searchAppByDeveloper/{developer}', [AllAppsController::class, 'searc
 
 // expense revenue //
 Route::resource('expense_revenue', ExpenseRevenueController::class);
+
+//   cron setting //
+Route::resource('setting', SettingController::class);
+Route::get('showSetting', [SettingController::class, 'show']);
 

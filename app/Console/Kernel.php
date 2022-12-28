@@ -28,12 +28,15 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
 //        if (! $this->migrationRunning()) {
-//            $setting = Setting::first();
+
 //            $schedule->command('spy:cron')->everyMinute();
 //            $schedule->command('spy:cron')->cron('*/'.$setting->time.' * * * *');
 //        }
 
-        $schedule->command('AppDetailsUpdate:cron')->everyMinute();
+
+        $setting = Setting::first();
+        $schedule->command('AppDetailsUpdate:cron')->cron('*/'.$setting->time.' * * * *');
+
 
     }
 

@@ -15,11 +15,11 @@ class CreateExpenseRevenueTable extends Migration
     {
         Schema::create('expense_revenue', function (Blueprint $table) {
             $table->id();
-            $table->string('package_name');
-            $table->string('ads_master');
-            $table->string('total_invest');
-            $table->string('adx');
-            $table->string('revenue');
+            $table->string('package_name')->nullable();
+            $table->string('ads_master')->nullable();
+            $table->string('total_invest')->nullable();
+            $table->string('adx')->nullable();
+            $table->string('revenue')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

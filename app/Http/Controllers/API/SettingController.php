@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 
 class SettingController extends Controller
@@ -31,10 +32,11 @@ class SettingController extends Controller
         return $setting;
     }
 
-    public function show($id){
+    public function show(){
 
-         $setting = Setting::find($id);
+         $setting = Setting::find(1);
          return $setting;
+
     }
 
 
