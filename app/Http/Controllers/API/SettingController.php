@@ -10,32 +10,43 @@ use Illuminate\Support\Facades\Auth;
 
 class SettingController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $setting = Setting::all();
         return $setting;
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
 
         $setting = Setting::find(1);
 
-        if (!is_null($setting)){
+        if (!is_null($setting)) {
             $setting->update([
-                'time'=>$request->time,
+                'time' => $request->time,
             ]);
-        }
-        else{
+        } else {
             Setting::create([
-                'time'=>$request->time,
+                'time' => $request->time,
             ]);
         }
         return $setting;
     }
 
-    public function show(){
+    public function show()
+    {
 
-         $setting = Setting::find(1);
-         return $setting;
+        $setting = Setting::find(1);
+        return $setting;
+
+    }
+
+    public function startCron()
+    {
+//        dd('hello');
+//        \Log::info("App");
+//        Artisan::call('schedule:work');
+        Artisan::call('AppDetailsUpdate:cron');
 
     }
 

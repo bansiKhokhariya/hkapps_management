@@ -17,6 +17,9 @@ use App\Http\Controllers\API\ActivityHistoryController;
 use App\Http\Controllers\API\ApiKeyListController;
 use App\Http\Controllers\API\DummyPackageController;
 use App\Http\Controllers\API\ExpenseRevenueController;
+use App\Http\Controllers\API\AdxMasterController;
+use App\Http\Controllers\API\AdsMasterController;
+use App\Http\Controllers\API\PartyMasterController;
 
 
 /*
@@ -115,8 +118,7 @@ Route::middleware('auth:api')->group(function () {
     // Plateform //
     Route::resource('platform', PlatformController::class);
 
-    // Advertise //
-    Route::resource('appAd', AdvertiseContoller::class);
+
 
     // apikey list //
     Route::resource('apikey_list', ApiKeyListController::class);
@@ -124,6 +126,8 @@ Route::middleware('auth:api')->group(function () {
 
 });
 
+// Advertise //
+Route::resource('appAd', AdvertiseContoller::class);
 
 //redis get data //
 Route::get('GetRedisData/{package_name}', [RawDataController::class, 'GetRedisData']);
@@ -184,4 +188,13 @@ Route::resource('expense_revenue', ExpenseRevenueController::class);
 //   cron setting //
 Route::resource('setting', SettingController::class);
 Route::get('showSetting', [SettingController::class, 'show']);
+Route::get('startCron', [SettingController::class, 'startCron']);
 
+// adx master //
+Route::resource('adx_master', AdxMasterController::class);
+
+// ads master //
+Route::resource('ads_master', AdsMasterController::class);
+
+// party master //
+Route::resource('party_master', PartyMasterController::class);
