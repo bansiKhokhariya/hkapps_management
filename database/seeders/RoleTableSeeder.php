@@ -40,6 +40,7 @@ class RoleTableSeeder extends Seeder
         $role1->givePermissionTo('task-delete');
 
 
+
         $role2 = Role::create(['name' => 'user']);
         $role2->givePermissionTo('dashboard-list');
         $role2->givePermissionTo('task-list');

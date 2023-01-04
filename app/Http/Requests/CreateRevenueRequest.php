@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Models\ExpenseRevenue;
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateExpenseRevenueRequest extends FormRequest
+class CreateRevenueRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,13 +26,10 @@ class CreateExpenseRevenueRequest extends FormRequest
     {
         return [
             'package_name'=>'required',
-            'ads_master'=>'required',
-            'total_invest'=>'required',
             'adx'=>'required',
             'revenue'=>'required',
         ];
     }
-
     public function persist()
     {
         $expenseRevenue = new ExpenseRevenue($this->validated());

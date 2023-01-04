@@ -14,14 +14,23 @@ class CreateExpenseRevenueTable extends Migration
     public function up()
     {
         Schema::create('expense_revenue', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->string('package_name')->nullable();
-            $table->string('ads_master')->nullable();
+            $table->integer('ads_master')->unsigned()->nullable();
+//            $table->unsignedBigInteger('ads_master');
             $table->string('total_invest')->nullable();
-            $table->string('adx')->nullable();
+            $table->integer('adx')->unsigned()->nullable();
+//            $table->unsignedBigInteger('adx');
             $table->string('revenue')->nullable();
+//            $table->foreign('ads_master')->references('id')->on('ads_master')->onDelete('cascade')->onUpdate('cascade');
+//            $table->foreign('adx')->references('id')->on('adx_master')->onDelete('cascade')->onUpdate('cascade');
             $table->softDeletes();
             $table->timestamps();
+        });
+        Schema::table('expense_revenue', function($table)
+        {
+            $table->foreign('ads_master')->references('id')->on('ads_master');
+            $table->foreign('adx')->references('id')->on('adx_master');
         });
     }
 

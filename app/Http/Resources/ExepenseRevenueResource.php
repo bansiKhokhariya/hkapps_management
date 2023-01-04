@@ -14,13 +14,30 @@ class ExepenseRevenueResource extends JsonResource
      */
     public function toArray($request)
     {
+
+
+
+        if($this->ads_master){
+            $ads = $this->masterAds;
+        }else{
+            $ads = null;
+        }
+
+        if($this->adx){
+            $adx = $this->Adx_master;
+        }else{
+            $adx = null;
+        }
+
         return [
             'id' => $this->id,
-            'package_name' => $this->package_name ,
-            'ads_master' => $this->ads_master,
+            'package_name' => $this->package_name,
+            'ads_master' => $ads,
+            'adx' => $adx,
             'total_invest' => $this->total_invest,
-            'adx' => $this->adx,
+            'icon' => $this->icon(),
             'revenue' => $this->revenue,
+            'created_date' => $this->created_at->format('d-m-Y'),
         ];
     }
 }

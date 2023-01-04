@@ -13,15 +13,16 @@ class AdPlacement extends Model
 
     protected $table = 'ad_placement';
     protected $guarded = [];
-    protected $appends=['platform_name'];
+    protected $appends = ['platform_name'];
 
     public function platform()
     {
-         return  $this->belongsTo(PlatForm::class);
+        return $this->belongsTo(PlatForm::class);
     }
 
-    public function getPlatformNameAttribute(){
-         return $this->platform->platform_name;
+    public function getPlatformNameAttribute()
+    {
+        return $this->platform->platform_name;
     }
 
 }

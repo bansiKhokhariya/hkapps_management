@@ -184,11 +184,14 @@ Route::get('searchAppByDeveloper/{developer}', [AllAppsController::class, 'searc
 
 // expense revenue //
 Route::resource('expense_revenue', ExpenseRevenueController::class);
+Route::post('store_expense',[ExpenseRevenueController::class,'storeExpense']);
+Route::post('store_revenue',[ExpenseRevenueController::class,'storeRevenue']);
 
 //   cron setting //
 Route::resource('setting', SettingController::class);
 Route::get('showSetting', [SettingController::class, 'show']);
 Route::get('startCron', [SettingController::class, 'startCron']);
+Route::get('stopCron', [SettingController::class, 'stopCron']);
 
 // adx master //
 Route::resource('adx_master', AdxMasterController::class);
@@ -198,3 +201,7 @@ Route::resource('ads_master', AdsMasterController::class);
 
 // party master //
 Route::resource('party_master', PartyMasterController::class);
+
+// git //
+Route::get('git',[\App\Http\Controllers\GitController::class,'createRepo']);
+Route::get('service_start',[ActivityHistoryController::class,'sevice']);

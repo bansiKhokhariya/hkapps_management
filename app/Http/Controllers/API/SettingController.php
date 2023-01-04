@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Console\Commands\AppDetailsUpadateCron;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use Illuminate\Http\Request;
@@ -44,11 +45,17 @@ class SettingController extends Controller
     public function startCron()
     {
 //        dd('hello');
-//        \Log::info("App");
-//        Artisan::call('schedule:work');
-        Artisan::call('AppDetailsUpdate:cron');
+        \Log::info("start cron");
+        \Artisan::call('schedule:run');
+//        Artisan::call('AppDetailsUpdate:cron');
+
 
     }
+    public function stopCron(Request $request)
+    {
+        AppDetailsUpadateCron::dispatch();
+        \Log::info("stop cron");
 
+    }
 
 }
