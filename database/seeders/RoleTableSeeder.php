@@ -17,33 +17,101 @@ class RoleTableSeeder extends Seeder
     public function run()
     {
 
-        Permission::create(['name' => 'dashboard-list']);
-        Permission::create(['name' => 'user-list']);
-        Permission::create(['name' => 'user-create']);
-        Permission::create(['name' => 'user-edit']);
+        Permission::create(['name' => 'dashboard-view']);
+        Permission::create(['name' => 'user-view']);
+        Permission::create(['name' => 'user-store']);
+        Permission::create(['name' => 'user-update']);
         Permission::create(['name' => 'user-delete']);
-        Permission::create(['name' => 'task-list']);
-        Permission::create(['name' => 'task-create']);
-        Permission::create(['name' => 'task-edit']);
+        Permission::create(['name' => 'task-view']);
+        Permission::create(['name' => 'task-store']);
+        Permission::create(['name' => 'task-update']);
         Permission::create(['name' => 'task-delete']);
+        Permission::create(['name' => 'webcreon2-view']);
+        Permission::create(['name' => 'webcreon2-update']);
+        Permission::create(['name' => 'allApp-view']);
+        Permission::create(['name' => 'allApp-store']);
+        Permission::create(['name' => 'allApp-update']);
+        Permission::create(['name' => 'allApp-delete']);
+        Permission::create(['name' => 'apikey-view']);
+        Permission::create(['name' => 'apikey-delete']);
+        Permission::create(['name' => 'apikey-assign']);
+        Permission::create(['name' => 'platform-view']);
+        Permission::create(['name' => 'platform-store']);
+        Permission::create(['name' => 'platform-update']);
+        Permission::create(['name' => 'platform-delete']);
+        Permission::create(['name' => 'advertise-view']);
+        Permission::create(['name' => 'advertise-store']);
+        Permission::create(['name' => 'advertise-update']);
+        Permission::create(['name' => 'advertise-delete']);
+        Permission::create(['name' => 'expenseRevenue-view']);
+        Permission::create(['name' => 'expenseRevenue-store']);
+        Permission::create(['name' => 'expenseRevenue-update']);
+        Permission::create(['name' => 'expenseRevenue-delete']);
+        Permission::create(['name' => 'expense-store']);
+        Permission::create(['name' => 'revenue-store']);
+        Permission::create(['name' => 'ads-view']);
+        Permission::create(['name' => 'ads-store']);
+        Permission::create(['name' => 'ads-update']);
+        Permission::create(['name' => 'ads-delete']);
+        Permission::create(['name' => 'adx-view']);
+        Permission::create(['name' => 'adx-store']);
+        Permission::create(['name' => 'adx-update']);
+        Permission::create(['name' => 'adx-delete']);
+        Permission::create(['name' => 'party-view']);
+        Permission::create(['name' => 'party-store']);
+        Permission::create(['name' => 'party-update']);
+        Permission::create(['name' => 'party-delete']);
+        Permission::create(['name' => 'activityLog-view']);
+        Permission::create(['name' => 'permission-update']);
 
 
         $role1 = Role::create(['name' => 'admin']);
-        $role1->givePermissionTo('dashboard-list');
-        $role1->givePermissionTo('user-list');
-        $role1->givePermissionTo('user-create');
-        $role1->givePermissionTo('user-edit');
+        $role1->givePermissionTo('dashboard-view');
+        $role1->givePermissionTo('user-view');
+        $role1->givePermissionTo('user-store');
+        $role1->givePermissionTo('user-update');
         $role1->givePermissionTo('user-delete');
-        $role1->givePermissionTo('task-list');
-        $role1->givePermissionTo('task-create');
-        $role1->givePermissionTo('task-edit');
+        $role1->givePermissionTo('task-view');
+        $role1->givePermissionTo('task-store');
+        $role1->givePermissionTo('task-update');
         $role1->givePermissionTo('task-delete');
-
-
-
-        $role2 = Role::create(['name' => 'user']);
-        $role2->givePermissionTo('dashboard-list');
-        $role2->givePermissionTo('task-list');
+        $role1->givePermissionTo('webcreon2-view');
+        $role1->givePermissionTo('webcreon2-update');
+        $role1->givePermissionTo('allApp-view');
+        $role1->givePermissionTo('allApp-store');
+        $role1->givePermissionTo('allApp-update');
+        $role1->givePermissionTo('allApp-delete');
+        $role1->givePermissionTo('apikey-view');
+        $role1->givePermissionTo('apikey-delete');
+        $role1->givePermissionTo('apikey-assign');
+        $role1->givePermissionTo('platform-view');
+        $role1->givePermissionTo('platform-store');
+        $role1->givePermissionTo('platform-update');
+        $role1->givePermissionTo('platform-delete');
+        $role1->givePermissionTo('advertise-view');
+        $role1->givePermissionTo('advertise-store');
+        $role1->givePermissionTo('advertise-update');
+        $role1->givePermissionTo('advertise-delete');
+        $role1->givePermissionTo('expenseRevenue-view');
+        $role1->givePermissionTo('expenseRevenue-store');
+        $role1->givePermissionTo('expenseRevenue-update');
+        $role1->givePermissionTo('expenseRevenue-delete');
+        $role1->givePermissionTo('expense-store');
+        $role1->givePermissionTo('revenue-store');
+        $role1->givePermissionTo('ads-view');
+        $role1->givePermissionTo('ads-store');
+        $role1->givePermissionTo('ads-update');
+        $role1->givePermissionTo('ads-delete');
+        $role1->givePermissionTo('adx-view');
+        $role1->givePermissionTo('adx-store');
+        $role1->givePermissionTo('adx-update');
+        $role1->givePermissionTo('adx-delete');
+        $role1->givePermissionTo('party-view');
+        $role1->givePermissionTo('party-store');
+        $role1->givePermissionTo('party-update');
+        $role1->givePermissionTo('party-delete');
+        $role1->givePermissionTo('activityLog-view');
+        $role1->givePermissionTo('permission-update');
 
 
         $user = User::create([

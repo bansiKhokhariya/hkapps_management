@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -61,6 +62,12 @@ class User extends Authenticatable
     public function tasks()
     {
         return $this->belongsToMany(Task::class)->withTimestamps();
+    }
+
+    public function role()
+    {
+        $role = Role::where('name', $this->roles)->with('permissions')->first();
+        return $role;
     }
 
     public function receivesBroadcastNotificationsOn()

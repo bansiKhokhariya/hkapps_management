@@ -4,7 +4,7 @@ use App\Http\Controllers\API\SettingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
-use App\Http\Controllers\API\EmployeeController;
+use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\TaskController;
 use App\Http\Controllers\API\NotificationController;
 use App\Http\Controllers\API\AppsController;
@@ -20,6 +20,7 @@ use App\Http\Controllers\API\ExpenseRevenueController;
 use App\Http\Controllers\API\AdxMasterController;
 use App\Http\Controllers\API\AdsMasterController;
 use App\Http\Controllers\API\PartyMasterController;
+use App\Http\Controllers\API\PermissionController;
 
 
 /*
@@ -48,9 +49,11 @@ Route::middleware('auth:api')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
     // employee //
-    Route::resource('employee', EmployeeController::class);
-    Route::post('updateProfile/{user_id}', [EmployeeController::class, 'updateProfile']);
+    Route::resource('user', UserController::class);
+    Route::post('updateProfile/{user_id}', [UserController::class, 'updateProfile']);
 
+    // permission //
+    Route::get('permission', [PermissionController::class, 'index']);
 
     // task //
     Route::resource('task', TaskController::class);

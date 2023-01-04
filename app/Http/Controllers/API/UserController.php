@@ -5,39 +5,39 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateEmployeeRequest;
 use App\Http\Requests\UpdateEmployeeRequest;
-use App\Http\Resources\EmployeeResource;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 
 
-class EmployeeController extends Controller
+class UserController extends Controller
 {
     public function index()
     {
-        $employee = User::get();
-        return EmployeeResource::collection($employee);
+        $user = User::get();
+        return UserResource::collection($user);
     }
 
     public function store(CreateEmployeeRequest $request)
     {
-        return EmployeeResource::make($request->persist());
+        return UserResource::make($request->persist());
     }
 
-    public function show(User $employee)
+    public function show(User $user)
     {
-        return EmployeeResource::make($employee);
+        return UserResource::make($user);
     }
 
-    public function update(UpdateEmployeeRequest $request, User $employee)
+    public function update(UpdateEmployeeRequest $request, User $user)
     {
-        return EmployeeResource::make($request->persist($employee));
+        return UserResource::make($request->persist($user));
     }
 
-    public function destroy(User $employee)
+    public function destroy(User $user)
     {
-        $employee->delete();
-        return response('Employee Deleted Successfully');
+        $user->delete();
+        return response('User Deleted Successfully');
     }
 
     public function updateProfile(Request $request, $user_id){
