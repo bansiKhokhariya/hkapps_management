@@ -54,6 +54,7 @@ Route::middleware('auth:api')->group(function () {
 
     // permission //
     Route::get('permission', [PermissionController::class, 'index']);
+    Route::post('updatePermission/{role_id}', [PermissionController::class, 'updatePermission']);
 
     // task //
     Route::resource('task', TaskController::class);
