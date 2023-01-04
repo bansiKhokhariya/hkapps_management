@@ -34,17 +34,23 @@ class UpdateEmployeeRequest extends FormRequest
             'name' => 'required',
             'email' => 'required',
             'password' => 'required',
-            'roles' => 'required',
-            'designation'=>'required'
+            'designation' => 'required'
         ];
     }
+
     public function persist(User $employee)
     {
         $id = Auth::user()->id;
         $auth_user = User::find($id);
 
 
-        $role = Role::findByName($this->roles, 'web');
+        $convertOldRole = str_replace(' ', '_', strtolower($employee->name));
+        $getRole = Role::where('name', $convertOldRole)->first();
+        $convertRole = str_replace(' ', '_', strtolower($this->name));
+        $updateRole = Role::find($getRole->id);
+        $updateRole->name = $convertRole;
+        $updateRole->save();
+        $role = Role::findByName($convertRole, 'web');
 
         $employee->fill($this->validated());
         $employee->password = bcrypt($this->password);
@@ -52,15 +58,16 @@ class UpdateEmployeeRequest extends FormRequest
             $file = $this->file('profile_image');
             $file_name = $file->getClientOriginalName();
             $file->move(public_path('/profile_image'), $file_name);
-            $file_path =  URL::to('/') . '/profile_image/'.$file_name;
+            $file_path = URL::to('/') . '/profile_image/' . $file_name;
         } else {
             $file_path = null;
         }
-        if($this->profile_image == null){
+        if ($this->profile_image == null) {
             $employee->profile_image = $employee->profile_image;
-        }else{
+        } else {
             $employee->profile_image = $file_path;
         }
+        $employee->roles = $convertRole;
         $employee->assignRole($role);
         $employee->save();
 

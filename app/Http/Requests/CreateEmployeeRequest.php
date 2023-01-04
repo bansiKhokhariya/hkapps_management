@@ -33,7 +33,6 @@ class CreateEmployeeRequest extends FormRequest
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required',
-            'roles' => 'required',
             'designation'=>'required'
         ];
     }
@@ -42,7 +41,10 @@ class CreateEmployeeRequest extends FormRequest
         $id = Auth::user()->id;
         $auth_user = User::find($id);
 
-        $role = Role::findByName($this->roles, 'web');
+        $convertRole = str_replace(' ', '_', strtolower($this->name));
+        Role::create(['name' => $convertRole,'guard_name'=> 'web']);
+
+        $role = Role::findByName($convertRole, 'web');
         $employee = new User($this->validated());
         $employee->password = bcrypt($this->password);
 
@@ -55,10 +57,12 @@ class CreateEmployeeRequest extends FormRequest
             $file_path = null;
         }
         $employee->profile_image = $file_path;
+        $employee->roles = $convertRole;
 
 
         $employee->assignRole($role);
         $employee->save();
+
 
         // CALL EVENT
         // event(new UserEvent($auth_user));
