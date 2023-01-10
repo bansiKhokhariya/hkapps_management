@@ -15,7 +15,7 @@ class CreateAppDetailsTable extends Migration
     {
         Schema::create('app_details', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('allApps_id');
+            $table->unsignedBigInteger('app_packageName');
 //            $table->unsignedBigInteger('allApps_id');
             $table->text('description')->nullable();
             $table->text('descriptionHTML')->nullable();
@@ -59,7 +59,7 @@ class CreateAppDetailsTable extends Migration
             $table->string('comments')->nullable();
             $table->string('url')->nullable();
             $table->string('status')->nullable();
-            $table->foreign('allApps_id')->references('id')->on('all_apps')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('app_packageName')->references('id')->on('all_apps')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
 

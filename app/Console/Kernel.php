@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -35,7 +36,8 @@ class Kernel extends ConsoleKernel
 
 
         $setting = Setting::first();
-        $schedule->command('AppDetailsUpdate:cron')->cron('*/'.$setting->time.' * * * *');
+        $user = User::where('roles','admin')->first();
+        $schedule->command('AppDetailsUpdate:cron')->cron('*/'.$setting->time.' * * * *')->user($user);
 
 
     }

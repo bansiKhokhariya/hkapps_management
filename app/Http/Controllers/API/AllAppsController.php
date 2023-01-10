@@ -149,9 +149,9 @@ class AllAppsController extends Controller
         $response = $redis->get($package_name);
 
 
-        $get_allApps = AllApps::where('app_packageName',$package_name)->first();
-        $meta_keywords = explode(',',$get_allApps->app_apikey);
-        if(!in_array($api_key,$meta_keywords)){
+        $get_allApps = AllApps::where('app_packageName', $package_name)->first();
+        $meta_keywords = explode(',', $get_allApps->app_apikey);
+        if (!in_array($api_key, $meta_keywords)) {
             $get_api_key = ApikeyList::where('apikey_packageName', $package_name)->where('apikey_text', $api_key)->first();
             if ($get_api_key) {
                 $apikey_request_count = $get_api_key->apikey_request;
@@ -165,7 +165,6 @@ class AllAppsController extends Controller
                 $apiKey->save();
             }
         }
-
 
 
         // call event
@@ -188,12 +187,13 @@ class AllAppsController extends Controller
 
     }
 
-    public function updatePrivacypolicyLink($id , Request $request){
+    public function updatePrivacypolicyLink($id, Request $request)
+    {
         $allApps = AllApps::find($id);
 
-        if (!is_null($allApps)){
+        if (!is_null($allApps)) {
             $allApps->update([
-                'app_privacyPolicyLink'=>$request->app_privacyPolicyLink,
+                'app_privacyPolicyLink' => $request->app_privacyPolicyLink,
             ]);
         }
 
@@ -217,14 +217,14 @@ class AllAppsController extends Controller
 
         $result = array_diff($keys, $allApps);
 
-        $results = array_map(function ($prod) {
+        // $results = array_map(function ($prod) {
 
-            $header = ['app_packageName', 'app_apikey'];
-            $values = [$prod, $this->generateApikey()];
-            $combine_array = array_combine($header, $values);
-            return $combine_array;
+        //     $header = ['app_packageName', 'app_apikey'];
+        //     $values = [$prod, $this->generateApikey()];
+        //     $combine_array = array_combine($header, $values);
+        //     return $combine_array;
 
-        }, $result);
+        // }, $result);
 
         $redis = Redis::connection('RedisApp');
         foreach ($result as $key) {
@@ -242,11 +242,11 @@ class AllAppsController extends Controller
 
         }
 
-        TestAllApp::insert($results);
+        // TestAllApp::insert($results);
 
         return 'package add succesfully!';
-
     }
+
     public function generateApikey()
     {
 
@@ -308,11 +308,10 @@ class AllAppsController extends Controller
             $platform_adFormat = [];
             if (isset($value->AppID) && $value->AppID != '') {
                 $ad_Appid = $value->AppID;
-                array_push($platform_adFormat,'App ID');
+                array_push($platform_adFormat, 'App ID');
             } else {
                 $ad_Appid = '';
             }
-
 
 
             $ad_Banner = [];
@@ -326,31 +325,31 @@ class AllAppsController extends Controller
             foreach ($value as $item => $i) {
                 if (str_starts_with($item, 'Banner')) {
                     array_push($ad_Banner, $i);
-                    array_push($platform_adFormat,'Banner');
+                    array_push($platform_adFormat, 'Banner');
                 }
                 if (str_starts_with($item, 'Interstitial')) {
                     array_push($ad_Interstitial, $i);
-                    array_push($platform_adFormat,'Interstitial');
+                    array_push($platform_adFormat, 'Interstitial');
                 }
                 if (str_starts_with($item, 'Native')) {
                     array_push($ad_Native, $i);
-                    array_push($platform_adFormat,'Native');
+                    array_push($platform_adFormat, 'Native');
                 }
                 if (str_starts_with($item, 'NativeBanner')) {
                     array_push($ad_NativeBanner, $i);
-                    array_push($platform_adFormat,'Native Banner');
+                    array_push($platform_adFormat, 'Native Banner');
                 }
                 if (str_starts_with($item, 'RewardedVideo')) {
                     array_push($ad_RewardedVideo, $i);
-                    array_push($platform_adFormat,'Rewarded Video');
+                    array_push($platform_adFormat, 'Rewarded Video');
                 }
                 if (str_starts_with($item, 'RewardedInterstitial')) {
                     array_push($ad_RewardedInterstitial, $i);
-                    array_push($platform_adFormat,'Rewarded Interstitial');
+                    array_push($platform_adFormat, 'Rewarded Interstitial');
                 }
                 if (str_starts_with($item, 'AppOpen')) {
                     array_push($ad_AppOpen, $i);
-                    array_push($platform_adFormat,'App Open');
+                    array_push($platform_adFormat, 'App Open');
                 }
             }
 
@@ -362,7 +361,7 @@ class AllAppsController extends Controller
 
         }
         $monetize_array = ['monetize_setting' => $monetize_setting];
-        $app_setting = array_merge((array)$app_setting,$monetize_array);
+        $app_setting = array_merge((array)$app_setting, $monetize_array);
 
         // **** //
 
@@ -398,7 +397,7 @@ class AllAppsController extends Controller
         // **** //
 
 
-        return response()->json(['data'=>$app_setting]);
+        return response()->json(['data' => $app_setting]);
 
     }
 
@@ -551,8 +550,8 @@ class AllAppsController extends Controller
             $new_placement_array = array_merge($new_placement_array, $object1);
         }
 
-        $response =  (object)["STATUS" => $test_response->STATUS, "MSG" => $test_response->MSG, "APP_SETTINGS" => $app_settings, "PLACEMENT" => $new_placement_array,
-            "Advertise_List" => $test_response->Advertise_List, "MORE_APP_SPLASH" => $test_response->MORE_APP_SPLASH, "MORE_APP_EXIT" => $test_response->MORE_APP_EXIT,"EXTRA_DATA" => $test_response->app_extra];
+        $response = (object)["STATUS" => $test_response->STATUS, "MSG" => $test_response->MSG, "APP_SETTINGS" => $app_settings, "PLACEMENT" => $new_placement_array,
+            "Advertise_List" => $test_response->Advertise_List, "MORE_APP_SPLASH" => $test_response->MORE_APP_SPLASH, "MORE_APP_EXIT" => $test_response->MORE_APP_EXIT, "EXTRA_DATA" => $test_response->app_extra];
 
 
         // return $response;
@@ -564,24 +563,24 @@ class AllAppsController extends Controller
 
     }
 
-    public function getDeveloperName(){
+    public function getDeveloperName()
+    {
 
         $app_details = AppDetails::groupBy('developer')->pluck('developer');
         return $app_details;
 
     }
 
-    public function searchAppByDeveloper($developer){
+    public function searchAppByDeveloper($developer)
+    {
 
-         $app_details = AppDetails::where('developer',$developer)->pluck('app_packageName');
+        $app_details = AppDetails::where('developer', $developer)->pluck('app_packageName');
 
-         $all_apps = AllApps::whereIn('app_packageName',$app_details)->get();
+        $all_apps = AllApps::whereIn('app_packageName', $app_details)->get();
 
-         return AllAppResource::collection($all_apps);
+        return AllAppResource::collection($all_apps);
 
     }
-
-
 
 
 }

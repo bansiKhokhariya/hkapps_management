@@ -8,7 +8,9 @@ use App\Http\Requests\UpdateEmployeeRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
+use Spatie\Permission\Models\Role;
 
 
 class UserController extends Controller
@@ -36,7 +38,15 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+
+        // role delete //
+        $convertRole = str_replace(' ', '_', strtolower($user->roles));
+        $role = Role::findByName($convertRole, 'web');
+        $role->delete();
+
+        // user delete //
         $user->delete();
+
         return response('User Deleted Successfully');
     }
 

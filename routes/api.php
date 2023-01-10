@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\API\SettingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
@@ -9,7 +8,7 @@ use App\Http\Controllers\API\TaskController;
 use App\Http\Controllers\API\NotificationController;
 use App\Http\Controllers\API\AppsController;
 use App\Http\Controllers\API\AdvertiseContoller;
-//use App\Http\Controllers\API\RedisController;
+use App\Http\Controllers\API\RedisController;
 use App\Http\Controllers\API\RawDataController;
 use App\Http\Controllers\API\AllAppsController;
 use App\Http\Controllers\API\PlatformController;
@@ -17,6 +16,7 @@ use App\Http\Controllers\API\ActivityHistoryController;
 use App\Http\Controllers\API\ApiKeyListController;
 use App\Http\Controllers\API\DummyPackageController;
 use App\Http\Controllers\API\ExpenseRevenueController;
+use App\Http\Controllers\API\SettingController;
 use App\Http\Controllers\API\AdxMasterController;
 use App\Http\Controllers\API\AdsMasterController;
 use App\Http\Controllers\API\PartyMasterController;
@@ -37,6 +37,7 @@ use App\Http\Controllers\API\PermissionController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
 
 Route::prefix('auth')->middleware('guest:api')->group(function () {
 
@@ -123,12 +124,38 @@ Route::middleware('auth:api')->group(function () {
     Route::resource('platform', PlatformController::class);
 
 
-
     // apikey list //
     Route::resource('apikey_list', ApiKeyListController::class);
 
+    // adx master //
+    Route::resource('adx_master', AdxMasterController::class);
+
+    // ads master //
+    Route::resource('ads_master', AdsMasterController::class);
+
+    // party master //
+    Route::resource('party_master', PartyMasterController::class);
+
+    // expense revenue //
+    Route::resource('expense_revenue', ExpenseRevenueController::class);
+    Route::post('store_expense', [ExpenseRevenueController::class, 'storeExpense']);
+    Route::post('store_revenue', [ExpenseRevenueController::class, 'storeRevenue']);
+
+    // all apps with DB 6//
+    Route::get('storePackage', [AllAppsController::class, 'storePackage']);
+
+    // apikey list //
+    Route::post('assignApiKey', [ApiKeyListController::class, 'assignApiKey']);
+
+
+    // app response //
+    Route::post('viewAppRes', [AllAppsController::class, 'viewAppRes']);
+
+    // privacy policy link update  //
+    Route::post('updatePrivacypolicyLink/{id}', [AllAppsController::class, 'updatePrivacypolicyLink']);
 
 });
+
 
 // Advertise //
 Route::resource('appAd', AdvertiseContoller::class);
@@ -152,19 +179,10 @@ Route::put('test_store_monetize', [AllAppsController::class, 'test_store_monetiz
 Route::get('activity_history', [ActivityHistoryController::class, 'index']);
 Route::post('filter_activity_history', [ActivityHistoryController::class, 'filterDateRangeOrUser']);
 
-// apikey list //
-Route::post('assignApiKey', [ApiKeyListController::class, 'assignApiKey']);
-
-// app response //
-Route::post('viewAppRes', [AllAppsController::class, 'viewAppRes']);
 
 // dummy package //
 Route::get('dummyPackage/{status_code?}', [DummyPackageController::class, 'index']);
 Route::get('dummyPackage/store/{package_name}', [DummyPackageController::class, 'store']);
-
-
-// privacy policy link update  //
-Route::post('updatePrivacypolicyLink/{id}', [AllAppsController::class, 'updatePrivacypolicyLink']);
 
 
 // redis db 6 data get //
@@ -175,37 +193,21 @@ Route::post('webcreonSetData', [AppsController::class, 'setData']);
 // search package_name //
 Route::get('search/{package_name}', [AllAppsController::class, 'searchPackage']);
 
-// all apps with DB 6//
-Route::get('storePackage', [AllAppsController::class, 'storePackage']);
 
 // test All Apps db 6 //
 Route::get('getTestData/{package_name}', [AllAppsController::class, 'getTestData']);
 Route::post('setTestData', [AllAppsController::class, 'setTestData']);
 
+
 // get developer name //
 Route::get('getDeveloperName', [AllAppsController::class, 'getDeveloperName']);
 Route::get('searchAppByDeveloper/{developer}', [AllAppsController::class, 'searchAppByDeveloper']);
 
-// expense revenue //
-Route::resource('expense_revenue', ExpenseRevenueController::class);
-Route::post('store_expense',[ExpenseRevenueController::class,'storeExpense']);
-Route::post('store_revenue',[ExpenseRevenueController::class,'storeRevenue']);
 
-//   cron setting //
+// cron setting //
 Route::resource('setting', SettingController::class);
 Route::get('showSetting', [SettingController::class, 'show']);
 Route::get('startCron', [SettingController::class, 'startCron']);
-Route::get('stopCron', [SettingController::class, 'stopCron']);
 
-// adx master //
-Route::resource('adx_master', AdxMasterController::class);
 
-// ads master //
-Route::resource('ads_master', AdsMasterController::class);
-
-// party master //
-Route::resource('party_master', PartyMasterController::class);
-
-// git //
-Route::get('git',[\App\Http\Controllers\GitController::class,'createRepo']);
-Route::get('service_start',[ActivityHistoryController::class,'sevice']);
+Route::get('service_start', [ActivityHistoryController::class, 'sevice']);

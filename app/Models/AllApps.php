@@ -21,7 +21,7 @@ class AllApps extends Model
 
     public function getDescriptionForEvent(string $eventName): string
     {
-        return "{$eventName} Apps - ID:{$this->id}, appName:{$this->app_name}";
+        return "{$eventName} All Apps - ID:{$this->id}, appName:{$this->appPackageName}";
     }
 
     public function AdPlacement()
