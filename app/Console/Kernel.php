@@ -37,7 +37,7 @@ class Kernel extends ConsoleKernel
 
         $setting = Setting::first();
         $user = User::where('roles','admin')->first();
-        $schedule->command('AppDetailsUpdate:cron')->cron('*/'.$setting->time.' * * * *')->user($user);
+        $schedule->command('AppDetailsUpdate:cron')->cron('*/'.$setting->time.' * * * *');
 
 
     }

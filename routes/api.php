@@ -8,7 +8,6 @@ use App\Http\Controllers\API\TaskController;
 use App\Http\Controllers\API\NotificationController;
 use App\Http\Controllers\API\AppsController;
 use App\Http\Controllers\API\AdvertiseContoller;
-use App\Http\Controllers\API\RedisController;
 use App\Http\Controllers\API\RawDataController;
 use App\Http\Controllers\API\AllAppsController;
 use App\Http\Controllers\API\PlatformController;
@@ -21,6 +20,7 @@ use App\Http\Controllers\API\AdxMasterController;
 use App\Http\Controllers\API\AdsMasterController;
 use App\Http\Controllers\API\PartyMasterController;
 use App\Http\Controllers\API\PermissionController;
+use App\Http\Controllers\API\AdsProVersionController;
 
 
 /*
@@ -153,6 +153,9 @@ Route::middleware('auth:api')->group(function () {
 
     // privacy policy link update  //
     Route::post('updatePrivacypolicyLink/{id}', [AllAppsController::class, 'updatePrivacypolicyLink']);
+
+    // AdsPro Version //
+    Route::resource('proVersion', AdsProVersionController::class);
 
 });
 

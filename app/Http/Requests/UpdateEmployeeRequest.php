@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Validation\Rule;
 
 class UpdateEmployeeRequest extends FormRequest
 {
@@ -28,11 +29,12 @@ class UpdateEmployeeRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(User $employee)
     {
+
         return [
             'name' => 'required',
-            'email' => 'required',
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($this->user->id)],
             'password' => 'required',
             'designation' => 'required'
         ];
@@ -53,6 +55,7 @@ class UpdateEmployeeRequest extends FormRequest
         $role = Role::findByName($convertRole, 'web');
 
         $employee->fill($this->validated());
+
         $employee->password = bcrypt($this->password);
         if ($this->hasFile('profile_image')) {
             $file = $this->file('profile_image');
@@ -67,6 +70,7 @@ class UpdateEmployeeRequest extends FormRequest
         } else {
             $employee->profile_image = $file_path;
         }
+        $employee->email = $this->email;
         $employee->roles = $convertRole;
         $employee->assignRole($role);
         $employee->save();
