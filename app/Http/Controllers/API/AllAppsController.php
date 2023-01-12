@@ -229,16 +229,21 @@ class AllAppsController extends Controller
         $redis = Redis::connection('RedisApp');
         foreach ($result as $key) {
 
-            $allApps = new AllApps();
-            $allApps->app_packageName = $key;
-            $allApps->app_apikey = $this->generateApikey();
-            $allApps->save();
+            $app_details_link = "https://play.google.com/store/apps/details?id=" . $key;
+            $res = Http::get($app_details_link);
+            if ($res->status() == 200) {
+                $allApps = new AllApps();
+                $allApps->app_packageName = $key;
+                $allApps->app_apikey = $this->generateApikey();
+                $allApps->save();
 
-            // ***************** view app response json ******************** //
-            $getApp = new AllApps();
-            $result = $getApp->viewResponse($key, $this->generateApikey());
-            $redis->set($key, json_encode($result));
-            //**********//
+                // ***************** view app response json ******************** //
+                $getApp = new AllApps();
+                $result = $getApp->viewResponse($key, $this->generateApikey());
+                $redis->set($key, json_encode($result));
+                //**********//
+            }
+
 
         }
 
