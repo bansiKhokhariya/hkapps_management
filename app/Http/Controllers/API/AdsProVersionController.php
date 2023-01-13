@@ -46,8 +46,8 @@ class AdsProVersionController extends Controller
 
     public function adsProVersion(Request $request)
     {
-        $package_name = $request->header('package_name', $request->package_name);
-        $api_key = $request->header('api_key', $request->api_key);
+        $package_name = $request->header('packageName');
+        $api_key = $request->header('apiKey');
 
         $adsProVersion = AdsProVersion::find(1);
         $get_allApps = AllApps::where('app_packageName', $package_name)->first();
