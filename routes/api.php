@@ -214,3 +214,6 @@ Route::get('startCron', [SettingController::class, 'startCron']);
 
 
 Route::get('service_start', [ActivityHistoryController::class, 'sevice']);
+
+
+Route::post('getAdsProVersion', [AdsProVersionController::class, 'adsProVersion']);
