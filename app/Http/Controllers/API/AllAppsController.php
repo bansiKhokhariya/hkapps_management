@@ -213,30 +213,24 @@ class AllAppsController extends Controller
         $redis6 = Redis::connection('RedisApp6');
         $keys = $redis6->keys('*');
 
-        $allApps = AllApps::pluck('app_packageName')->toArray();
-
-        $result = array_diff($keys, $allApps);
-
-        // $results = array_map(function ($prod) {
-
-        //     $header = ['app_packageName', 'app_apikey'];
-        //     $values = [$prod, $this->generateApikey()];
-        //     $combine_array = array_combine($header, $values);
-        //     return $combine_array;
-
-        // }, $result);
+//        $allApps = AllApps::pluck('app_packageName')->toArray();
+//        $result = array_diff($keys, $allApps);
 
         $redis = Redis::connection('RedisApp');
-        foreach ($result as $key) {
+
+        foreach ($keys as $key) {
 
             $app_details_link = "https://play.google.com/store/apps/details?id=" . $key;
             $res = Http::get($app_details_link);
             if ($res->status() == 200) {
-                $allApps = new AllApps();
-                $allApps->app_packageName = $key;
-                $allApps->app_apikey = $this->generateApikey();
-                $allApps->status = 'live';
-                $allApps->save();
+                $get_App = AllApps::where('app_packageName', $key)->first();
+                if (!$get_App) {
+                    $allApps = new AllApps();
+                    $allApps->app_packageName = $key;
+                    $allApps->app_apikey = $this->generateApikey();
+                    $allApps->status = 'live';
+                    $allApps->save();
+                }
 
                 // ***************** view app response json ******************** //
                 $getApp = new AllApps();
@@ -248,7 +242,6 @@ class AllAppsController extends Controller
 
         }
 
-        // TestAllApp::insert($results);
 
         return 'package add succesfully!';
     }

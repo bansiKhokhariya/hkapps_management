@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use App\Models\AllApps;
 use App\Models\AppDetails;
+use App\Models\User;
+use App\Notifications\RemoveAppNotification;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 
@@ -50,21 +52,21 @@ class CheckAppStatusCron extends Command
                 $res = Http::get($app_details_link);
                 if ($res->status() == 200) {
 
-                }else{
+                } else {
                     $get_app = AllApps::where('app_packageName', $allApp->app_packageName)->first();
                     if ($get_app) {
                         \Log::info($get_app->id);
                         // send app remove notification //
-//                        $user = User::where('roles', 'admin')->first();
-//                        $auth_user = User::find($user->id);
-//                        $notification = $user;
-//                        $app_details = [
-//                            'Package Name' => $get_app->app_packageName,
-//                            'App Name' => $get_app->app_name,
-//                            'Icon' => $get_app->app_logo,
-//                        ];
-//                        $notification->notify(new RemoveAppNotification($app_details,$auth_user));
-                        //  ****** //
+                        $user = User::where('roles', 'admin')->first();
+                        $auth_user = User::find($user->id);
+                        $notification = $user;
+                        $app_details = [
+                            'Package Name' => $get_app->app_packageName,
+                            'App Name' => $get_app->app_name,
+                            'Icon' => $get_app->app_logo,
+                        ];
+                        $notification->notify(new RemoveAppNotification($app_details, $auth_user));
+                        //****** //
 
                         $get_app->status = 'removed';
                         $get_app->save();
