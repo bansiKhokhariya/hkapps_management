@@ -16,8 +16,8 @@ class Kernel extends ConsoleKernel
      */
 
     protected $commands = [
-//        Commands\SpyCron::class,
         Commands\AppDetailsUpadateCron::class,
+        Commands\CheckAppStatusCron::class,
     ];
 
     /**
@@ -28,17 +28,13 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-//        if (! $this->migrationRunning()) {
 
-//            $schedule->command('spy:cron')->everyMinute();
-//            $schedule->command('spy:cron')->cron('*/'.$setting->time.' * * * *');
-//        }
-
-
-        $setting = Setting::first();
-        $user = User::where('roles','admin')->first();
-        $schedule->command('AppDetailsUpdate:cron')->cron('*/'.$setting->time.' * * * *');
-
+        // app details update cron //
+        $appDetailsUpdate = Setting::where('cron','AppDetailsUpdate')->first();
+        $schedule->command('AppDetailsUpdate:cron')->cron('*/'.$appDetailsUpdate->time.' * * * *');
+        // check app status cron //
+        $checkAppStatus = Setting::where('cron','CheckAppStatus')->first();
+        $schedule->command('CheckAppStatus:cron')->cron('*/'.$checkAppStatus->time.' * * * *');
 
     }
 

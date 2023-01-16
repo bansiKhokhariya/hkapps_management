@@ -59,7 +59,7 @@ class AllAppResource extends JsonResource
             'developer_name' => $developer_name,
             'total_downloads' =>intval(str_replace(",","",$total_downloads)),
             'avg_per_day' => 0,
-            'status' => $status,
+            'status' => $this->status,
             'unauthorize' => $this->TotalRequestCount(),
 //            'created_at' => $this->created_at->format('d-m-Y'),
 //            'updated_at' => $this->updated_at->format('d-m-Y'),

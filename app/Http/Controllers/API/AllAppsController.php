@@ -235,6 +235,7 @@ class AllAppsController extends Controller
                 $allApps = new AllApps();
                 $allApps->app_packageName = $key;
                 $allApps->app_apikey = $this->generateApikey();
+                $allApps->status = 'live';
                 $allApps->save();
 
                 // ***************** view app response json ******************** //

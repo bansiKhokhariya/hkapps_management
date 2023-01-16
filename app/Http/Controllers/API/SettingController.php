@@ -13,22 +13,21 @@ class SettingController extends Controller
 {
     public function index()
     {
-        $setting = Setting::all();
-        return $setting;
+       $setting = Setting::all();
+       return $setting;
     }
 
     public function store(Request $request)
     {
-
-        $setting = Setting::find(1);
-
+        $setting = Setting::where('cron',$request->cron)->first();
         if (!is_null($setting)) {
             $setting->update([
                 'time' => $request->time,
             ]);
         } else {
-            Setting::create([
+            $setting = Setting::create([
                 'time' => $request->time,
+                'cron' => $request->cron,
             ]);
         }
         return $setting;
@@ -36,10 +35,15 @@ class SettingController extends Controller
 
     public function show()
     {
-
-        $setting = Setting::find(1);
-        return $setting;
-
+            $setting = Setting::all();
+            return $setting;
+//        $finalArray = [];
+//        $CheckAppStatus = Setting::find(1);
+//        $object1 = array('CheckAppStatus' => $CheckAppStatus->time);
+//        $AppDetailsUpdate = Setting::find(2);
+//        $object2 = array('AppDetailsUpdate' => $AppDetailsUpdate->time);
+//        $finalArray = array_merge($finalArray,$object1,$object2);
+//        return $finalArray;
     }
 
     public function startCron()

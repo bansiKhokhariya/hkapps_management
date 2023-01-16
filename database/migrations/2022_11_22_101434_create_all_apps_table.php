@@ -36,6 +36,7 @@ class CreateAllAppsTable extends Migration
             $table->integer('app_mainClickCntSwAd')->nullable();
             $table->integer('app_innerClickCntSwAd')->nullable();
             $table->text('app_parameter')->nullable();
+            $table->string('status')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

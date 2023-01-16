@@ -183,7 +183,7 @@ class CreateAllAppRequest extends FormRequest
                     $appDetails->recentChangesHTML = $value->recentChangesHTML;
                     $appDetails->comments = json_encode($value->comments);
                     $appDetails->url = $value->url;
-                    $appDetails->status = 'publish';
+                    $appDetails->status = 'live';
                     $appDetails->save();
 
                 }
@@ -194,7 +194,7 @@ class CreateAllAppRequest extends FormRequest
                 if(!$get_app_details){
                     $appDetails = new AppDetails();
                     $appDetails->allApps_id = $allApp->id;
-                    $appDetails->status = 'not publish';
+                    $appDetails->status = 'removed';
                     $appDetails->save();
                 }
 

@@ -15,6 +15,7 @@ class CreateSettingTable extends Migration
     {
         Schema::create('setting', function (Blueprint $table) {
             $table->id();
+            $table->string('cron');
             $table->string('time');
             $table->timestamps();
         });

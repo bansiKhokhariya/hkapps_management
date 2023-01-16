@@ -44,22 +44,24 @@ class AppDetailsUpadateCron extends Command
      */
     public function handle()
     {
+        \Log::info("App Details update cron!");
+        $allApps = AllApps::get();
 
-        $users = AllApps::get();
+        if ($allApps->count() > 0) {
 
-        if ($users->count() > 0) {
-            foreach ($users as $allApp) {
+            foreach ($allApps as $allApp) {
 
                 $app_details_link = "https://lplciltdwh6kd6qjl4ytd6tzoq0iaumr.lambda-url.us-east-1.on.aws/?id=" . $allApp->app_packageName;
                 $res = Http::get($app_details_link);
                 if ($res->status() == 200) {
-                    \Log::info('200 status');
+
                     $repo_response = $res->getBody()->getContents();
                     $value = json_decode($repo_response);
 
                     // **** update app_details **** //
                     $get_app_details = AppDetails::where('app_packageName', $allApp->app_packageName)->first();
                     if ($get_app_details) {
+                        \Log::info($get_app_details->id);
                         $appDetails = AppDetails::find($get_app_details->id);
                         $appDetails->app_packageName = $allApp->app_packageName;
                         $appDetails->description = $value->description;
@@ -103,9 +105,10 @@ class AppDetailsUpadateCron extends Command
                         $appDetails->recentChangesHTML = $value->recentChangesHTML;
                         $appDetails->comments = $value->comments;
                         $appDetails->url = $value->url;
+                        $appDetails->status = 'live';
                         $appDetails->save();
                     } else {
-//                        \Log::info($allApp->app_packageName.' package add');
+                        \Log::info($allApp->app_packageName.' package add');
                         $appDetails = new AppDetails();
                         $appDetails->app_packageName = $allApp->app_packageName;
                         $appDetails->description = $value->description;
@@ -149,7 +152,7 @@ class AppDetailsUpadateCron extends Command
                         $appDetails->recentChangesHTML = $value->recentChangesHTML;
                         $appDetails->comments = json_encode($value->comments);
                         $appDetails->url = $value->url;
-                        $appDetails->status = 'publish';
+                        $appDetails->status = 'live';
                         $appDetails->save();
                     }
 
@@ -166,36 +169,11 @@ class AppDetailsUpadateCron extends Command
                     // **** //
 
 
-                } else {
-
-                    \Log::info('500 status');
-                    $get_app = AllApps::where('app_packageName', $allApp->app_packageName)->first();
-                    if ($get_app) {
-
-                        // send app remove notification //
-//                        $user = User::where('roles', 'admin')->first();
-//                        $auth_user = User::find($user->id);
-//                        $notification = $user;
-//                        $app_details = [
-//                            'Package Name' => $get_app->app_packageName,
-//                            'App Name' => $get_app->app_name,
-//                            'Icon' => $get_app->app_logo,
-//                        ];
-//                        $notification->notify(new RemoveAppNotification($app_details,$auth_user));
-                        //  ****** //
-
-                        $get_app->forceDelete();
-
-                    } else {
-                        \Log::info('app not found');
-                    }
-
-
                 }
             }
         }
 
-        \Log::info("App Details updated!");
+        \Log::info("App Details update cron run succesfully!");
 
     }
 }
