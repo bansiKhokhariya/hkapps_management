@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\CompanyMasterController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
@@ -156,6 +157,9 @@ Route::middleware('auth:api')->group(function () {
 
     // AdsPro Version //
     Route::resource('proVersion', AdsProVersionController::class);
+
+    // AdsPro Version //
+    Route::resource('company_master', CompanyMasterController::class);
 
 });
 
