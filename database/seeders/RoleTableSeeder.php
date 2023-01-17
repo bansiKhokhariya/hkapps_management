@@ -63,9 +63,13 @@ class RoleTableSeeder extends Seeder
         Permission::create(['name' => 'party-delete']);
         Permission::create(['name' => 'activityLog-view']);
         Permission::create(['name' => 'permission-update']);
+        Permission::create(['name' => 'companyMaster-view']);
+        Permission::create(['name' => 'companyMaster-store']);
+        Permission::create(['name' => 'companyMaster-update']);
+        Permission::create(['name' => 'companyMaster-delete']);
 
 
-        $role1 = Role::create(['name' => 'admin']);
+        $role1 = Role::create(['name' => 'super_admin']);
         $role1->givePermissionTo('dashboard-view');
         $role1->givePermissionTo('user-view');
         $role1->givePermissionTo('user-store');
@@ -112,14 +116,18 @@ class RoleTableSeeder extends Seeder
         $role1->givePermissionTo('party-delete');
         $role1->givePermissionTo('activityLog-view');
         $role1->givePermissionTo('permission-update');
+        $role1->givePermissionTo('companyMaster-view');
+        $role1->givePermissionTo('companyMaster-store');
+        $role1->givePermissionTo('companyMaster-update');
+        $role1->givePermissionTo('companyMaster-delete');
 
 
         $user = User::create([
-            'name' => 'admin',
-            'email' => 'admin@gmail.com',
+            'name' => 'super admin',
+            'email' => 'superadmin@gmail.com',
             'password' => bcrypt('12345678'),
-            'designation'=> 'admins',
-            'roles'=> 'admin'
+            'designation'=> 'superadmin',
+            'roles'=> 'super_admin'
         ]);
 
         $user->assignRole($role1);

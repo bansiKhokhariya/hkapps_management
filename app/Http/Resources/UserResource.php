@@ -27,6 +27,7 @@ class UserResource extends JsonResource
             'reworking_task'=>$this->getReWorkingCountAttribute(),
             'task'=> $this->getTaskAttribute(),
             'designation' =>$this->designation,
+            'company_master_id' => $this->companyMaster,
             'created_at' =>$this->created_at->format('d-m-Y'),
             'updated_at' =>$this->updated_at->format('d-m-Y'),
         ];

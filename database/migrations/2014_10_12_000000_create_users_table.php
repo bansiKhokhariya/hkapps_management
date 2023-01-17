@@ -20,18 +20,25 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('designation',[
+                'Super Admin'=>\App\Models\User::superadmin,
+                'admin'=>\App\Models\User::admin,
                 'designer' => \App\Models\User::designer,
                 'developer'  => \App\Models\User::developer,
                 'tester' => \App\Models\User::tester,
                 'ASO' => \App\Models\User::aso,
-                'admins'=>\App\Models\User::admins,
                 'production'=>\App\Models\User::production,
+
             ])->nullable();
             $table->string('roles');
             $table->string('profile_image')->nullable();
+            $table->integer('company_master_id')->unsigned();
             $table->rememberToken();
             $table->softDeletes();
             $table->timestamps();
+        });
+        Schema::table('users', function($table)
+        {
+            $table->foreign('company_master_id')->references('id')->on('company_master');
         });
     }
 

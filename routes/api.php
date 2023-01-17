@@ -158,7 +158,7 @@ Route::middleware('auth:api')->group(function () {
     // AdsPro Version //
     Route::resource('proVersion', AdsProVersionController::class);
 
-    // AdsPro Version //
+    // Company master //
     Route::resource('company_master', CompanyMasterController::class);
 
 });

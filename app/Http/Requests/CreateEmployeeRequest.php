@@ -33,7 +33,8 @@ class CreateEmployeeRequest extends FormRequest
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required',
-            'designation'=>'required'
+            'designation'=>'required',
+//            'company_master_id'=>'required'
         ];
     }
     public function persist()
@@ -58,6 +59,7 @@ class CreateEmployeeRequest extends FormRequest
         }
         $employee->profile_image = $file_path;
         $employee->roles = $convertRole;
+        $employee->company_master_id = $this->company_master_id;
 
 
         $employee->assignRole($role);

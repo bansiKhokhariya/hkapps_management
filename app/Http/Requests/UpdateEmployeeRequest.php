@@ -36,7 +36,8 @@ class UpdateEmployeeRequest extends FormRequest
             'name' => 'required',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($this->user->id)],
             'password' => 'required',
-            'designation' => 'required'
+            'designation' => 'required',
+//            'company_master_id' => 'required'
         ];
     }
 
@@ -70,6 +71,7 @@ class UpdateEmployeeRequest extends FormRequest
         } else {
             $employee->profile_image = $file_path;
         }
+        $employee->company_master_id = $this->company_master_id;
         $employee->email = $this->email;
         $employee->roles = $convertRole;
         $employee->assignRole($role);

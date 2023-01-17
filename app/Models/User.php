@@ -31,8 +31,9 @@ class User extends Authenticatable
     const developer = 'developer';
     const tester = 'tester';
     const aso = 'ASO';
-    const admins = 'admins';
+    const admin = 'admin';
     const production = 'production';
+    const superadmin = 'Super Admin';
 
     protected $fillable = [
         'name',
@@ -62,6 +63,11 @@ class User extends Authenticatable
     public function tasks()
     {
         return $this->belongsToMany(Task::class)->withTimestamps();
+    }
+
+    public function companyMaster()
+    {
+        return $this->belongsTo(CompanyMaster::class)->withTimestamps();
     }
 
     public function role()
