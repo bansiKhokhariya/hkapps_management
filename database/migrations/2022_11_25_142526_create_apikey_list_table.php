@@ -19,9 +19,14 @@ class CreateApikeyListTable extends Migration
             $table->string('apikey_packageName')->nullable();
             $table->integer('apikey_appID')->nullable();
             $table->integer('apikey_request')->default(1);
+            $table->integer('company_master_id')->unsigned()->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
+        Schema::table('apikey_list', function ($table) {
+            $table->foreign('company_master_id')->references('id')->on('company_master');
+        });
+
     }
 
     /**

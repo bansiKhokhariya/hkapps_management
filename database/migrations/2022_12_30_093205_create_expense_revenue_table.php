@@ -24,13 +24,15 @@ class CreateExpenseRevenueTable extends Migration
             $table->string('revenue')->nullable();
 //            $table->foreign('ads_master')->references('id')->on('ads_master')->onDelete('cascade')->onUpdate('cascade');
 //            $table->foreign('adx')->references('id')->on('adx_master')->onDelete('cascade')->onUpdate('cascade');
+            $table->integer('company_master_id')->unsigned()->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
-        Schema::table('expense_revenue', function($table)
-        {
+        Schema::table('expense_revenue', function ($table) {
             $table->foreign('ads_master')->references('id')->on('ads_master');
             $table->foreign('adx')->references('id')->on('adx_master');
+            $table->foreign('company_master_id')->references('id')->on('company_master');
+
         });
     }
 

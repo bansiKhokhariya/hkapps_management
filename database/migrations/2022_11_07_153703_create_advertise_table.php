@@ -24,8 +24,12 @@ class CreateAdvertiseTable extends Migration
             $table->string('app_rating');
             $table->string('app_download');
             $table->string('app_AdFormat');
+            $table->integer('company_master_id')->unsigned()->nullable();
             $table->softDeletes();
             $table->timestamps();
+        });
+        Schema::table('advertise', function ($table) {
+            $table->foreign('company_master_id')->references('id')->on('company_master');
         });
     }
 

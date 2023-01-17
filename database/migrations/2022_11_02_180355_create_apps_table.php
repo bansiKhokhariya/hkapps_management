@@ -19,8 +19,13 @@ class CreateAppsTable extends Migration
             $table->string('title');
             $table->string('icon');
             $table->string('developer');
+            $table->integer('company_master_id')->unsigned()->nullable();
             $table->softDeletes();
             $table->timestamps();
+        });
+        Schema::table('apps', function($table)
+        {
+            $table->foreign('company_master_id')->references('id')->on('company_master');
         });
     }
 

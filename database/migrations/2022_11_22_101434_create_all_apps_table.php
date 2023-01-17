@@ -31,14 +31,18 @@ class CreateAllAppsTable extends Migration
             $table->integer('app_AppOpenAdStatus')->default(1);
             $table->string('app_howShowAd')->nullable();
             $table->string('app_adPlatformSequence')->nullable();
-            $table->string('app_alernateAdShow')->nullable();
+            $table->string('app_alternateAdShow')->nullable();
             $table->integer('app_testAdStatus')->default(0);
             $table->integer('app_mainClickCntSwAd')->nullable();
             $table->integer('app_innerClickCntSwAd')->nullable();
             $table->text('app_parameter')->nullable();
             $table->string('status')->nullable();
+            $table->integer('company_master_id')->unsigned()->nullable();
             $table->softDeletes();
             $table->timestamps();
+        });
+        Schema::table('all_apps', function ($table) {
+            $table->foreign('company_master_id')->references('id')->on('company_master');
         });
     }
 

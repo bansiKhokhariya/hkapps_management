@@ -53,7 +53,7 @@ class CheckAppStatusCron extends Command
                 if ($res->status() == 200) {
 
                 } else {
-                    $get_app = AllApps::where('app_packageName', $allApp->app_packageName)->first();
+                    $get_app = AllApps::where('app_packageName', $allApp->app_packageName)->where('status','live')->first();
                     if ($get_app) {
                         \Log::info($get_app->id);
                         // send app remove notification //

@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\API\CompanyMasterController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
@@ -9,6 +8,7 @@ use App\Http\Controllers\API\TaskController;
 use App\Http\Controllers\API\NotificationController;
 use App\Http\Controllers\API\AppsController;
 use App\Http\Controllers\API\AdvertiseContoller;
+use App\Http\Controllers\API\RedisController;
 use App\Http\Controllers\API\RawDataController;
 use App\Http\Controllers\API\AllAppsController;
 use App\Http\Controllers\API\PlatformController;
@@ -22,6 +22,7 @@ use App\Http\Controllers\API\AdsMasterController;
 use App\Http\Controllers\API\PartyMasterController;
 use App\Http\Controllers\API\PermissionController;
 use App\Http\Controllers\API\AdsProVersionController;
+use App\Http\Controllers\API\CompanyMasterController;
 
 
 /*
@@ -148,21 +149,20 @@ Route::middleware('auth:api')->group(function () {
     // apikey list //
     Route::post('assignApiKey', [ApiKeyListController::class, 'assignApiKey']);
 
-
-    // app response //
-    Route::post('viewAppRes', [AllAppsController::class, 'viewAppRes']);
-
     // privacy policy link update  //
     Route::post('updatePrivacypolicyLink/{id}', [AllAppsController::class, 'updatePrivacypolicyLink']);
 
+
     // AdsPro Version //
-    Route::resource('proVersion', AdsProVersionController::class);
+    Route::resource('adsProVersion', AdsProVersionController::class);
 
     // Company master //
     Route::resource('company_master', CompanyMasterController::class);
 
 });
 
+// app response //
+Route::post('viewAppRes', [AllAppsController::class, 'viewAppRes']);
 
 // Advertise //
 Route::resource('appAd', AdvertiseContoller::class);
@@ -210,14 +210,13 @@ Route::post('setTestData', [AllAppsController::class, 'setTestData']);
 Route::get('getDeveloperName', [AllAppsController::class, 'getDeveloperName']);
 Route::get('searchAppByDeveloper/{developer}', [AllAppsController::class, 'searchAppByDeveloper']);
 
+// AdsPro Version //
+Route::get('getAdsProVersion', [AdsProVersionController::class, 'adsProVersion']);
 
 // cron setting //
 Route::resource('setting', SettingController::class);
 Route::get('showSetting', [SettingController::class, 'show']);
-Route::get('startCron', [SettingController::class, 'startCron']);
-
+Route::get('startAppdetailsUpdateCron', [SettingController::class, 'startAppdetailsUpdateCron']);
+Route::get('startCheckAppStatusCron', [SettingController::class, 'startCheckAppStatusCron']);
 
 Route::get('service_start', [ActivityHistoryController::class, 'sevice']);
-
-
-Route::post('getAdsProVersion', [AdsProVersionController::class, 'adsProVersion']);

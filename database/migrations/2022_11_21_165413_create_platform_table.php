@@ -19,8 +19,12 @@ class CreatePlatformTable extends Migration
             $table->string('platform_name');
             $table->string('ad_format');
             $table->string('status')->default(0);
+            $table->integer('company_master_id')->unsigned()->nullable();
             $table->softDeletes();
             $table->timestamps();
+        });
+        Schema::table('platform', function ($table) {
+            $table->foreign('company_master_id')->references('id')->on('company_master');
         });
     }
 

@@ -17,8 +17,12 @@ class CreatePartyMasterTable extends Migration
             $table->increments('id');
             $table->string('party');
             $table->string('company_name');
+            $table->integer('company_master_id')->unsigned()->nullable();
             $table->softDeletes();
             $table->timestamps();
+        });
+        Schema::table('party_master', function ($table) {
+            $table->foreign('company_master_id')->references('id')->on('company_master');
         });
     }
 
