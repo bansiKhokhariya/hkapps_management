@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Events\RedisDataEvent;
 use App\Models\PlatForm;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
 
 class CreatePlatformRequest extends FormRequest
@@ -35,6 +36,7 @@ class CreatePlatformRequest extends FormRequest
 
     public function persist()
     {
+        $user_company = Auth::user()->company_master_id;
         $platform = new PlatForm($this->validated());
 
         //logo
@@ -57,6 +59,7 @@ class CreatePlatformRequest extends FormRequest
 
         $platform->platform_name = $this->platform_name;
         $platform->ad_format = $this->ad_format;
+        $platform->company_master_id = $user_company;
 
         $platform->save();
 

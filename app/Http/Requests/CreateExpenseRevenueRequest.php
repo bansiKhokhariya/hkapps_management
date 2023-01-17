@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\ExpenseRevenue;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class CreateExpenseRevenueRequest extends FormRequest
 {
@@ -35,7 +36,9 @@ class CreateExpenseRevenueRequest extends FormRequest
 
     public function persist()
     {
+        $user_company = Auth::user()->company_master_id;
         $expenseRevenue = new ExpenseRevenue($this->validated());
+        $expenseRevenue->company_master_id = $user_company;
         $expenseRevenue->save();
         return $expenseRevenue;
     }

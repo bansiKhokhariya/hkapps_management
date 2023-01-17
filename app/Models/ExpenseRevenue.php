@@ -30,6 +30,11 @@ class ExpenseRevenue extends Model
         return $this->belongsTo(AdxMaster::class, 'adx', 'id');
     }
 
+    public function companyMaster()
+    {
+        return $this->belongsTo(CompanyMaster::class);
+    }
+
     public function icon()
     {
         $get_app = AllApps::where('app_packageName', $this->package_name)->pluck('app_logo')->first();

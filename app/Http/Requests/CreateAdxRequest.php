@@ -26,16 +26,18 @@ class CreateAdxRequest extends FormRequest
     public function rules()
     {
         return [
-            'adx_register_company'=>'required',
-            'adx'=>'required',
-            'adx_share'=>'required',
-            'type'=>'required'
+            'adx_register_company' => 'required',
+            'adx' => 'required',
+            'adx_share' => 'required',
+            'type' => 'required'
         ];
     }
+
     public function persist()
     {
-
+        $user_company = Auth::user()->company_master_id;
         $AdxMaster = new AdxMaster($this->validated());
+        $AdxMaster->company_master_id = $user_company;
         $AdxMaster->save();
         return $AdxMaster;
 

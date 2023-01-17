@@ -26,4 +26,8 @@ class ApikeyList extends Model
     {
         return resolve(ApikeyFilters::class)->apply($query);
     }
+    public function companyMaster()
+    {
+        return $this->belongsTo(CompanyMaster::class);
+    }
 }

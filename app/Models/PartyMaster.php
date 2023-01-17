@@ -19,4 +19,8 @@ class PartyMaster extends Model
     {
         return "{$eventName} PartyMaster - ID:{$this->id}, Party:{$this->party}";
     }
+    public function companyMaster()
+    {
+        return $this->belongsTo(CompanyMaster::class);
+    }
 }

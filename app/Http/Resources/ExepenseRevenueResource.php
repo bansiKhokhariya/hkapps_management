@@ -37,6 +37,7 @@ class ExepenseRevenueResource extends JsonResource
             'total_invest' => $this->total_invest,
             'icon' => $this->icon(),
             'revenue' => $this->revenue,
+            'company_master_id' => $this->companyMaster,
             'created_date' => $this->created_at->format('d-m-Y'),
         ];
     }

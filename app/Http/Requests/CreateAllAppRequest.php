@@ -43,7 +43,7 @@ class CreateAllAppRequest extends FormRequest
 
     public function persist()
     {
-
+        $user_company = Auth::user()->company_master_id;
         $getAllApp = AllApps::where('app_packageName', $this->app_packageName)->first();
         if (!$getAllApp) {
             $id = Auth::user()->id;
@@ -65,6 +65,7 @@ class CreateAllAppRequest extends FormRequest
                 $allApp->app_logo = $file_path_logo;
             }
             $allApp->app_apikey = $this->app_apikey;
+            $allApp->company_master_id = $user_company;
             //
             $allApp->save();
 

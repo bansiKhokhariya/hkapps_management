@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\AdsMaster;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class CreateAdsRequest extends FormRequest
 {
@@ -32,8 +33,9 @@ class CreateAdsRequest extends FormRequest
     }
     public function persist()
     {
-
+        $user_company = Auth::user()->company_master_id;
         $AdsMaster = new AdsMaster($this->validated());
+        $AdsMaster->company_master_id = $user_company;
         $AdsMaster->save();
         return $AdsMaster;
 

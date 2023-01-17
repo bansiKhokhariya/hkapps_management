@@ -67,7 +67,7 @@ class User extends Authenticatable
 
     public function companyMaster()
     {
-        return $this->belongsTo(CompanyMaster::class)->withTimestamps();
+        return $this->belongsTo(CompanyMaster::class);
     }
 
     public function role()

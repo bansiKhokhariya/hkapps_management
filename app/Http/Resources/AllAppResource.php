@@ -21,6 +21,13 @@ class AllAppResource extends JsonResource
             $app_parameter = json_decode($this->app_parameter);
         }
 
+
+        if ($this->companyMaster == null) {
+            $company = [];
+        } else {
+            $company = $this->companyMaster;
+        }
+
         if($this->appDetails()==null){
             $developer_name = '';
             $total_downloads = '';
@@ -61,6 +68,7 @@ class AllAppResource extends JsonResource
             'avg_per_day' => 0,
             'status' => $this->status,
             'unauthorize' => $this->TotalRequestCount(),
+            'company_master_id' => $company,
 //            'created_at' => $this->created_at->format('d-m-Y'),
 //            'updated_at' => $this->updated_at->format('d-m-Y'),
         ];

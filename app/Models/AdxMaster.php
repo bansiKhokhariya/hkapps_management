@@ -20,4 +20,8 @@ class AdxMaster extends Model
     {
         return "{$eventName} AdxMaster - ID:{$this->id}, adx:{$this->adx}";
     }
+    public function companyMaster()
+    {
+        return $this->belongsTo(CompanyMaster::class);
+    }
 }

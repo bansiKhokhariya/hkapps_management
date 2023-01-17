@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\PartyMaster;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class CreatePartyRequest extends FormRequest
 {
@@ -31,8 +32,9 @@ class CreatePartyRequest extends FormRequest
     }
     public function persist()
     {
-
+        $user_company = Auth::user()->company_master_id;
         $PartyMaster = new PartyMaster($this->validated());
+        $PartyMaster->company_master_id = $user_company;
         $PartyMaster->save();
         return $PartyMaster;
 

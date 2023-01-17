@@ -19,6 +19,7 @@ class PlatformResource extends JsonResource
             'logo'=>$this->logo,
             'platform_name'=>$this->platform_name,
             'ad_format'=>json_decode($this->ad_format),
+            'company_master_id' => $this->companyMaster,
             'created_at' =>$this->created_at->format('d-m-Y'),
             'updated_at' =>$this->updated_at->format('d-m-Y'),
         ];

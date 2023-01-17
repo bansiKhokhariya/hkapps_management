@@ -19,6 +19,7 @@ class AdsResource extends JsonResource
             'tel_id' => $this->tel_id,
             'cid' => $this->cid,
             'ads_master' => $this->ads_master,
+            'company_master_id' => $this->companyMaster,
             'deleted_at'=>$this->deleted_at,
             'created_at' => $this->created_at->format('d-m-Y'),
             'updated_at' => $this->updated_at->format('d-m-Y'),

@@ -20,6 +20,7 @@ class AdxResource extends JsonResource
             'adx' => $this->adx,
             'adx_share' => $this->adx_share,
             'type' => $this->type,
+            'company_master_id' => $this->companyMaster,
             'deleted_at'=>$this->deleted_at,
             'created_at' => $this->created_at->format('d-m-Y'),
             'updated_at' => $this->updated_at->format('d-m-Y'),

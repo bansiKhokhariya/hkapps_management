@@ -24,6 +24,11 @@ class AllApps extends Model
         return "{$eventName} All Apps - ID:{$this->id}, appName:{$this->appPackageName}";
     }
 
+    public function companyMaster()
+    {
+        return $this->belongsTo(CompanyMaster::class);
+    }
+
     public function AdPlacement()
     {
 

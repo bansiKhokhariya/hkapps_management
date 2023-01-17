@@ -20,4 +20,9 @@ class AdsMaster extends Model
     {
         return "{$eventName} AdsMaster - ID:{$this->id}, adsMaster:{$this->ads_master}";
     }
+
+    public function companyMaster()
+    {
+        return $this->belongsTo(CompanyMaster::class);
+    }
 }

@@ -19,4 +19,8 @@ class PlatForm extends Model
     {
         return "{$eventName} PlatForm - ID:{$this->id}, platformName:{$this->platform_name}";
     }
+    public function companyMaster()
+    {
+        return $this->belongsTo(CompanyMaster::class);
+    }
 }
