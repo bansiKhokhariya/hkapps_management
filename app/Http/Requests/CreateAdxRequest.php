@@ -37,7 +37,9 @@ class CreateAdxRequest extends FormRequest
     {
         $user_company = Auth::user()->company_master_id;
         $AdxMaster = new AdxMaster($this->validated());
-        $AdxMaster->company_master_id = $user_company;
+        if(Auth::user()->role !== 'super_admin'){
+            $AdxMaster->company_master_id = $user_company;
+        }
         $AdxMaster->save();
         return $AdxMaster;
 

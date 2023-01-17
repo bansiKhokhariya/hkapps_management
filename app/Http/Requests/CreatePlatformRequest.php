@@ -59,7 +59,9 @@ class CreatePlatformRequest extends FormRequest
 
         $platform->platform_name = $this->platform_name;
         $platform->ad_format = $this->ad_format;
-        $platform->company_master_id = $user_company;
+        if(Auth::user()->role !== 'super_admin'){
+            $platform->company_master_id = $user_company;
+        }
 
         $platform->save();
 

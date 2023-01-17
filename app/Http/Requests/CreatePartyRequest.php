@@ -34,7 +34,9 @@ class CreatePartyRequest extends FormRequest
     {
         $user_company = Auth::user()->company_master_id;
         $PartyMaster = new PartyMaster($this->validated());
-        $PartyMaster->company_master_id = $user_company;
+        if(Auth::user()->role !== 'super_admin'){
+            $PartyMaster->company_master_id = $user_company;
+        }
         $PartyMaster->save();
         return $PartyMaster;
 

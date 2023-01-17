@@ -28,6 +28,11 @@ class ExepenseRevenueResource extends JsonResource
         }else{
             $adx = null;
         }
+        if ($this->companyMaster == null) {
+            $company = [];
+        } else {
+            $company = $this->companyMaster;
+        }
 
         return [
             'id' => $this->id,
@@ -37,7 +42,7 @@ class ExepenseRevenueResource extends JsonResource
             'total_invest' => $this->total_invest,
             'icon' => $this->icon(),
             'revenue' => $this->revenue,
-            'company_master_id' => $this->companyMaster,
+            'company_master_id' => $company,
             'created_date' => $this->created_at->format('d-m-Y'),
         ];
     }

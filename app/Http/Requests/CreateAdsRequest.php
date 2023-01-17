@@ -35,7 +35,10 @@ class CreateAdsRequest extends FormRequest
     {
         $user_company = Auth::user()->company_master_id;
         $AdsMaster = new AdsMaster($this->validated());
-        $AdsMaster->company_master_id = $user_company;
+        if(Auth::user()->role !== 'super_admin'){
+            $AdsMaster->company_master_id = $user_company;
+        }
+
         $AdsMaster->save();
         return $AdsMaster;
 

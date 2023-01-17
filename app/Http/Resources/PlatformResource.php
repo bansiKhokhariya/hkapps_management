@@ -14,12 +14,17 @@ class PlatformResource extends JsonResource
      */
     public function toArray($request)
     {
+        if ($this->companyMaster == null) {
+            $company = [];
+        } else {
+            $company = $this->companyMaster;
+        }
         return [
             'id' =>$this->id,
             'logo'=>$this->logo,
             'platform_name'=>$this->platform_name,
             'ad_format'=>json_decode($this->ad_format),
-            'company_master_id' => $this->companyMaster,
+            'company_master_id' => $company,
             'created_at' =>$this->created_at->format('d-m-Y'),
             'updated_at' =>$this->updated_at->format('d-m-Y'),
         ];

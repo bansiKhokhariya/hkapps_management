@@ -65,7 +65,9 @@ class CreateAllAppRequest extends FormRequest
                 $allApp->app_logo = $file_path_logo;
             }
             $allApp->app_apikey = $this->app_apikey;
-            $allApp->company_master_id = $user_company;
+            if(Auth::user()->role !== 'super_admin'){
+                $allApp->company_master_id = $user_company;
+            }
             //
             $allApp->save();
 

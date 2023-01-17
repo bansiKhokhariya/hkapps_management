@@ -38,7 +38,10 @@ class CreateExpenseRevenueRequest extends FormRequest
     {
         $user_company = Auth::user()->company_master_id;
         $expenseRevenue = new ExpenseRevenue($this->validated());
-        $expenseRevenue->company_master_id = $user_company;
+
+        if(Auth::user()->role !== 'super_admin'){
+            $expenseRevenue->company_master_id = $user_company;
+        }
         $expenseRevenue->save();
         return $expenseRevenue;
     }
