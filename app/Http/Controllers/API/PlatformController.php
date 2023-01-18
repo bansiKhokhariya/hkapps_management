@@ -9,12 +9,18 @@ use App\Http\Resources\PlatformResource;
 use App\Models\PlatForm;
 use Illuminate\Http\Request;
 use App\Events\RedisDataEvent;
+use Illuminate\Support\Facades\Auth;
 
 class PlatformController extends Controller
 {
     public function index()
     {
-        $platform = PlatForm::get();
+        $companyUser = Auth::user()->company_master_id;
+        if (!$companyUser) {
+            $platform = PlatForm::get();
+        } else {
+            $platform = PlatForm::where('company_master_id', $companyUser)->get();
+        }
         return PlatformResource::collection($platform);
     }
 

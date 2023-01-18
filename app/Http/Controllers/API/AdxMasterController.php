@@ -9,12 +9,18 @@ use App\Http\Requests\UpdateAdxRequest;
 use App\Http\Resources\AdxResource;
 use App\Models\AdxMaster;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AdxMasterController extends Controller
 {
     public function index()
     {
-        $adxMaster = AdxMaster::all();
+        $companyUser = Auth::user()->company_master_id;
+        if (!$companyUser) {
+            $adxMaster = AdxMaster::all();
+        } else {
+            $adxMaster = AdxMaster::where('company_master_id', $companyUser)->get();
+        }
         return AdxResource::collection($adxMaster);
     }
 

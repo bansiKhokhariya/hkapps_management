@@ -8,12 +8,18 @@ use App\Http\Requests\UpdatePartyRequest;
 use App\Http\Resources\PartyResource;
 use App\Models\PartyMaster;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PartyMasterController extends Controller
 {
     public function index()
     {
-        $PartyMaster = PartyMaster::all();
+        $companyUser = Auth::user()->company_master_id;
+        if (!$companyUser) {
+            $PartyMaster = PartyMaster::all();
+        } else {
+            $PartyMaster = PartyMaster::where('company_master_id', $companyUser)->get();
+        }
         return PartyResource::collection($PartyMaster);
     }
 

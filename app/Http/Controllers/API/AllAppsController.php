@@ -27,7 +27,13 @@ class AllAppsController extends Controller
 {
     public function index()
     {
-        $allApp = AllApps::all();
+
+        $companyUser = Auth::user()->company_master_id;
+        if (!$companyUser) {
+            $allApp = AllApps::all();
+        } else {
+            $allApp = AllApps::where('company_master_id', $companyUser)->get();
+        }
         return AllAppResource::collection($allApp);
     }
 

@@ -8,12 +8,18 @@ use App\Http\Requests\UpdateAdsRequest;
 use App\Http\Resources\AdsResource;
 use App\Models\AdsMaster;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AdsMasterController extends Controller
 {
     public function index()
     {
-        $adsMaster = AdsMaster::all();
+        $companyUser = Auth::user()->company_master_id;
+        if (!$companyUser) {
+            $adsMaster = AdsMaster::all();
+        } else {
+            $adsMaster = AdsMaster::where('company_master_id', $companyUser)->get();
+        }
         return AdsResource::collection($adsMaster);
     }
 

@@ -16,7 +16,13 @@ class AppsController extends Controller
 {
     public function index(){
 
-        $app = App::filter()->latest()->get();
+        $companyUser = Auth::user()->company_master_id;
+        if (!$companyUser) {
+            $app = App::filter()->latest()->get();
+        } else {
+            $app = App::where('company_master_id', $companyUser)->filter()->latest()->get();
+        }
+
         return response()->json($app);
 
     }

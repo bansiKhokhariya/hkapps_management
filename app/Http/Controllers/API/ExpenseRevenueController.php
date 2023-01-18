@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateExpenseRevenueRequest;
 use App\Http\Resources\ExepenseRevenueResource;
 use App\Models\ExpenseRevenue;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ExpenseRevenueController extends Controller
@@ -25,14 +26,28 @@ class ExpenseRevenueController extends Controller
 //                DB::raw("exp.created_at as created_at"))
 //            ->groupBy("package_name")
 //            ->get();
-        $result = ExpenseRevenue::select("id", "package_name",
-            DB::raw("(select ads_master from expense_revenue where expense_revenue.package_name = package_name and ads_master is not null limit 1) as ads_master"),
-            DB::raw("sum(total_invest) as total_invest"),
-            DB::raw("(select adx from expense_revenue where expense_revenue.package_name = package_name and adx is not null limit 1) as adx"),
-            DB::raw("sum(revenue) as revenue"),
-            DB::raw("created_at as created_at"))
-            ->groupBy("package_name")
-            ->get();
+
+
+        $companyUser = Auth::user()->company_master_id;
+        if (!$companyUser) {
+            $result = ExpenseRevenue::select("id", "package_name",
+                DB::raw("(select ads_master from expense_revenue where expense_revenue.package_name = package_name and ads_master is not null limit 1) as ads_master"),
+                DB::raw("sum(total_invest) as total_invest"),
+                DB::raw("(select adx from expense_revenue where expense_revenue.package_name = package_name and adx is not null limit 1) as adx"),
+                DB::raw("sum(revenue) as revenue"),
+                DB::raw("created_at as created_at"))
+                ->groupBy("package_name")
+                ->get();
+        } else {
+            $result = ExpenseRevenue::where('company_master_id', $companyUser)->select("id", "package_name",
+                DB::raw("(select ads_master from expense_revenue where expense_revenue.package_name = package_name and ads_master is not null limit 1) as ads_master"),
+                DB::raw("sum(total_invest) as total_invest"),
+                DB::raw("(select adx from expense_revenue where expense_revenue.package_name = package_name and adx is not null limit 1) as adx"),
+                DB::raw("sum(revenue) as revenue"),
+                DB::raw("created_at as created_at"))
+                ->groupBy("package_name")
+                ->get();
+        }
 
         return ExepenseRevenueResource::collection($result);
     }
