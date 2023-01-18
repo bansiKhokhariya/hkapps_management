@@ -216,7 +216,9 @@ Route::get('getAdsProVersion', [AdsProVersionController::class, 'adsProVersion']
 // cron setting //
 Route::resource('setting', SettingController::class);
 Route::get('showSetting', [SettingController::class, 'show']);
-Route::get('startAppdetailsUpdateCron', [SettingController::class, 'startAppdetailsUpdateCron']);
+Route::get('startAppDetailsUpdateCron', [SettingController::class, 'startAppDetailsUpdateCron']);
+Route::get('stopAppDetailsUpdateCron', [SettingController::class, 'stopAppDetailsUpdateCron']);
 Route::get('startCheckAppStatusCron', [SettingController::class, 'startCheckAppStatusCron']);
+Route::get('stopCheckAppStatusCron', [SettingController::class, 'stopCheckAppStatusCron']);
 
 Route::get('service_start', [ActivityHistoryController::class, 'sevice']);

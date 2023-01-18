@@ -47,20 +47,59 @@ class SettingController extends Controller
 
     }
 
-    public function startAppdetailsUpdateCron()
+    public function startAppDetailsUpdateCron()
     {
 
-        \Log::info("start AppdetailsUpdate cron");
-        \Artisan::call('AppDetailsUpdate:cron');
-        \Log::info("end AppdetailsUpdate cron");
+        $setting = Setting::where('cron', 'AppDetailsUpdate')->first();
+        $setting->infinity = 1;
+        $setting->save();
+
+        for ($i = 1; $i <= INF; $i++) {
+            $getSetting = Setting::where('cron', 'CheckAppStatus')->first();
+            if ((int)$getSetting->infinity === 1) {
+                sleep($getSetting->time * 60);
+                \Artisan::call('AppDetailsUpdate:cron');
+            } elseif ((int)$getSetting->infinity === 0) {
+                break;
+            }
+        }
+
+    }
+
+    public function stopAppDetailsUpdateCron()
+    {
+
+        $setting = Setting::where('cron', 'AppDetailsUpdate')->first();
+        $setting->infinity = 0;
+        $setting->save();
+
     }
 
     public function startCheckAppStatusCron()
     {
 
-        \Log::info("start CheckAppStatus cron");
-        \Artisan::call('CheckAppStatus:cron');
-        \Log::info("end CheckAppStatus cron");
+        $setting = Setting::where('cron', 'CheckAppStatus')->first();
+        $setting->infinity = 1;
+        $setting->save();
+
+        for ($i = 1; $i <= INF; $i++) {
+            $getSetting = Setting::where('cron', 'CheckAppStatus')->first();
+            if ((int)$getSetting->infinity === 1) {
+                sleep($getSetting->time * 60);
+                \Artisan::call('CheckAppStatus:cron');
+            } elseif ((int)$getSetting->infinity === 0) {
+                break;
+            }
+        }
+    }
+
+    public function stopCheckAppStatusCron()
+    {
+
+        $setting = Setting::where('cron', 'CheckAppStatus')->first();
+        $setting->infinity = 0;
+        $setting->save();
+
     }
 
 

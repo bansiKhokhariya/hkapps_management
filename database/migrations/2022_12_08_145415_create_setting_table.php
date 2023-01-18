@@ -17,6 +17,7 @@ class CreateSettingTable extends Migration
             $table->id();
             $table->string('cron');
             $table->string('time');
+            $table->string('infinity')->default(0);
             $table->timestamps();
         });
     }
