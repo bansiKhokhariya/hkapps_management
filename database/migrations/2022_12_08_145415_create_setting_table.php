@@ -14,7 +14,7 @@ class CreateSettingTable extends Migration
     public function up()
     {
         Schema::create('setting', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->string('cron');
             $table->string('time');
             $table->string('infinity')->default(0);
