@@ -10,7 +10,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class ExpenseRevenue extends Model
 {
     use HasFactory, SoftDeletes, LogsActivity;
-
+    protected $connection = 'mysql3';
     protected $table = 'expense_revenue';
     protected $guarded = [];
     protected static $logName = 'Expense Revenue';

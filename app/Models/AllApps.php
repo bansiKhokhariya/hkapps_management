@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Redis;
 class AllApps extends Model
 {
     use HasFactory, SoftDeletes, LogsActivity;
-
+    protected $connection = 'mysql4';
     protected $table = 'all_apps';
     protected $guarded = [];
 

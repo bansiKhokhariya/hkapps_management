@@ -10,7 +10,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class AdPlacement extends Model
 {
     use HasFactory, SoftDeletes;
-
+    protected $connection = 'mysql4';
     protected $table = 'ad_placement';
     protected $guarded = [];
     protected $appends = ['platform_name'];

@@ -10,6 +10,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class PlatForm extends Model
 {
     use HasFactory, SoftDeletes , LogsActivity;
+    protected $connection = 'mysql4';
 
     protected $table = 'platform';
     protected $fillable = ['logo', 'platform_name', 'ad_format', 'status'];

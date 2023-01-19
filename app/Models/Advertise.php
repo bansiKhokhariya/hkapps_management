@@ -10,7 +10,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class Advertise extends Model
 {
     use HasFactory, SoftDeletes;
-
+    protected $connection = 'mysql2';
     protected static $logName = 'Advertise';
 
     public function getDescriptionForEvent(string $eventName): string

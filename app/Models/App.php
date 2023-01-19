@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class App extends Model
 {
     use HasFactory , SoftDeletes;
+    protected $connection = 'mysql4';
+
     protected $table = 'apps';
     protected $fillable = ['package_name','title','icon','developer'];
 

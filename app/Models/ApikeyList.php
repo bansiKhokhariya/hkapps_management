@@ -11,7 +11,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class ApikeyList extends Model
 {
     use HasFactory, SoftDeletes, LogsActivity;
-
+    protected $connection = 'mysql4';
     protected $table = 'apikey_list';
     protected $guarded = [];
 

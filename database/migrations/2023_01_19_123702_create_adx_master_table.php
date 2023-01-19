@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateApikeyListTable extends Migration
+class CreateAdxMasterTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,21 +13,20 @@ class CreateApikeyListTable extends Migration
      */
     public function up()
     {
-        Schema::create('apikey_list', function (Blueprint $table) {
-            $table->id();
-            $table->text('apikey_text')->nullable();
-            $table->string('apikey_packageName')->nullable();
-            $table->integer('apikey_appID')->nullable();
-            $table->integer('apikey_request')->default(1);
-            $table->integer('is_available')->default(0);
+        Schema::create('adx_master', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('adx_register_company');
+            $table->string('adx');
+            $table->integer('adx_share');
+            $table->string('type');
             $table->integer('company_master_id')->unsigned()->nullable();
+//            $table->foreign('company_master_id')->references('id')->on('company_master');
             $table->softDeletes();
             $table->timestamps();
         });
-        Schema::table('apikey_list', function ($table) {
+        Schema::table('adx_master', function ($table) {
             $table->foreign('company_master_id')->references('id')->on('company_master');
         });
-
     }
 
     /**
@@ -37,6 +36,6 @@ class CreateApikeyListTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('apikey_list');
+        Schema::dropIfExists('adx_master');
     }
 }

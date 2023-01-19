@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePartyMasterTable extends Migration
+class CreateAdsMasterTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,17 @@ class CreatePartyMasterTable extends Migration
      */
     public function up()
     {
-        Schema::create('party_master', function (Blueprint $table) {
+        Schema::create('ads_master', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('party');
-            $table->string('company_name');
+            $table->string('tel_id');
+            $table->string('cid');
+            $table->string('ads_master');
             $table->integer('company_master_id')->unsigned()->nullable();
+//            $table->foreign('company_master_id')->references('id')->on('company_master');
             $table->softDeletes();
             $table->timestamps();
         });
-        Schema::table('party_master', function ($table) {
+        Schema::table('ads_master', function ($table) {
             $table->foreign('company_master_id')->references('id')->on('company_master');
         });
     }
@@ -33,6 +35,6 @@ class CreatePartyMasterTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('party_master');
+        Schema::dropIfExists('ads_master');
     }
 }

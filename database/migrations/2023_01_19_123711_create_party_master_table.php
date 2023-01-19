@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAdxMasterTable extends Migration
+class CreatePartyMasterTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,16 @@ class CreateAdxMasterTable extends Migration
      */
     public function up()
     {
-        Schema::create('adx_master', function (Blueprint $table) {
-            $table->id();
-            $table->string('adx_register_company');
-            $table->string('adx');
-            $table->integer('adx_share');
-            $table->string('type');
+        Schema::create('party_master', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('party');
+            $table->string('company_name');
             $table->integer('company_master_id')->unsigned()->nullable();
+//            $table->foreign('company_master_id')->references('id')->on('company_master');
             $table->softDeletes();
             $table->timestamps();
         });
-        Schema::table('adx_master', function ($table) {
+        Schema::table('party_master', function ($table) {
             $table->foreign('company_master_id')->references('id')->on('company_master');
         });
     }
@@ -35,6 +34,6 @@ class CreateAdxMasterTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('adx_master');
+        Schema::dropIfExists('party_master');
     }
 }

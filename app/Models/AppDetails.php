@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 class AppDetails extends Model
 {
     use HasFactory;
+    protected $connection = 'mysql4';
+
     protected $table = 'app_details';
     protected $guarded = [];
 
