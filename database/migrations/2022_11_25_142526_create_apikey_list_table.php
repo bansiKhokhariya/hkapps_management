@@ -19,6 +19,7 @@ class CreateApikeyListTable extends Migration
             $table->string('apikey_packageName')->nullable();
             $table->integer('apikey_appID')->nullable();
             $table->integer('apikey_request')->default(1);
+            $table->integer('is_available')->default(0);
             $table->integer('company_master_id')->unsigned()->nullable();
             $table->softDeletes();
             $table->timestamps();

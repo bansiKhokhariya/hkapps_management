@@ -156,20 +156,29 @@ class AllAppsController extends Controller
 
 
         $get_allApps = AllApps::where('app_packageName', $package_name)->first();
-        $meta_keywords = explode(',', $get_allApps->app_apikey);
-        if (!in_array($api_key, $meta_keywords)) {
-            $get_api_key = ApikeyList::where('apikey_packageName', $package_name)->where('apikey_text', $api_key)->first();
-            if ($get_api_key) {
-                $apikey_request_count = $get_api_key->apikey_request;
-                $apiKey = ApikeyList::find($get_api_key->id);
-                $apiKey->apikey_request = $apikey_request_count + 1;
-                $apiKey->save();
-            } else {
-                $apiKey = new ApikeyList();
-                $apiKey->apikey_packageName = $package_name;
-                $apiKey->apikey_text = $api_key;
-                $apiKey->save();
+        if ($get_allApps) {
+            $meta_keywords = explode(',', $get_allApps->app_apikey);
+            if (!in_array($api_key, $meta_keywords)) {
+                $get_api_key = ApikeyList::where('apikey_packageName', $package_name)->where('apikey_text', $api_key)->first();
+                if ($get_api_key) {
+                    $apikey_request_count = $get_api_key->apikey_request;
+                    $apiKey = ApikeyList::find($get_api_key->id);
+                    $apiKey->apikey_request = $apikey_request_count + 1;
+                    $apiKey->save();
+                } else {
+                    $apiKey = new ApikeyList();
+                    $apiKey->apikey_packageName = $package_name;
+                    $apiKey->apikey_text = $api_key;
+                    $apiKey->is_available = 1;
+                    $apiKey->save();
+                }
             }
+        } else {
+            $apiKey = new ApikeyList();
+            $apiKey->apikey_packageName = $package_name;
+            $apiKey->apikey_text = $api_key;
+            $apiKey->is_available = 0;
+            $apiKey->save();
         }
 
 

@@ -100,6 +100,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('getAllNotification', [NotificationController::class, 'getAllNotification']);
     Route::get('getUnreadNotification', [NotificationController::class, 'getUnreadNotification']);
     Route::get('markAsRead', [NotificationController::class, 'markAsRead']);
+    Route::delete('deleteNotification/{id}', [NotificationController::class, 'deleteNotification']);
 
 
     // Analytics  //
