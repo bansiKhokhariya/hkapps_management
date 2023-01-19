@@ -23,7 +23,7 @@ class CreateActivityLogTable extends Migration
         });
     }
 
-    /**
+     /**
      * Reverse the migrations.
      */
     public function down()

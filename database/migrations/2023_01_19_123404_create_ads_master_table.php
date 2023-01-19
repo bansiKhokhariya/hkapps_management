@@ -28,7 +28,7 @@ class CreateAdsMasterTable extends Migration
         });
     }
 
-    /**
+     /**
      * Reverse the migrations.
      *
      * @return void

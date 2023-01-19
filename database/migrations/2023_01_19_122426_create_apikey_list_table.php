@@ -30,7 +30,7 @@ class CreateApikeyListTable extends Migration
         });
     }
 
-    /**
+     /**
      * Reverse the migrations.
      *
      * @return void

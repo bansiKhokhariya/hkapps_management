@@ -22,7 +22,7 @@ class CreateCompanyMasterTable extends Migration
         });
     }
 
-    /**
+     /**
      * Reverse the migrations.
      *
      * @return void
