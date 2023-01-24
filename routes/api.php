@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\GithubTokenController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
@@ -155,6 +156,9 @@ Route::middleware('auth:api')->group(function () {
 
     // AdsPro Version //
     Route::resource('adsProVersion', AdsProVersionController::class);
+
+    // github token  //
+    Route::resource('gitHubToken', GithubTokenController::class);
 
     // Company master //
     Route::resource('company_master', CompanyMasterController::class);
