@@ -14,6 +14,7 @@ use App\Models\AdPlacement;
 use App\Models\AllApps;
 use App\Models\ApikeyList;
 use App\Models\AppDetails;
+use App\Models\GitHubToken;
 use App\Models\TestAdPlacement;
 use App\Models\TestAllApp;
 use App\Models\User;
@@ -246,12 +247,16 @@ class AllAppsController extends Controller
                     $allApps->status = 'live';
                     $allApps->save();
 
+                    // create github repo //
+                    $getToken = GitHubToken::find(1);
                     $response = Http::withHeaders([
-                        'Authorization' =>  'Bearer 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',
+                        'Authorization' =>  'Bearer '.$getToken->github_access_token,
                     ])->post('https://api.github.com/user/repos', [
                         'name' => $allApps->app_packageName.'_'.$allApps->id,
                         'description' => 'hkApps repo',
                     ]);
+                    // ************* //
+
                 }
 
                 // ***************** view app response json ******************** //

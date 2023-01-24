@@ -6,6 +6,7 @@ use App\Events\UserEvent;
 use App\Models\AdPlacement;
 use App\Models\AllApps;
 use App\Models\AppDetails;
+use App\Models\GitHubToken;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
@@ -71,12 +72,15 @@ class CreateAllAppRequest extends FormRequest
             //
             $allApp->save();
 
+            // create github repo //
+            $getToken = GitHubToken::find(1);
             $response = Http::withHeaders([
-                'Authorization' =>  'Bearer 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',
+                'Authorization' =>  'Bearer '.$getToken->github_access_token,
             ])->post('https://api.github.com/user/repos', [
                 'name' => $allApp->app_packageName.'_'.$allApp->id,
                 'description' => 'hkApps repo',
             ]);
+            // ************* //
 
 
 //            $jsonData = $response->json();
