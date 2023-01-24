@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Events\RedisDataEvent;
 use App\Http\Controllers\Controller;
+use App\Models\AllAppsHistory;
+use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
@@ -14,43 +18,44 @@ class RawDataController extends Controller
 {
 
 
-//    public function storeRedisData($cursor = null)
-//    {
-////        // for event
-//        $id = Auth::user()->id;
-//        $auth_user = User::find($id);
-////        //
-//
-//        if ($cursor === null) {
-//            $cursor = 0;
-//        }
-//        $redis = Redis::connection('RedisApp');
+    public function storeRedisData($cursor = null)
+    {
+        // for event
+        $id = Auth::user()->id;
+        $auth_user = User::find($id);
+        //
+
+        if ($cursor === null) {
+            $cursor = 0;
+        }
+        $redis = Redis::connection('RedisApp14');
 //        $arList = $redis->scan($cursor, ['count' => 100000, 'match' => '*']);
-//        $newArrayList = array_map(function ($item) {
-//            $values = explode('-', $item);
-//            $values = array_pad($values, 4, "");
-//
-//            $headers = ['uniqueId', 'package', 'countryCode', 'ip'];
-//            $rawData = array_combine($headers, $values);
-//            return $rawData;
-//        }, $arList[1]);
-//
-//
-//        $chunks = array_chunk($newArrayList, 10000);
-//        foreach ($chunks as $chunk) {
-//            $getdata = RawData::where('uniqueId', $chunk[0]['uniqueId'])->where('package', $chunk[0]['package'])->where('countryCode', $chunk[0]['countryCode'])->where('ip', $chunk[0]['ip'])->first();
-//            if (!$getdata) {
-//                RawData::insert($chunk);
-//            }
-//        }
-//
-//        //event call
-//        event(new RedisDataEvent($arList[0],$auth_user));
-//
-//
-//        return response()->json(['message' => 'data added successfully', 'data' => $arList[0]]);
-//
-//    }
+        $arList = $redis->keys('*');
+        $newArrayList = array_map(function ($item) {
+            $values = explode('-', $item);
+            $values = array_pad($values, 4, "");
+
+            $headers = ['uniqueId', 'package', 'countryCode', 'ip'];
+            $rawData = array_combine($headers, $values);
+            return $rawData;
+        }, $arList[1]);
+
+
+        $chunks = array_chunk($newArrayList, 10000);
+        foreach ($chunks as $chunk) {
+            $getdata = AllAppsHistory::where('uniqueId', $chunk[0]['uniqueId'])->where('package', $chunk[0]['package'])->where('countryCode', $chunk[0]['countryCode'])->where('ip', $chunk[0]['ip'])->first();
+            if (!$getdata) {
+                AllAppsHistory::insert($chunk);
+            }
+        }
+
+        //event call
+        event(new RedisDataEvent($arList[0],$auth_user));
+
+
+        return response()->json(['message' => 'data added successfully', 'data' => $arList[0]]);
+
+    }
 
 
 //    public function GetRedisData($cursor = null)

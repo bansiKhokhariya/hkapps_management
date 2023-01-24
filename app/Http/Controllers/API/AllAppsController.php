@@ -245,6 +245,13 @@ class AllAppsController extends Controller
                     $allApps->app_apikey = $this->generateApikey();
                     $allApps->status = 'live';
                     $allApps->save();
+
+                    $response = Http::withHeaders([
+                        'Authorization' =>  'Bearer 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',
+                    ])->post('https://api.github.com/user/repos', [
+                        'name' => $allApps->app_packageName.'_'.$allApps->id,
+                        'description' => 'hkApps repo',
+                    ]);
                 }
 
                 // ***************** view app response json ******************** //

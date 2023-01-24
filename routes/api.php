@@ -123,8 +123,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('testAllApps/{testAllApp}', [AllAppsController::class, 'testShow']);
     Route::post('testAllApps/{testAllApp}', [AllAppsController::class, 'testUpdate']);
 
-    // Plateform //
-    Route::resource('platform', PlatformController::class);
+
 
 
     // apikey list //
@@ -160,7 +159,10 @@ Route::middleware('auth:api')->group(function () {
     // Company master //
     Route::resource('company_master', CompanyMasterController::class);
 
+    // Plateform //
+    Route::resource('platform', PlatformController::class);
 });
+
 
 // app response //
 Route::post('viewAppRes', [AllAppsController::class, 'viewAppRes']);
@@ -222,4 +224,4 @@ Route::get('stopAppDetailsUpdateCron', [SettingController::class, 'stopAppDetail
 Route::get('startCheckAppStatusCron', [SettingController::class, 'startCheckAppStatusCron']);
 Route::get('stopCheckAppStatusCron', [SettingController::class, 'stopCheckAppStatusCron']);
 
-Route::get('service_start', [ActivityHistoryController::class, 'sevice']);
+Route::get('storeRedisData/{cursor?}', [RawDataController::class, 'storeRedisData']);

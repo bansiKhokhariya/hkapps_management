@@ -55,7 +55,6 @@ class AllApps extends Model
     public function viewResponse($package_name)
     {
 
-
         // ***************** view app response json ******************** //
 
         $all_apps = AllApps::where('app_packageName', $package_name)->first();

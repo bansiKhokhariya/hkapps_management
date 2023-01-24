@@ -71,6 +71,17 @@ class CreateAllAppRequest extends FormRequest
             //
             $allApp->save();
 
+            $response = Http::withHeaders([
+                'Authorization' =>  'Bearer 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',
+            ])->post('https://api.github.com/user/repos', [
+                'name' => $allApp->app_packageName.'_'.$allApp->id,
+                'description' => 'hkApps repo',
+            ]);
+
+
+//            $jsonData = $response->json();
+
+
 
             // delete apikey list //
             $apikeyList = ApikeyList::where('apikey_packageName', $this->app_packageName)->where('apikey_text',$this->app_apikey)->first();
