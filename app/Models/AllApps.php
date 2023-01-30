@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Filters\AllAppsFilters;
 use App\Http\Resources\AdPlacementResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,6 +23,11 @@ class AllApps extends Model
     public function getDescriptionForEvent(string $eventName): string
     {
         return "{$eventName} All Apps - ID:{$this->id}, appName:{$this->appPackageName}";
+    }
+
+    public function scopeFilter($query)
+    {
+        return resolve(AllAppsFilters::class)->apply($query);
     }
 
     public function companyMaster()

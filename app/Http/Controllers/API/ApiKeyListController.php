@@ -10,6 +10,7 @@ use App\Models\AllApps;
 use App\Models\ApikeyList;
 use Illuminate\Http\Request;
 use App\Events\RedisDataEvent;
+use Illuminate\Support\Facades\Redis;
 
 class ApiKeyListController extends Controller
 {
@@ -62,6 +63,13 @@ class ApiKeyListController extends Controller
             $allApps->app_apikey = $request->apikey;
         }
         $allApps->save();
+
+        // ***************** view app response json ******************** //
+        $getApp = new AllApps();
+        $result = $getApp->viewResponse($package_name,$apikey);
+
+        $redis = Redis::connection('RedisApp');
+        $redis->set($package_name, json_encode($result));
 
 
         // delete apikey list //

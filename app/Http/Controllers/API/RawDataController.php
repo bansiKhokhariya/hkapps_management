@@ -29,8 +29,8 @@ class RawDataController extends Controller
             $cursor = 0;
         }
         $redis = Redis::connection('RedisApp14');
-//        $arList = $redis->scan($cursor, ['count' => 100000, 'match' => '*']);
-        $arList = $redis->keys('*');
+        $arList = $redis->scan($cursor, ['count' => 100000, 'match' => '*']);
+//        $arList = $redis->keys('*');
         $newArrayList = array_map(function ($item) {
             $values = explode('-', $item);
             $values = array_pad($values, 4, "");

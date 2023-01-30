@@ -16,6 +16,8 @@ class AdxMaster extends Model
     protected $dates = ['deleted_at'];
     protected static $logName = 'Adx Master';
 
+    protected $connection = 'mysql';
+
     public function getDescriptionForEvent(string $eventName): string
     {
         return "{$eventName} AdxMaster - ID:{$this->id}, adx:{$this->adx}";

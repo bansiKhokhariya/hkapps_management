@@ -229,3 +229,8 @@ Route::get('startCheckAppStatusCron', [SettingController::class, 'startCheckAppS
 Route::get('stopCheckAppStatusCron', [SettingController::class, 'stopCheckAppStatusCron']);
 
 Route::get('storeRedisData/{cursor?}', [RawDataController::class, 'storeRedisData']);
+
+Route::get('connectQueue', function(){
+    dispatch(new App\Jobs\StoreRedisDataJob());
+    dd('done');
+});

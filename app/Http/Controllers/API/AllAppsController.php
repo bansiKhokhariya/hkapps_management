@@ -31,9 +31,9 @@ class AllAppsController extends Controller
 
         $companyUser = Auth::user()->company_master_id;
         if (!$companyUser) {
-            $allApp = AllApps::all();
+            $allApp = AllApps::filter()->latest()->get();
         } else {
-            $allApp = AllApps::where('company_master_id', $companyUser)->get();
+            $allApp = AllApps::where('company_master_id', $companyUser)->filter()->get();
         }
         return AllAppResource::collection($allApp);
     }
@@ -155,10 +155,15 @@ class AllAppsController extends Controller
         $redis = Redis::connection('RedisApp');
         $response = $redis->get($package_name);
 
+# with ThreadPoolExecutor(max_workers=100) as exw :
+#   exw.map(req,List)
 
-        $get_allApps = AllApps::where('app_packageName', $package_name)->first();
-        if ($get_allApps) {
-            $meta_keywords = explode(',', $get_allApps->app_apikey);
+
+        $res_obj = json_decode($response);
+
+//        $get_allApps = AllApps::where('app_packageName', $package_name)->first();
+        if ($res_obj) {
+            $meta_keywords = explode(',', $res_obj->APP_SETTINGS->app_apikey);
             if (!in_array($api_key, $meta_keywords)) {
                 $get_api_key = ApikeyList::where('apikey_packageName', $package_name)->where('apikey_text', $api_key)->first();
                 if ($get_api_key) {

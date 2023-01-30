@@ -15,7 +15,7 @@ class AdsMaster extends Model
     protected $fillable = ['cid', 'tel_id', 'ads_master'];
     protected $dates = ['deleted_at'];
     protected static $logName = 'Ads Master';
-
+    protected  $connection ='mysql';
     public function getDescriptionForEvent(string $eventName): string
     {
         return "{$eventName} AdsMaster - ID:{$this->id}, adsMaster:{$this->ads_master}";
