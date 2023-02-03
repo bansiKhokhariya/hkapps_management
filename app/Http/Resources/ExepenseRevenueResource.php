@@ -15,8 +15,6 @@ class ExepenseRevenueResource extends JsonResource
     public function toArray($request)
     {
 
-
-
         if($this->ads_master){
             $ads = $this->masterAds;
         }else{

@@ -17,16 +17,6 @@ class ExpenseRevenueController extends Controller
 {
     public function index()
     {
-//        $result = DB::table("expense_revenue as exp")
-//            ->select("exp.id","exp.package_name",
-//                DB::raw("(select ads_master from expense_revenue where expense_revenue.package_name = exp.package_name and ads_master is not null limit 1) as ads_master"),
-//                DB::raw("sum(exp.total_invest) as total_invest"),
-//                DB::raw("(select adx from expense_revenue where expense_revenue.package_name = exp.package_name and adx is not null limit 1) as adx"),
-//                DB::raw("sum(exp.revenue) as revenue"),
-//                DB::raw("exp.created_at as created_at"))
-//            ->groupBy("package_name")
-//            ->get();
-
 
         $companyUser = Auth::user()->company_master_id;
         if (!$companyUser) {
@@ -49,7 +39,8 @@ class ExpenseRevenueController extends Controller
                 ->get();
         }
 
-        return ExepenseRevenueResource::collection($result);
+        return $result;
+//        return ExepenseRevenueResource::collection($result);
     }
 
     public function store(CreateExpenseRevenueRequest $request)
