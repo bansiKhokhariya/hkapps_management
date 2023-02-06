@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\GithubTokenController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -230,7 +231,13 @@ Route::get('stopCheckAppStatusCron', [SettingController::class, 'stopCheckAppSta
 
 Route::get('storeRedisData/{cursor?}', [RawDataController::class, 'storeRedisData']);
 
+Route::get('getCount',[DashboardController::class,'getCount']);
+
+
+
 Route::get('connectQueue', function(){
     dispatch(new App\Jobs\StoreRedisDataJob());
     dd('done');
 });
+
+
