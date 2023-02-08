@@ -92,7 +92,7 @@ class RawDataController extends Controller
     public function GetRedisData($package_name)
     {
 
-        $redis = Redis::connection('RedisApp');
+        $redis = Redis::connection('RedisApp14');
         $arList = $redis->keys("*{$package_name}*");
 
         $data = $this->paginate($arList);
@@ -102,7 +102,7 @@ class RawDataController extends Controller
     }
 
 
-    public function paginate($items, $perPage = 100, $page = null, $options = [])
+    public function paginate($items, $perPage = 1000, $page = null, $options = [])
     {
         $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
         $items = $items instanceof Collection ? $items : Collection::make($items);

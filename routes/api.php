@@ -228,6 +228,8 @@ Route::get('startAppDetailsUpdateCron', [SettingController::class, 'startAppDeta
 Route::get('stopAppDetailsUpdateCron', [SettingController::class, 'stopAppDetailsUpdateCron']);
 Route::get('startCheckAppStatusCron', [SettingController::class, 'startCheckAppStatusCron']);
 Route::get('stopCheckAppStatusCron', [SettingController::class, 'stopCheckAppStatusCron']);
+Route::get('startWebCreonCron', [SettingController::class, 'startWebCreonCron']);
+Route::get('stopWebCreonCron', [SettingController::class, 'stopWebCreonCron']);
 
 Route::get('storeRedisData/{cursor?}', [RawDataController::class, 'storeRedisData']);
 

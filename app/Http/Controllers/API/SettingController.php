@@ -102,5 +102,32 @@ class SettingController extends Controller
 
     }
 
+    public function startWebCreonCron()
+    {
+
+        $setting = Setting::where('cron', 'WebCreon')->first();
+        $setting->infinity = 1;
+        $setting->save();
+
+        for ($i = 1; $i <= INF; $i++) {
+            $getSetting = Setting::where('cron', 'WebCreon')->first();
+            if ((int)$getSetting->infinity === 1) {
+                sleep($getSetting->time * 60);
+                \Artisan::call('WebCreon:cron');
+            } elseif ((int)$getSetting->infinity === 0) {
+                break;
+            }
+        }
+    }
+
+    public function stopWebCreonCron()
+    {
+
+        $setting = Setting::where('cron', 'WebCreon')->first();
+        $setting->infinity = 0;
+        $setting->save();
+
+    }
+
 
 }

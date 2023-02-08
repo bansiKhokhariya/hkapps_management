@@ -18,6 +18,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         Commands\AppDetailsUpadateCron::class,
         Commands\CheckAppStatusCron::class,
+        Commands\WebcreonCron::class,
     ];
 
     /**
@@ -35,7 +36,9 @@ class Kernel extends ConsoleKernel
         // check app status cron //
         $checkAppStatus = Setting::where('cron','CheckAppStatus')->first();
         $schedule->command('CheckAppStatus:cron')->cron('*/'.$checkAppStatus->time.' * * * *');
-
+       // WebCreon cron //
+        $webCreon = Setting::where('cron','WebCreon')->first();
+        $schedule->command('WebCreon:cron')->cron('*/'.$webCreon->time.' * * * *');
     }
 
     /**
