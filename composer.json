@@ -17,6 +17,7 @@
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.4",
+        "nelexa/google-play-scraper": "0.4.0.9",
         "predis/predis": "^2.0",
         "pusher/pusher-php-server": "~3.0",
         "rjchauhan/laravel-finer": "^8.3",

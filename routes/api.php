@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\GithubTokenController;
+use App\Http\Controllers\API\SpyAppsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
@@ -241,5 +242,9 @@ Route::get('connectQueue', function(){
     dispatch(new App\Jobs\StoreRedisDataJob());
     dd('done');
 });
+
+
+Route::get('saveSpyApps',[SpyAppsController::class,'saveSpyApps']);
+Route::get('getSpyApps',[SpyAppsController::class,'getSpyApps']);
 
 
