@@ -15,7 +15,7 @@ class CreateAppDetailsTable extends Migration
     {
         Schema::connection('mysql4')->create('app_details', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('app_packageName')->unsigned()->nullable();
+            $table->string('app_packageName')->unsigned()->nullable();
             $table->text('description')->nullable();
             $table->text('descriptionHTML')->nullable();
             $table->text('summary')->nullable();

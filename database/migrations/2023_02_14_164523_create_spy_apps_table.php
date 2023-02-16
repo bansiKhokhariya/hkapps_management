@@ -15,20 +15,21 @@ class CreateSpyAppsTable extends Migration
     {
         Schema::connection('mysql4')->create('spy_apps', function (Blueprint $table) {
             $table->id();
-            $table->string('packageName');
-            $table->string('url');
-            $table->string('locale');
-            $table->string('country');
-            $table->string('name');
-            $table->string('description');
-            $table->string('developerName');
-            $table->string('icon');
-            $table->string('screenshots');
-            $table->string('score');
-            $table->string('priceText');
-            $table->string('installsText');
+            $table->string('packageName')->nullable();
+            $table->string('url')->nullable();
+            $table->string('locale')->nullable();
+            $table->string('country')->nullable();
+            $table->string('name')->nullable();
+            $table->string('description')->nullable();
+            $table->string('developerName')->nullable();
+            $table->string('icon')->nullable();
+            $table->string('screenshots')->nullable();
+            $table->string('score')->nullable();
+            $table->string('priceText')->nullable();
+            $table->string('installsText')->nullable();
             $table->timestamps();
         });
+
     }
 
     /**

@@ -129,5 +129,60 @@ class SettingController extends Controller
 
     }
 
+    public function startSpyAppCron()
+    {
+
+        $setting = Setting::where('cron', 'SpyApp')->first();
+        $setting->infinity = 1;
+        $setting->save();
+
+        for ($i = 1; $i <= INF; $i++) {
+            $getSetting = Setting::where('cron', 'SpyApp')->first();
+            if ((int)$getSetting->infinity === 1) {
+                sleep($getSetting->time * 60);
+                \Artisan::call('SpyApp:cron');
+            } elseif ((int)$getSetting->infinity === 0) {
+                break;
+            }
+        }
+    }
+
+    public function stopSpyAppCron()
+    {
+
+        $setting = Setting::where('cron', 'SpyApp')->first();
+        $setting->infinity = 0;
+        $setting->save();
+
+    }
+
+    public function startSpyAppDetailsCron()
+    {
+
+        $setting = Setting::where('cron', 'SpyAppDetails')->first();
+        $setting->infinity = 1;
+        $setting->save();
+
+        for ($i = 1; $i <= INF; $i++) {
+            $getSetting = Setting::where('cron', 'SpyAppDetails')->first();
+            if ((int)$getSetting->infinity === 1) {
+                sleep($getSetting->time * 60);
+                \Artisan::call('SpyAppDetails:cron');
+            } elseif ((int)$getSetting->infinity === 0) {
+                break;
+            }
+        }
+    }
+
+    public function stopSpyAppDetailsCron()
+    {
+
+        $setting = Setting::where('cron', 'SpyAppDetails')->first();
+        $setting->infinity = 0;
+
+        $setting->save();
+
+    }
+
 
 }

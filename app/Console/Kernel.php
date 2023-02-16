@@ -19,6 +19,8 @@ class Kernel extends ConsoleKernel
         Commands\AppDetailsUpadateCron::class,
         Commands\CheckAppStatusCron::class,
         Commands\WebcreonCron::class,
+        Commands\SpyAppCron::class,
+        Commands\SpyAppDetailsCron::class,
     ];
 
     /**
@@ -39,6 +41,12 @@ class Kernel extends ConsoleKernel
        // WebCreon cron //
         $webCreon = Setting::where('cron','WebCreon')->first();
         $schedule->command('WebCreon:cron')->cron('*/'.$webCreon->time.' * * * *');
+        // SpyApp cron //
+        $spyApp = Setting::where('cron','SpyApp')->first();
+        $schedule->command('SpyApp:cron')->cron('*/'.$spyApp->time.' * * * *');
+        // SpyAppDetails cron //
+        $spyAppDetails = Setting::where('cron','SpyAppDetails')->first();
+        $schedule->command('SpyAppDetails:cron')->cron('*/'.$spyAppDetails->time.' * * * *');
     }
 
     /**
