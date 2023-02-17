@@ -44,7 +44,7 @@ class SpyAppDetailsCron extends Command
         if ($getSpyApp->count() > 0) {
             foreach ($getSpyApp as $spyApp) {
 
-                $gPlay = new \Nelexa\GPlay\GPlayApps($defaultLocale = 'fr_CA', $defaultCountry = 'ca');
+                $gPlay = new \Nelexa\GPlay\GPlayApps();
                 $appInfo = $gPlay->getAppInfo($spyApp->packageName);
 
                 $spyAppDetails = new SpyAppDetails();

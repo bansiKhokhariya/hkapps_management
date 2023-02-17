@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\SpyAppResource;
 use App\Models\SpyApps;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Response;
 use Nelexa\GPlay\Model\GoogleImage;
 
 class SpyAppsController extends Controller
@@ -14,7 +17,7 @@ class SpyAppsController extends Controller
     {
 
         $getSpyApps = SpyApps::latest()->get();
-        return $getSpyApps;
+        return SpyAppResource::collection($getSpyApps);
 
     }
 
@@ -57,5 +60,55 @@ class SpyAppsController extends Controller
         return 'all new spy app save!';
 
     }
+
+    public function saveSpyApp(Request $request)
+    {
+
+
+        $gPlay = new \Nelexa\GPlay\GPlayApps();
+
+        $checkApp = $gPlay->existsApp($request->packageName);
+
+        if ($checkApp > 0) {
+
+            $appInfo = $gPlay->getAppInfo($request->packageName);
+
+            $screenshots = array_map(
+                static function (GoogleImage $googleImage) {
+                    return $googleImage->getUrl();
+                },
+                $appInfo->screenshots
+            );
+
+            $getSpyApps = SpyApps::where('packageName', $request->packageName)->first();
+            if (!$getSpyApps) {
+                $spyApp = new SpyApps();
+                $spyApp->packageName = $request->packageName;
+                $spyApp->url = $appInfo->getUrl();
+                $spyApp->locale = $appInfo->locale;
+                $spyApp->country = $appInfo->country;
+                $spyApp->name = $appInfo->name;
+                $spyApp->description = $appInfo->description;
+                $spyApp->developerName = $appInfo->developer->getName();
+                $spyApp->screenshots = json_encode($screenshots);
+                $spyApp->icon = $appInfo->icon->getUrl();
+                $spyApp->score = $appInfo->score;
+                $spyApp->priceText = $appInfo->priceText;
+                $spyApp->installsText = $appInfo->installsText;
+                $spyApp->save();
+
+                return $spyApp;
+            }
+        } else {
+
+            return Response::json([
+                'message' => 'this app is not exists in google play store'
+            ], 404);
+
+        }
+
+
+    }
+
 
 }

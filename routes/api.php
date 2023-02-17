@@ -247,8 +247,9 @@ Route::get('connectQueue', function(){
     dd('done');
 });
 
-
+// spy app //
 Route::get('saveSpyApps',[SpyAppsController::class,'saveSpyApps']);
+Route::post('saveSpyApp',[SpyAppsController::class,'saveSpyApp']);
 Route::get('getSpyApps',[SpyAppsController::class,'getSpyApps']);
 
 
