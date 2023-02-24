@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\CommanMasterController;
 use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\GithubTokenController;
 use App\Http\Controllers\API\SpyAppsController;
@@ -165,6 +166,9 @@ Route::middleware('auth:api')->group(function () {
     // Company master //
     Route::resource('company_master', CompanyMasterController::class);
 
+    // Comman master //
+    Route::resource('comman_master', CommanMasterController::class);
+
     // Plateform //
     Route::resource('platform', PlatformController::class);
 });
@@ -251,5 +255,7 @@ Route::get('connectQueue', function(){
 Route::get('saveSpyApps',[SpyAppsController::class,'saveSpyApps']);
 Route::post('saveSpyApp',[SpyAppsController::class,'saveSpyApp']);
 Route::get('getSpyApps',[SpyAppsController::class,'getSpyApps']);
+
+
 
 

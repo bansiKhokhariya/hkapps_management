@@ -21,17 +21,17 @@ class CreateExpenseRevenueTable extends Migration
             $table->integer('adx')->unsigned()->nullable();
             $table->string('revenue')->nullable();
             $table->integer('company_master_id')->unsigned()->nullable();
-//            $table->foreign('ads_master')->references('id')->on('hk_apps_management.ads_master')->onDelete('cascade')->onUpdate('cascade');
-//            $table->foreign('adx')->references('id')->on('hk_apps_management.adx_master')->onDelete('cascade')->onUpdate('cascade');
-//            $table->foreign('company_master_id')->references('id')->on('hk_apps_management.company_master')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('ads_master')->references('id')->on('hk_apps_management.ads_master')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('adx')->references('id')->on('hk_apps_management.adx_master')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('company_master_id')->references('id')->on('hk_apps_management.company_master')->onDelete('cascade')->onUpdate('cascade');
             $table->softDeletes();
             $table->timestamps();
         });
-        Schema::table('expense_revenue', function ($table) {
-            $table->foreign('ads_master')->references('id')->on('hk_apps_management.ads_master');
-            $table->foreign('adx')->references('id')->on('hk_apps_management.adx_master');
-            $table->foreign('company_master_id')->references('id')->on('hk_apps_management.company_master');
-        });
+//        Schema::table('expense_revenue', function ($table) {
+//            $table->foreign('ads_master')->references('id')->on('hk_apps_management.ads_master');
+//            $table->foreign('adx')->references('id')->on('hk_apps_management.adx_master');
+//            $table->foreign('company_master_id')->references('id')->on('hk_apps_management.company_master');
+//        });
     }
 
      /**

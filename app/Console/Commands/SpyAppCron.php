@@ -54,6 +54,9 @@ class SpyAppCron extends Command
 
             $getSpyApps = SpyApps::where('packageName', $app->id)->first();
             if (!$getSpyApps) {
+
+                $appInfo = $gPlay->getAppInfo($app->id);
+
                 $spyApp = new SpyApps();
                 $spyApp->packageName = $app->id;
                 $spyApp->url = $app->getUrl();
@@ -67,6 +70,8 @@ class SpyAppCron extends Command
                 $spyApp->score = $app->score;
                 $spyApp->priceText = $app->priceText;
                 $spyApp->installsText = $app->installsText;
+                $spyApp->released = $appInfo->released;
+                $spyApp->updated = $appInfo->updated;
                 $spyApp->save();
             }
         }

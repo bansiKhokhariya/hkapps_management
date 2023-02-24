@@ -20,14 +20,14 @@ class CreateAppsTable extends Migration
             $table->string('icon');
             $table->string('developer');
             $table->integer('company_master_id')->unsigned()->nullable();
-//            $table->foreign('company_master_id')->references('id')->on('hk_apps_management.company_master');
+            $table->foreign('company_master_id')->references('id')->on('hk_apps_management.company_master');
             $table->softDeletes();
             $table->timestamps();
         });
-        Schema::table('apps', function($table)
-        {
-            $table->foreign('company_master_id')->references('id')->on('hk_apps_management.company_master');
-        });
+//        Schema::table('apps', function($table)
+//        {
+//            $table->foreign('company_master_id')->references('id')->on('hk_apps_management.company_master');
+//        });
     }
 
      /**

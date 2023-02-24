@@ -38,13 +38,13 @@ class CreateAllAppsTable extends Migration
             $table->text('app_parameter')->nullable();
             $table->string('status')->nullable();
             $table->integer('company_master_id')->unsigned()->nullable();
-//            $table->foreign('company_master_id')->references('id')->on('hk_apps_management.company_master')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('company_master_id')->references('id')->on('hk_apps_management.company_master')->onDelete('cascade')->onUpdate('cascade');
             $table->softDeletes();
             $table->timestamps();
         });
-        Schema::table('all_apps', function ($table) {
-            $table->foreign('company_master_id')->references('id')->on('hk_apps_management.company_master');
-        });
+//        Schema::table('all_apps', function ($table) {
+//            $table->foreign('company_master_id')->references('id')->on('hk_apps_management.company_master');
+//        });
     }
 
      /**

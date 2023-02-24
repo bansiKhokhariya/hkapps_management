@@ -20,13 +20,13 @@ class CreateAdxMasterTable extends Migration
             $table->integer('adx_share');
             $table->string('type');
             $table->integer('company_master_id')->unsigned()->nullable();
-//            $table->foreign('company_master_id')->references('id')->on('company_master');
+            $table->foreign('company_master_id')->references('id')->on('company_master');
             $table->softDeletes();
             $table->timestamps();
         });
-        Schema::table('adx_master', function ($table) {
-            $table->foreign('company_master_id')->references('id')->on('company_master');
-        });
+//        Schema::table('adx_master', function ($table) {
+//            $table->foreign('company_master_id')->references('id')->on('company_master');
+//        });
     }
 
      /**

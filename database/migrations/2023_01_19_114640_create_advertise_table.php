@@ -25,13 +25,13 @@ class CreateAdvertiseTable extends Migration
             $table->string('app_download');
             $table->string('app_AdFormat');
             $table->integer('company_master_id')->unsigned()->nullable();
-//            $table->foreign('company_master_id')->references('id')->on('hk_apps_management.company_master')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('company_master_id')->references('id')->on('hk_apps_management.company_master')->onDelete('cascade')->onUpdate('cascade');
             $table->softDeletes();
             $table->timestamps();
         });
-        Schema::table('advertise', function ($table) {
-            $table->foreign('company_master_id')->references('id')->on('hk_apps_management.company_master');
-        });
+//        Schema::table('advertise', function ($table) {
+//            $table->foreign('company_master_id')->references('id')->on('hk_apps_management.company_master');
+//        });
     }
 
      /**

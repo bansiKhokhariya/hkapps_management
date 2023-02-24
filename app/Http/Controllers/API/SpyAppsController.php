@@ -95,6 +95,8 @@ class SpyAppsController extends Controller
                 $spyApp->score = $appInfo->score;
                 $spyApp->priceText = $appInfo->priceText;
                 $spyApp->installsText = $appInfo->installsText;
+                $spyApp->released = $appInfo->released;
+                $spyApp->updated = $appInfo->updated;
                 $spyApp->save();
 
                 return $spyApp;

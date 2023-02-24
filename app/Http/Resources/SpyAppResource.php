@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class SpyAppResource extends JsonResource
@@ -22,6 +23,9 @@ class SpyAppResource extends JsonResource
             $reviews = $this->getSpyAppDetails()->reviews;
         }
 
+       $released_date =  Carbon::parse($this->released);
+       $updated_date =  Carbon::parse($this->updated);
+
         return [
             'id'=>$this->id,
             'packageName' =>$this->packageName,
@@ -39,6 +43,10 @@ class SpyAppResource extends JsonResource
             'installs'=> $installs ,
             'ratings'=> $ratings,
             'reviews'=> $reviews,
+            'released_day'=>$released_date->diffForHumans(),
+            'updated_day'=>$updated_date->diffForHumans(),
+            'released'=> $this->released,
+            'updated'=> $this->updated,
             'created_at' =>$this->created_at->format('d-m-Y'),
             'updated_at' =>$this->updated_at->format('d-m-Y'),
         ];

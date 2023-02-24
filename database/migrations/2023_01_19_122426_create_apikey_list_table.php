@@ -21,13 +21,13 @@ class CreateApikeyListTable extends Migration
             $table->integer('apikey_request')->default(1);
             $table->integer('is_available')->default(0);
             $table->integer('company_master_id')->unsigned()->nullable();
-//            $table->foreign('company_master_id')->references('id')->on('hk_apps_management.company_master')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('company_master_id')->references('id')->on('hk_apps_management.company_master')->onDelete('cascade')->onUpdate('cascade');
             $table->softDeletes();
             $table->timestamps();
         });
-        Schema::table('apikey_list', function ($table) {
-            $table->foreign('company_master_id')->references('id')->on('hk_apps_management.company_master');
-        });
+//        Schema::table('apikey_list', function ($table) {
+//            $table->foreign('company_master_id')->references('id')->on('hk_apps_management.company_master');
+//        });
     }
 
      /**

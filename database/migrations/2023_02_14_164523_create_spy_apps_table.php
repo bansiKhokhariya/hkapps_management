@@ -27,6 +27,8 @@ class CreateSpyAppsTable extends Migration
             $table->string('score')->nullable();
             $table->string('priceText')->nullable();
             $table->string('installsText')->nullable();
+            $table->string('released')->nullable();
+            $table->string('updated')->nullable();
             $table->timestamps();
         });
 

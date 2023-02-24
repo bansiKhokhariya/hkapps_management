@@ -26,16 +26,16 @@ class CreateAdPlacementTable extends Migration
             $table->text('ad_RewardedVideo')->nullable();
             $table->text('ad_RewardedInterstitial')->nullable();
             $table->text('ad_AppOpen')->nullable();
-//            $table->foreign('allApps_id')->references('id')->on('all_apps')->onDelete('cascade')->onUpdate('cascade');
-//            $table->foreign('platform_id')->references('id')->on('platform')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('allApps_id')->references('id')->on('all_apps')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('platform_id')->references('id')->on('platform')->onDelete('cascade')->onUpdate('cascade');
             $table->softDeletes();
             $table->timestamps();
         });
-        Schema::table('ad_placement', function($table)
-        {
-            $table->foreign('allApps_id')->references('id')->on('all_apps');
-            $table->foreign('platform_id')->references('id')->on('platform');
-        });
+//        Schema::table('ad_placement', function($table)
+//        {
+//            $table->foreign('allApps_id')->references('id')->on('all_apps');
+//            $table->foreign('platform_id')->references('id')->on('platform');
+//        });
     }
 
      /**
