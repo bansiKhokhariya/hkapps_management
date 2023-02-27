@@ -20,7 +20,7 @@ class CreateSpyAppsTable extends Migration
             $table->string('locale')->nullable();
             $table->string('country')->nullable();
             $table->string('name')->nullable();
-            $table->string('description')->nullable();
+            $table->text('description')->nullable();
             $table->string('developerName')->nullable();
             $table->string('icon')->nullable();
             $table->string('screenshots')->nullable();
@@ -29,6 +29,8 @@ class CreateSpyAppsTable extends Migration
             $table->string('installsText')->nullable();
             $table->string('released')->nullable();
             $table->string('updated')->nullable();
+            $table->string('version')->nullable();
+            $table->string('category')->nullable();
             $table->timestamps();
         });
 

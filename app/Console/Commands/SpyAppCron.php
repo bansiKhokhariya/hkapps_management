@@ -53,10 +53,9 @@ class SpyAppCron extends Command
             );
 
             $getSpyApps = SpyApps::where('packageName', $app->id)->first();
+
             if (!$getSpyApps) {
-
                 $appInfo = $gPlay->getAppInfo($app->id);
-
                 $spyApp = new SpyApps();
                 $spyApp->packageName = $app->id;
                 $spyApp->url = $app->getUrl();
@@ -72,6 +71,28 @@ class SpyAppCron extends Command
                 $spyApp->installsText = $app->installsText;
                 $spyApp->released = $appInfo->released;
                 $spyApp->updated = $appInfo->updated;
+                $spyApp->version = $appInfo->appVersion;
+                $spyApp->category = $appInfo->category->id;
+                $spyApp->save();
+            }else{
+                $appInfoUpdate = $gPlay->getAppInfo($app->id);
+                $spyApp = SpyApps::find($getSpyApps->id);
+                $spyApp->packageName = $app->id;
+                $spyApp->url = $app->getUrl();
+                $spyApp->locale = $app->locale;
+                $spyApp->country = $app->country;
+                $spyApp->name = $app->name;
+                $spyApp->description = $app->description;
+                $spyApp->developerName = $app->developerName;
+                $spyApp->icon = $app->icon;
+                $spyApp->screenshots = json_encode($screenshots);
+                $spyApp->score = $app->score;
+                $spyApp->priceText = $app->priceText;
+                $spyApp->installsText = $app->installsText;
+                $spyApp->released = $appInfoUpdate->released;
+                $spyApp->updated = $appInfoUpdate->updated;
+                $spyApp->version = $appInfoUpdate->appVersion;
+                $spyApp->category = $appInfoUpdate->category->id;
                 $spyApp->save();
             }
         }

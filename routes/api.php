@@ -255,6 +255,7 @@ Route::get('connectQueue', function(){
 Route::get('saveSpyApps',[SpyAppsController::class,'saveSpyApps']);
 Route::post('saveSpyApp',[SpyAppsController::class,'saveSpyApp']);
 Route::get('getSpyApps',[SpyAppsController::class,'getSpyApps']);
+Route::get('getSpyApp/{packageName}',[SpyAppsController::class,'getSpyApp']);
 
 
 
