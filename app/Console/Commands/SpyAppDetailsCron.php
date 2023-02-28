@@ -47,11 +47,19 @@ class SpyAppDetailsCron extends Command
                 $gPlay = new \Nelexa\GPlay\GPlayApps();
                 $appInfo = $gPlay->getAppInfo($spyApp->packageName);
 
+                $spyAppDetails = SpyAppDetails::where('packageName',$spyApp->packageName)->latest()->first();
+                if($spyAppDetails){
+                    $dailyInstalls = $appInfo->installs - $spyAppDetails->downloads;
+                }else{
+                    $dailyInstalls = 0 ;
+                }
+
                 $spyAppDetails = new SpyAppDetails();
                 $spyAppDetails->packageName = $spyApp->packageName;
                 $spyAppDetails->downloads = $appInfo->installs;
                 $spyAppDetails->ratings = $appInfo->score;
                 $spyAppDetails->reviews = $appInfo->numberReviews;
+                $spyAppDetails->daily_installs = $dailyInstalls;
                 $spyAppDetails->save();
 
             }

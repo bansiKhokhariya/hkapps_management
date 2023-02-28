@@ -16,6 +16,7 @@ class CreateSpyAppDetailsTable extends Migration
         Schema::connection('mysql4')->create('spy_app_details', function (Blueprint $table) {
             $table->id();
             $table->string('packageName')->nullable();
+            $table->string('daily_installs')->nullable();
             $table->string('downloads')->nullable();
             $table->string('ratings')->nullable();
             $table->string('reviews')->nullable();

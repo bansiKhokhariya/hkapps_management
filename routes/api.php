@@ -257,6 +257,9 @@ Route::post('saveSpyApp',[SpyAppsController::class,'saveSpyApp']);
 Route::get('getSpyApps',[SpyAppsController::class,'getSpyApps']);
 Route::get('getSpyApp/{packageName}',[SpyAppsController::class,'getSpyApp']);
 
+// county //
+Route::get('getCountry',[CommanMasterController::class,'getCountry']);
+
 
 
 

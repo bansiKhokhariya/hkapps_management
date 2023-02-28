@@ -7,6 +7,7 @@ use App\Http\Requests\CreateCommanMasterRequest;
 use App\Http\Requests\UpdateCommanMasterRequest;
 use App\Http\Resources\CommanMasterResource;
 use App\Models\CommanMaster;
+use App\Models\CountryMaster;
 use Illuminate\Http\Request;
 
 class CommanMasterController extends Controller
@@ -37,4 +38,12 @@ class CommanMasterController extends Controller
         $commanMaster->delete();
         return response('Comman Master Deleted Successfully');
     }
+
+    public function getCountry(){
+
+        $country = CountryMaster::get();
+        return $country;
+
+    }
+
 }
