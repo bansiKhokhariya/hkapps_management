@@ -23,9 +23,7 @@ class SpyApps extends Model
 
     public function getInstalls($packageName)
     {
-        $getSpyApp = SpyAppDetails::where('packageName', $packageName)->select('downloads', 'created_at')->get();
-
-//        dd($getSpyApp);
+        $getSpyApp = SpyAppDetails::where('packageName', $packageName)->select('daily_installs', 'created_at')->get();
 
         return $getSpyApp;
     }

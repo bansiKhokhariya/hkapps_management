@@ -16,6 +16,7 @@ class CreateAppsTable extends Migration
         Schema::connection('mysql4')->create('apps', function (Blueprint $table) {
             $table->increments('id');
             $table->string('package_name');
+            $table->string('app_accountName');
             $table->string('title');
             $table->string('icon');
             $table->string('developer');

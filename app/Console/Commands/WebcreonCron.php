@@ -56,11 +56,18 @@ class WebcreonCron extends Command
                         $appDetails_res = Http::get($appDetails_link);
                         $app_response = json_decode($appDetails_res->getBody()->getContents());
 
+
+                        $redis = Redis::connection('RedisApp6');
+                        $response = $redis->get($packageName);
+                        $app_res_redis =  json_decode($response);
+
+
                         $app = new App();
                         $app->title = $app_response->title;
                         $app->package_name = $packageName;
                         $app->icon = $app_response->icon;
                         $app->developer = $app_response->developer;
+                        $app->app_accountName = $app_res_redis->APP_SETTINGS->app_accountName;
                         $app->save();
 
                         $app_delete_link = "https://webcreon.com/update/deleteindb6?pkg=" . $packageName;

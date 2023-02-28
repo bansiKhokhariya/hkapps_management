@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Events\UserEvent;
 use App\Http\Controllers\Controller;
 use App\Models\App;
+use App\Models\CompanyMaster;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,10 +18,12 @@ class AppsController extends Controller
     public function index(){
 
         $companyUser = Auth::user()->company_master_id;
+        $companyMaster = CompanyMaster::where('id',$companyUser)->first();
+
         if (!$companyUser) {
             $app = App::filter()->latest()->get();
         } else {
-            $app = App::where('company_master_id', $companyUser)->filter()->latest()->get();
+            $app = App::where('app_accountName', $companyMaster->company)->filter()->latest()->get();
         }
 
         return response()->json($app);
@@ -48,12 +51,17 @@ class AppsController extends Controller
 
         if($res->status() == 200){
 
-            // for event
-            $id = Auth::user()->id;
-            $auth_user = User::find($id);
-            //
+//            // for event
+//            $id = Auth::user()->id;
+//            $auth_user = User::find($id);
+//            //
 
             $app_response = json_decode($res->getBody()->getContents());
+
+            $redis = Redis::connection('RedisApp6');
+            $response = $redis->get($package_name);
+            $app_res_redis =  json_decode($response);
+
 
             $get_app = App::where('package_name',$package_name)->first();
             if(!($get_app)){
@@ -62,6 +70,7 @@ class AppsController extends Controller
                 $app->package_name = $package_name;
                 $app->icon = $app_response->icon;
                 $app->developer = $app_response->developer;
+                $app->app_accountName = $app_res_redis->APP_SETTINGS->app_accountName;
                 $app->save();
 
                 //event call
@@ -71,6 +80,7 @@ class AppsController extends Controller
             }
 
         }else{
+
             $app_response = $res->getBody()->getContents();
             return response()->json($app_response,500);
         }
