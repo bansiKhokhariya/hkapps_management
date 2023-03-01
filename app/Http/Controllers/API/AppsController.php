@@ -21,9 +21,9 @@ class AppsController extends Controller
         $companyMaster = CompanyMaster::where('id',$companyUser)->first();
 
         if (!$companyUser) {
-            $app = App::filter()->latest()->get();
+            $app = App::filter()->latest()->paginate(9);
         } else {
-            $app = App::where('app_accountName', $companyMaster->company)->filter()->latest()->get();
+            $app = App::where('app_accountName', $companyMaster->company)->filter()->latest()->paginate(9);
         }
 
         return response()->json($app);
