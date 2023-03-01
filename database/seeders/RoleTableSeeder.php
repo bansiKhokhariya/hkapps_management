@@ -67,6 +67,18 @@ class RoleTableSeeder extends Seeder
         Permission::create(['name' => 'companyMaster-store']);
         Permission::create(['name' => 'companyMaster-update']);
         Permission::create(['name' => 'companyMaster-delete']);
+        Permission::create(['name' => 'analytics-view']);
+        Permission::create(['name' => 'backgroundTask-view']);
+        Permission::create(['name' => 'systemSettings-view']);
+        Permission::create(['name' => 'notification-view']);
+        Permission::create(['name' => 'spyApp-view']);
+        Permission::create(['name' => 'spyApp-store']);
+        Permission::create(['name' => 'commanMaster-view']);
+        Permission::create(['name' => 'commanMaster-store']);
+        Permission::create(['name' => 'commanMaster-update']);
+        Permission::create(['name' => 'commanMaster-delete']);
+
+
 
 
         $role1 = Role::create(['name' => 'super_admin']);
@@ -120,6 +132,19 @@ class RoleTableSeeder extends Seeder
         $role1->givePermissionTo('companyMaster-store');
         $role1->givePermissionTo('companyMaster-update');
         $role1->givePermissionTo('companyMaster-delete');
+        $role1->givePermissionTo('analytics-view');
+        $role1->givePermissionTo('backgroundTask-view');
+        $role1->givePermissionTo('systemSettings-view');
+        $role1->givePermissionTo('notification-view');
+        $role1->givePermissionTo('spyApp-view');
+        $role1->givePermissionTo('spyApp-store');
+        $role1->givePermissionTo('commanMaster-view');
+        $role1->givePermissionTo('commanMaster-store');
+        $role1->givePermissionTo('commanMaster-update');
+        $role1->givePermissionTo('commanMaster-delete');
+
+
+
 
 
         $user = User::create([
