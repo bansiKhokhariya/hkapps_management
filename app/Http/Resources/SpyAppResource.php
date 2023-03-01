@@ -71,6 +71,7 @@ class SpyAppResource extends JsonResource
             'category'=> $this->category,
             'version'=>$this->version,
             'dailyInstalls' => $this->getInstalls($this->packageName),
+            'AvgDailyInstalls' => $this->getAvgDailyInstalls($this->packageName),
             'created_at' => $this->created_at->format('d-m-Y'),
             'updated_at' => $this->updated_at->format('d-m-Y'),
         ];
