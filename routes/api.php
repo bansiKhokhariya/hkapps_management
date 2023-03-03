@@ -187,6 +187,9 @@ Route::get('GetRedisData/{package_name}', [RawDataController::class, 'GetRedisDa
 // webcreon //
 Route::get('getList', [AppsController::class, 'getPackageList']);
 Route::get('getCurrentPackage/{package_name}', [AppsController::class, 'getCurrentPackage']);
+Route::post('copyDataFromTo', [AppsController::class, 'CopyDataFromTo']);
+Route::get('getWebCreonPackage', [AppsController::class, 'getWebCreonPackage']);
+
 
 
 // monetize setting //
@@ -207,6 +210,7 @@ Route::get('dummyPackage/store/{package_name}', [DummyPackageController::class, 
 
 // redis db 6 data get //
 Route::get('webcreon2/{package_name}', [AppsController::class, 'getDB6Data']);
+Route::get('webcreon2Db2/{package_name}', [AppsController::class, 'getDB2Data']);
 Route::get('webcreon2', [AppsController::class, 'getDB6AllData']);
 Route::post('webcreonSetData', [AppsController::class, 'setData']);
 

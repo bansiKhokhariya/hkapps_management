@@ -47,6 +47,7 @@ class AppsController extends Controller
 
         $app_link = "https://lplciltdwh6kd6qjl4ytd6tzoq0iaumr.lambda-url.us-east-1.on.aws/?id=" . $package_name;
 
+
         $res = Http::get($app_link);
 
         if($res->status() == 200){
@@ -58,7 +59,8 @@ class AppsController extends Controller
 
             $app_response = json_decode($res->getBody()->getContents());
 
-            $redis = Redis::connection('RedisApp6');
+
+            $redis = Redis::connection('RedisApp2');
             $response = $redis->get($package_name);
             $app_res_redis =  json_decode($response);
 
@@ -110,6 +112,14 @@ class AppsController extends Controller
 
     }
 
+    public function getDB2Data($package_name){
+
+        $redis = Redis::connection('RedisApp2');
+        $response = $redis->get($package_name);
+        return json_decode($response);
+
+    }
+
     public function setData(Request $request){
 
         $redis = Redis::connection('RedisApp6');
@@ -127,6 +137,30 @@ class AppsController extends Controller
         $redis = Redis::connection('RedisApp6');
         $response = $redis->keys('*');
         return response()->json($response);
+
+    }
+
+    public function CopyDataFromTo(Request $request){
+
+        $from = $request->from;
+        $to = $request->to;
+
+        if($request->from && $request->to){
+            $redis = Redis::connection('RedisApp6');
+            $fromReponse = $redis->get($from);
+
+            $redis->set($to, $fromReponse);
+
+            return 'data copy and paste succesfully';
+        }
+        return response()->json('please enter package name','422');
+
+    }
+
+    public function getWebCreonPackage(){
+
+        $getWebCreonPackage = App::pluck('package_name');
+        return $getWebCreonPackage;
 
     }
 

@@ -32,11 +32,16 @@ class SpyApps extends Model
     public function getAvgDailyInstalls($packageName)
     {
         $countDailyInstalls = SpyAppDetails::where('packageName', $packageName)->count();
-        $sumDailyInstalls = SpyAppDetails::where('packageName', $packageName)->sum('daily_installs');
 
-        $avgDailyInstall = round($sumDailyInstalls / $countDailyInstalls) ;
+        if ($countDailyInstalls > 0) {
+            $sumDailyInstalls = SpyAppDetails::where('packageName', $packageName)->sum('daily_installs');
 
-        return $avgDailyInstall;
+            $avgDailyInstall = round($sumDailyInstalls / $countDailyInstalls);
+
+            return $avgDailyInstall;
+        }
+        return 0;
+
     }
 
 
