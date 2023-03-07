@@ -129,6 +129,17 @@ class ActivityHistoryController extends Controller
 
     }
 
+    public function activityStore(Request $request){
+
+        $activity = new Activity();
+        $activity->log_name = $request->log_name;
+        $activity->description = $request->description;
+        $activity->causer_id =  $request->causer_id;
+        $activity->save();
+        return $activity;
+
+    }
+
 
 
 }

@@ -201,6 +201,7 @@ Route::put('test_store_monetize', [AllAppsController::class, 'test_store_monetiz
 // Activity History //
 Route::get('activity_history', [ActivityHistoryController::class, 'index']);
 Route::post('filter_activity_history', [ActivityHistoryController::class, 'filterDateRangeOrUser']);
+Route::post('activityStore', [ActivityHistoryController::class, 'activityStore']);
 
 
 // dummy package //
@@ -263,6 +264,7 @@ Route::get('getSpyApp/{packageName}',[SpyAppsController::class,'getSpyApp']);
 
 // county //
 Route::get('getCountry',[CommanMasterController::class,'getCountry']);
+
 
 
 

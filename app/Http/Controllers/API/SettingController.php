@@ -158,10 +158,12 @@ class SettingController extends Controller
 
     public function startSpyAppDetailsCron()
     {
+        ini_set('max_execution_time', 0);
 
         $setting = Setting::where('cron', 'SpyAppDetails')->first();
         $setting->infinity = 1;
         $setting->save();
+
 
         for ($i = 1; $i <= INF; $i++) {
             $getSetting = Setting::where('cron', 'SpyAppDetails')->first();
