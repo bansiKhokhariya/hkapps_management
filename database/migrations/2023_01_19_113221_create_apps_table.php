@@ -20,6 +20,7 @@ class CreateAppsTable extends Migration
             $table->string('title');
             $table->string('icon');
             $table->string('developer');
+            $table->string('status');
             $table->integer('company_master_id')->unsigned()->nullable();
             $table->foreign('company_master_id')->references('id')->on('hk_apps_management.company_master');
             $table->softDeletes();

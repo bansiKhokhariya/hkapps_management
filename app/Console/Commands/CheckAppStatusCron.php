@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\AllApps;
+use App\Models\App;
 use App\Models\AppDetails;
 use App\Models\User;
 use App\Notifications\RemoveAppNotification;
@@ -68,6 +69,28 @@ class CheckAppStatusCron extends Command
 //                        $notification->notify(new RemoveAppNotification($app_details, $auth_user));
                         //****** //
 
+                        $get_app->status = 'removed';
+                        $get_app->save();
+
+                    } else {
+                        \Log::info('app not found');
+                    }
+                }
+            }
+        }
+
+        $apps = App::get();
+        if ($apps->count() > 0) {
+            foreach ($apps as $app) {
+
+                $app_details_link = "https://play.google.com/store/apps/details?id=" . $app->package_name;
+                $res = Http::get($app_details_link);
+                if ($res->status() == 200) {
+
+                } else {
+                    $get_app = App::where('package_name', $app->package_name)->where('status','live')->first();
+                    if ($get_app) {
+                        \Log::info($app->id);
                         $get_app->status = 'removed';
                         $get_app->save();
 

@@ -73,6 +73,7 @@ class AppsController extends Controller
                 $app->icon = $app_response->icon;
                 $app->developer = $app_response->developer;
                 $app->app_accountName = $app_res_redis->APP_SETTINGS->app_accountName;
+                $app->status = 'live';
                 $app->save();
 
                 //event call

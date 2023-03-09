@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Events\RedisDataEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ActivityHistoryResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Spatie\Activitylog\Models\Activity;
+
 
 class ActivityHistoryController extends Controller
 {
@@ -136,6 +138,10 @@ class ActivityHistoryController extends Controller
         $activity->description = $request->description;
         $activity->causer_id =  $request->causer_id;
         $activity->save();
+
+        // call event
+         event(new RedisDataEvent());
+
         return $activity;
 
     }
