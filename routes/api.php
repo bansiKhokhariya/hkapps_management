@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\AdsNetworkConroller;
 use App\Http\Controllers\API\CommanMasterController;
 use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\GithubTokenController;
@@ -171,6 +172,9 @@ Route::middleware('auth:api')->group(function () {
 
     // Plateform //
     Route::resource('platform', PlatformController::class);
+
+    // AdsNetwork //
+    Route::resource('adsNetwork', AdsNetworkConroller::class);
 });
 
 
