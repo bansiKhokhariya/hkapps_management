@@ -123,6 +123,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('appForceDelete', [AllAppsController::class, 'forceDelete']);
     Route::post('appRestore/{id}', [AllAppsController::class, 'appRestore']);
     Route::get('getDeletedApp', [AllAppsController::class, 'getDeletedApp']);
+    Route::get('getRemovedApp', [AllAppsController::class, 'getRemovedApp']);
 
     // test All Apps //
     Route::get('testAllApps/{testAllApp}', [AllAppsController::class, 'testShow']);
@@ -230,7 +231,7 @@ Route::post('setTestData', [AllAppsController::class, 'setTestData']);
 
 // get developer name //
 Route::get('getDeveloperName', [AllAppsController::class, 'getDeveloperName']);
-Route::get('searchAppByDeveloper/{developer}', [AllAppsController::class, 'searchAppByDeveloper']);
+Route::get('searchAppByDeveloper/{developer}/{status}', [AllAppsController::class, 'searchAppByDeveloper']);
 
 // AdsPro Version //
 Route::get('getAdsProVersion', [AdsProVersionController::class, 'adsProVersion']);

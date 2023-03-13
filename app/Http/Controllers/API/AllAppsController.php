@@ -31,9 +31,9 @@ class AllAppsController extends Controller
 
         $companyUser = Auth::user()->company_master_id;
         if (!$companyUser) {
-            $allApp = AllApps::filter()->latest()->get();
+            $allApp = AllApps::where('status','live')->filter()->latest()->get();
         } else {
-            $allApp = AllApps::where('company_master_id', $companyUser)->filter()->get();
+            $allApp = AllApps::where('company_master_id', $companyUser)->where('status','live')->filter()->get();
         }
         return AllAppResource::collection($allApp);
     }
@@ -602,14 +602,30 @@ class AllAppsController extends Controller
 
     }
 
-    public function searchAppByDeveloper($developer)
+    public function searchAppByDeveloper($developer, $status)
     {
 
         $app_details = AppDetails::where('developer', $developer)->pluck('app_packageName');
 
-        $all_apps = AllApps::whereIn('app_packageName', $app_details)->get();
+        if($status == 'live'){
+            $all_apps = AllApps::whereIn('app_packageName', $app_details)->where('status','live')->get();
+        }else{
+            $all_apps = AllApps::whereIn('app_packageName', $app_details)->get();
+        }
 
         return AllAppResource::collection($all_apps);
+
+    }
+
+    public function getRemovedApp(){
+
+        $companyUser = Auth::user()->company_master_id;
+        if (!$companyUser) {
+            $allApp = AllApps::filter()->latest()->get();
+        } else {
+            $allApp = AllApps::where('company_master_id', $companyUser)->filter()->get();
+        }
+        return AllAppResource::collection($allApp);
 
     }
 
