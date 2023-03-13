@@ -113,6 +113,12 @@ class CheckAppStatusCron extends Command
                 $app_details_link = "https://play.google.com/store/apps/details?id=" . $app->package_name;
                 $res = Http::get($app_details_link);
                 if ($res->status() == 200) {
+                    $get_app = App::where('package_name', $app->package_name)->where('status', 'removed')->first();
+                    if ($get_app) {
+                        // \Log::info($app->id);
+                        $get_app->status = 'live';
+                        $get_app->save();
+                    }
                 } else {
                     $get_app = App::where('package_name', $app->package_name)->where('status', 'live')->first();
                     if ($get_app) {

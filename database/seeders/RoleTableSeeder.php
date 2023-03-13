@@ -77,6 +77,10 @@ class RoleTableSeeder extends Seeder
         Permission::create(['name' => 'commanMaster-store']);
         Permission::create(['name' => 'commanMaster-update']);
         Permission::create(['name' => 'commanMaster-delete']);
+        Permission::create(['name' => 'adsNetwork-view']);
+        Permission::create(['name' => 'adsNetwork-store']);
+        Permission::create(['name' => 'adsNetwork-update']);
+        Permission::create(['name' => 'adsNetwork-delete']);
 
 
 
@@ -142,6 +146,11 @@ class RoleTableSeeder extends Seeder
         $role1->givePermissionTo('commanMaster-store');
         $role1->givePermissionTo('commanMaster-update');
         $role1->givePermissionTo('commanMaster-delete');
+        $role1->givePermissionTo('adsNetwork-view');
+        $role1->givePermissionTo('adsNetwork-store');
+        $role1->givePermissionTo('adsNetwork-update');
+        $role1->givePermissionTo('adsNetwork-delete');
+
 
 
 

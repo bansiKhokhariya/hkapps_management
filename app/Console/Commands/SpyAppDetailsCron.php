@@ -45,22 +45,27 @@ class SpyAppDetailsCron extends Command
             foreach ($getSpyApp as $spyApp) {
 
                 $gPlay = new \Nelexa\GPlay\GPlayApps();
-                $appInfo = $gPlay->getAppInfo($spyApp->packageName);
 
-                $spyAppDetails = SpyAppDetails::where('packageName',$spyApp->packageName)->latest()->first();
-                if($spyAppDetails){
-                    $dailyInstalls = $appInfo->installs - $spyAppDetails->downloads;
-                }else{
-                    $dailyInstalls = 0 ;
+                $checkApp = $gPlay->existsApp($spyApp->packageName);
+
+                if ($checkApp > 0) {
+
+                    $appInfo = $gPlay->getAppInfo($spyApp->packageName);
+
+                    $spyAppDetails = SpyAppDetails::where('packageName', $spyApp->packageName)->latest()->first();
+                    if ($spyAppDetails) {
+                        $dailyInstalls = $appInfo->installs - $spyAppDetails->downloads;
+                    } else {
+                        $dailyInstalls = 0;
+                    }
+                    $spyAppDetails = new SpyAppDetails();
+                    $spyAppDetails->packageName = $spyApp->packageName;
+                    $spyAppDetails->downloads = $appInfo->installs;
+                    $spyAppDetails->ratings = $appInfo->score;
+                    $spyAppDetails->reviews = $appInfo->numberReviews;
+                    $spyAppDetails->daily_installs = $dailyInstalls;
+                    $spyAppDetails->save();
                 }
-
-                $spyAppDetails = new SpyAppDetails();
-                $spyAppDetails->packageName = $spyApp->packageName;
-                $spyAppDetails->downloads = $appInfo->installs;
-                $spyAppDetails->ratings = $appInfo->score;
-                $spyAppDetails->reviews = $appInfo->numberReviews;
-                $spyAppDetails->daily_installs = $dailyInstalls;
-                $spyAppDetails->save();
 
             }
 
