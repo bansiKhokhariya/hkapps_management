@@ -200,6 +200,9 @@ Route::get('getWebCreonPackage', [AppsController::class, 'getWebCreonPackage']);
 // monetize setting //
 Route::put('store_monetize', [AllAppsController::class, 'store_monetize']);
 
+//generate packagename //
+Route::get('generatePackageName/{name}',[AllAppsController::class,'generatePackageName']);
+
 // test monetize setting //
 Route::put('test_store_monetize', [AllAppsController::class, 'test_store_monetize']);
 
@@ -269,6 +272,7 @@ Route::get('getSpyApp/{packageName}',[SpyAppsController::class,'getSpyApp']);
 
 // county //
 Route::get('getCountry',[CommanMasterController::class,'getCountry']);
+
 
 
 

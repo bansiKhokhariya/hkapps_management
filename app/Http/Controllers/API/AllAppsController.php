@@ -18,6 +18,7 @@ use App\Models\GitHubToken;
 use App\Models\TestAdPlacement;
 use App\Models\TestAllApp;
 use App\Models\User;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Events\RedisDataEvent;
@@ -31,18 +32,27 @@ class AllAppsController extends Controller
 
         $companyUser = Auth::user()->company_master_id;
         if (!$companyUser) {
-            $allApp = AllApps::where('status','live')->filter()->latest()->get();
+            $allApp = AllApps::where('status', 'live')->filter()->latest()->get();
         } else {
-            $allApp = AllApps::where('company_master_id', $companyUser)->where('status','live')->filter()->get();
+            $allApp = AllApps::where('company_master_id', $companyUser)->where('status', 'live')->filter()->get();
         }
         return AllAppResource::collection($allApp);
     }
 
-    public function store(CreateAllAppRequest $request, CreateTestAllAppsRequest $testRequest)
+    public function store(CreateAllAppRequest $request)
+
     {
-        $allApps = AllAppResource::make($request->persist());
-        $testAllApps = AllAppResource::make($testRequest->persist());
-        return $allApps;
+        $app_details_link = "https://play.google.com/store/apps/details?id=" . $request->app_packageName;
+        $res = Http::get($app_details_link);
+        if ($res->status() == 200) {
+            return response()->json([
+                'message' => 'This packageName already exists in playStore!',
+            ], 422);
+        } else {
+            $allApps = AllAppResource::make($request->persist());
+            return $allApps;
+        }
+
     }
 
     public function show(AllApps $allApp)
@@ -255,9 +265,9 @@ class AllAppsController extends Controller
                     // create github repo //
                     $getToken = GitHubToken::find(1);
                     $response = Http::withHeaders([
-                        'Authorization' =>  'Bearer '.$getToken->github_access_token,
+                        'Authorization' => 'Bearer ' . $getToken->github_access_token,
                     ])->post('https://api.github.com/user/repos', [
-                        'name' => $allApps->app_packageName.'_'.$allApps->id,
+                        'name' => $allApps->app_packageName . '_' . $allApps->id,
                         'description' => 'hkApps repo',
                     ]);
                     // ************* //
@@ -607,9 +617,9 @@ class AllAppsController extends Controller
 
         $app_details = AppDetails::where('developer', $developer)->pluck('app_packageName');
 
-        if($status == 'live'){
-            $all_apps = AllApps::whereIn('app_packageName', $app_details)->where('status','live')->get();
-        }else{
+        if ($status == 'live') {
+            $all_apps = AllApps::whereIn('app_packageName', $app_details)->where('status', 'live')->get();
+        } else {
             $all_apps = AllApps::whereIn('app_packageName', $app_details)->get();
         }
 
@@ -617,7 +627,8 @@ class AllAppsController extends Controller
 
     }
 
-    public function getRemovedApp(){
+    public function getRemovedApp()
+    {
 
         $companyUser = Auth::user()->company_master_id;
         if (!$companyUser) {
@@ -627,6 +638,35 @@ class AllAppsController extends Controller
         }
         return AllAppResource::collection($allApp);
 
+    }
+
+    public function generatePackageName($name)
+    {
+
+        $app_details_link = "https://suggestqueries.google.com/complete/search?output=chrome&q=" . $name;
+
+        $res = Http::get($app_details_link);
+        $result = json_decode($res->getBody()->getContents());
+        $array_res = $result[1];
+        $newArray = [];
+        foreach ($array_res as $array_name) {
+            $journalName = preg_replace('/\s+/', '.', $array_name);
+            $newjournalName = 'com.' . $journalName;
+
+            $allApps = AllApps::where('app_packageName', $newjournalName)->first();
+
+            if (!$allApps) {
+                $app_details_link = "https://play.google.com/store/apps/details?id=" . $newjournalName;
+                $res = Http::get($app_details_link);
+                if ($res->status() == 200) {
+
+                } else {
+                    array_push($newArray, $newjournalName);
+                }
+            }
+
+        }
+        return $newArray;
     }
 
 

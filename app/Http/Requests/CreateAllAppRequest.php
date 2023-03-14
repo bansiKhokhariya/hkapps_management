@@ -22,6 +22,10 @@ class CreateAllAppRequest extends FormRequest
      *
      * @return bool
      */
+
+    protected $connection = 'mysql4';
+    protected $table = 'all_apps';
+
     public function authorize()
     {
         return true;
@@ -35,9 +39,11 @@ class CreateAllAppRequest extends FormRequest
     public function rules()
     {
         return [
-            // 'app_logo'=>'required',
+
+
+        // 'app_logo'=>'required',
             'app_name' => 'required',
-            'app_packageName' => 'required|unique:all_apps,app_packageName',
+            'app_packageName' => 'required|unique:mysql4.all_apps,app_packageName',
 //            'app_apikey' => 'nullable|unique:all_apps,app_apikey,NULL,id,deleted_at,NULL'
         ];
     }
@@ -70,7 +76,10 @@ class CreateAllAppRequest extends FormRequest
                 $allApp->company_master_id = $user_company;
             }
             //
+
             $allApp->save();
+
+
 
             // create github repo //
             $getToken = GitHubToken::find(1);
@@ -207,15 +216,13 @@ class CreateAllAppRequest extends FormRequest
                 }
 
             }else{
-
-                $get_app_details = AppDetails::where('allApps_id', $allApp->id)->first();
-                if(!$get_app_details){
-                    $appDetails = new AppDetails();
-                    $appDetails->allApps_id = $allApp->id;
-                    $appDetails->status = 'removed';
-                    $appDetails->save();
-                }
-
+//                $get_app_details = AppDetails::where('allApps_id', $allApp->id)->first();
+//                if(!$get_app_details){
+//                    $appDetails = new AppDetails();
+//                    $appDetails->allApps_id = $allApp->id;
+//                    $appDetails->status = 'removed';
+//                    $appDetails->save();
+//                }
             }
 
             // **************** //
