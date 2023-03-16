@@ -14,6 +14,7 @@ use App\Models\AdPlacement;
 use App\Models\AllApps;
 use App\Models\ApikeyList;
 use App\Models\AppDetails;
+use App\Models\AppRelatedWord;
 use App\Models\GitHubToken;
 use App\Models\TestAdPlacement;
 use App\Models\TestAllApp;
@@ -650,8 +651,20 @@ class AllAppsController extends Controller
         $array_res = $result[1];
         $newArray = [];
         foreach ($array_res as $array_name) {
+
+            $appRelatedWords = AppRelatedWord::pluck('word');
+            $appRelatedWordsConvertArray = $appRelatedWords->toArray();
+
+            $arrayRandomNumber = array_rand($appRelatedWordsConvertArray);
+            $randomWord = $appRelatedWordsConvertArray[$arrayRandomNumber];
+            $randomWordName = preg_replace('/\s+/', '.', $randomWord);
+
+            $prependArray = ['com', 'in', 'us', 'co.in', 'au'];
+            $prependArrayRandomNumber = array_rand($prependArray);
+            $prependWord = $prependArray[$prependArrayRandomNumber];
+
             $journalName = preg_replace('/\s+/', '.', $array_name);
-            $newjournalName = 'com.' . $journalName;
+            $newjournalName = $prependWord . '.' . $journalName . '.' . $randomWordName;
 
             $allApps = AllApps::where('app_packageName', $newjournalName)->first();
 
