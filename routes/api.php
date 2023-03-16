@@ -4,6 +4,7 @@ use App\Http\Controllers\API\AdsNetworkConroller;
 use App\Http\Controllers\API\CommanMasterController;
 use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\GithubTokenController;
+use App\Http\Controllers\API\GooglePlayApiController;
 use App\Http\Controllers\API\SpyAppsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -273,6 +274,12 @@ Route::get('getSpyApp/{packageName}',[SpyAppsController::class,'getSpyApp']);
 // county //
 Route::get('getCountry',[CommanMasterController::class,'getCountry']);
 
+//google play //
+
+Route::get('play/apps/{id}',[GooglePlayApiController::class,'GetGooglePLayAppById']);
+Route::get('play/info/countries',[GooglePlayApiController::class,'GetGooglePlayAppAvailableCountry']);
+Route::post('play/apps',[GooglePlayApiController::class,'SearchGooglePlayAppsByQuery']);
+Route::post('play/apps/query',[GooglePlayApiController::class,'SearchGooglePlayAppsByQueryPost']);
 
 
 
