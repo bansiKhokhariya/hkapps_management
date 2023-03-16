@@ -682,5 +682,4 @@ class AllAppsController extends Controller
         return $newArray;
     }
 
-
 }
