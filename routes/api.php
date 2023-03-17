@@ -277,9 +277,21 @@ Route::get('getCountry',[CommanMasterController::class,'getCountry']);
 //google play //
 
 Route::get('play/apps/{id}',[GooglePlayApiController::class,'GetGooglePLayAppById']);
-Route::get('play/info/countries',[GooglePlayApiController::class,'GetGooglePlayAppAvailableCountry']);
 Route::post('play/apps',[GooglePlayApiController::class,'SearchGooglePlayAppsByQuery']);
 Route::post('play/apps/query',[GooglePlayApiController::class,'SearchGooglePlayAppsByQueryPost']);
+Route::post('play/apps/{id}/reviews',[GooglePlayApiController::class,'appReview']);
+Route::get('play/info/countries',[GooglePlayApiController::class,'GetGooglePlayAppAvailableCountry']);
+Route::get('play/info/languages',[GooglePlayApiController::class,'GetGooglePlayAppAvailableLanguage']);
+Route::post('play/developers/{id}',[GooglePlayApiController::class,'getDeveloper']);
+Route::post('play/developers',[GooglePlayApiController::class,'devSearch']);
+Route::post('play/esimates',[GooglePlayApiController::class,'getAppsEsimates']);
+Route::post('play/suggestions',[GooglePlayApiController::class,'getSuggest']);
+Route::post('play/liveops',[GooglePlayApiController::class,'getEvents']);
+
+
+
+
+
 
 
 
