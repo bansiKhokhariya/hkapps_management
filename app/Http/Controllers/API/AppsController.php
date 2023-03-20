@@ -4,6 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Events\UserEvent;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\WebCreon2Resource;
+use App\Models\AllApps;
 use App\Models\App;
 use App\Models\CompanyMaster;
 use App\Models\User;
@@ -15,10 +17,11 @@ use Illuminate\Support\Facades\Redis;
 
 class AppsController extends Controller
 {
-    public function index(){
+    public function index()
+    {
 
         $companyUser = Auth::user()->company_master_id;
-        $companyMaster = CompanyMaster::where('id',$companyUser)->first();
+        $companyMaster = CompanyMaster::where('id', $companyUser)->first();
 
         if (!$companyUser) {
             $app = App::filter()->latest()->paginate(9);
@@ -30,7 +33,8 @@ class AppsController extends Controller
 
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
 
         $app = new App();
         $app->title = $request->title;
@@ -43,14 +47,15 @@ class AppsController extends Controller
 
     }
 
-    public function fetchAppData($package_name){
+    public function fetchAppData($package_name)
+    {
 
         $app_link = "https://lplciltdwh6kd6qjl4ytd6tzoq0iaumr.lambda-url.us-east-1.on.aws/?id=" . $package_name;
 
 
         $res = Http::get($app_link);
 
-        if($res->status() == 200){
+        if ($res->status() == 200) {
 
 //            // for event
 //            $id = Auth::user()->id;
@@ -62,11 +67,11 @@ class AppsController extends Controller
 
             $redis = Redis::connection('RedisApp2');
             $response = $redis->get($package_name);
-            $app_res_redis =  json_decode($response);
+            $app_res_redis = json_decode($response);
 
 
-            $get_app = App::where('package_name',$package_name)->first();
-            if(!($get_app)){
+            $get_app = App::where('package_name', $package_name)->first();
+            if (!($get_app)) {
                 $app = new App();
                 $app->title = $app_response->title;
                 $app->package_name = $package_name;
@@ -82,15 +87,16 @@ class AppsController extends Controller
                 return response()->json($app);
             }
 
-        }else{
+        } else {
 
             $app_response = $res->getBody()->getContents();
-            return response()->json($app_response,500);
+            return response()->json($app_response, 500);
         }
 
     }
 
-    public function getPackageList(){
+    public function getPackageList()
+    {
 
         $app_link = "https://webcreon.com/direct/getlist";
         $res = Http::get($app_link);
@@ -98,14 +104,16 @@ class AppsController extends Controller
 
     }
 
-    public function getCurrentPackage($package_name){
+    public function getCurrentPackage($package_name)
+    {
 
-        $app_link = "https://webcreon.com/direct/getcurrent?pkg=". $package_name;;
+        $app_link = "https://webcreon.com/direct/getcurrent?pkg=" . $package_name;;
         $res = Http::get($app_link);
         return $res;
     }
 
-    public function getDB6Data($package_name){
+    public function getDB6Data($package_name)
+    {
 
         $redis = Redis::connection('RedisApp6');
         $response = $redis->get($package_name);
@@ -113,7 +121,8 @@ class AppsController extends Controller
 
     }
 
-    public function getDB2Data($package_name){
+    public function getDB2Data($package_name)
+    {
 
         $redis = Redis::connection('RedisApp2');
         $response = $redis->get($package_name);
@@ -121,7 +130,8 @@ class AppsController extends Controller
 
     }
 
-    public function setData(Request $request){
+    public function setData(Request $request)
+    {
 
         $redis = Redis::connection('RedisApp6');
         $package_name = $request->package_name;
@@ -133,7 +143,8 @@ class AppsController extends Controller
 
     }
 
-    public function getDB6AllData(){
+    public function getDB6AllData()
+    {
 
         $redis = Redis::connection('RedisApp6');
         $response = $redis->keys('*');
@@ -141,12 +152,13 @@ class AppsController extends Controller
 
     }
 
-    public function CopyDataFromTo(Request $request){
+    public function CopyDataFromTo(Request $request)
+    {
 
         $from = $request->from;
         $to = $request->to;
 
-        if($request->from && $request->to){
+        if ($request->from && $request->to) {
             $redis = Redis::connection('RedisApp6');
             $fromReponse = $redis->get($from);
 
@@ -154,15 +166,30 @@ class AppsController extends Controller
 
             return 'data copy and paste succesfully';
         }
-        return response()->json('please enter package name','422');
+        return response()->json('please enter package name', '422');
 
     }
 
-    public function getWebCreonPackage(){
+    public function getWebCreonPackage()
+    {
 
         $getWebCreonPackage = App::pluck('package_name');
         return $getWebCreonPackage;
 
     }
+
+    public function webCreon2List()
+    {
+        $app = App::all();
+        return response()->json($app);
+    }
+
+    public function getAppInfoWebCreon2($packageName){
+
+        $adplacement = App::where('package_name', $packageName)->get();
+        return WebCreon2Resource::collection($adplacement);
+
+    }
+
 
 }

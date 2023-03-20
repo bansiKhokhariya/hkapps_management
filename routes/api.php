@@ -195,6 +195,7 @@ Route::get('getList', [AppsController::class, 'getPackageList']);
 Route::get('getCurrentPackage/{package_name}', [AppsController::class, 'getCurrentPackage']);
 Route::post('copyDataFromTo', [AppsController::class, 'CopyDataFromTo']);
 Route::get('getWebCreonPackage', [AppsController::class, 'getWebCreonPackage']);
+Route::get('webCreon2List', [AppsController::class, 'webCreon2List']);
 
 
 
@@ -223,6 +224,7 @@ Route::get('webcreon2/{package_name}', [AppsController::class, 'getDB6Data']);
 Route::get('webcreon2Db2/{package_name}', [AppsController::class, 'getDB2Data']);
 Route::get('webcreon2', [AppsController::class, 'getDB6AllData']);
 Route::post('webcreonSetData', [AppsController::class, 'setData']);
+Route::post('getAppInfoWebCreon2/{packageName}', [AppsController::class, 'getAppInfoWebCreon2']);
 
 // search package_name //
 Route::get('search/{package_name}', [AllAppsController::class, 'searchPackage']);
@@ -287,6 +289,7 @@ Route::post('play/developers',[GooglePlayApiController::class,'devSearch']);
 Route::post('play/esimates',[GooglePlayApiController::class,'getAppsEsimates']);
 Route::post('play/suggestions',[GooglePlayApiController::class,'getSuggest']);
 Route::post('play/liveops',[GooglePlayApiController::class,'getEvents']);
+
 
 
 

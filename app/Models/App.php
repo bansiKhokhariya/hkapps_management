@@ -27,4 +27,19 @@ class App extends Model
     {
         return resolve(AppFilters::class)->apply($query);
     }
+
+    public function appDetails()
+    {
+
+        $app_details = AppDetails::where('app_packageName', $this->app_packageName)->first();
+        return $app_details;
+
+    }
+
+    public function TotalRequestCount()
+    {
+        $get_api_keylist = ApikeyList::where('apikey_packageName', $this->app_packageName)->sum('apikey_request');
+        $totalRequest = (int)$get_api_keylist;
+        return $totalRequest;
+    }
 }
