@@ -6,6 +6,7 @@ use App\Filters\AppFilters;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Http;
 
 class App extends Model
 {
@@ -31,14 +32,21 @@ class App extends Model
     public function appDetails()
     {
 
-        $app_details = AppDetails::where('app_packageName', $this->app_packageName)->first();
-        return $app_details;
+//        $app_details = AppDetails::where('app_packageName', $this->app_packageName)->first();
+//        return $app_details;
+
+        $app_details_link = "https://lplciltdwh6kd6qjl4ytd6tzoq0iaumr.lambda-url.us-east-1.on.aws/?id=" . $this->package_name;
+        $res = Http::get($app_details_link);
+        if ($res->status() == 200) {
+            $repo_response = $res->getBody()->getContents();
+            $value = json_decode($repo_response);
+        }
 
     }
 
     public function TotalRequestCount()
     {
-        $get_api_keylist = ApikeyList::where('apikey_packageName', $this->app_packageName)->sum('apikey_request');
+        $get_api_keylist = ApikeyList::where('apikey_packageName', $this->package_name)->sum('apikey_request');
         $totalRequest = (int)$get_api_keylist;
         return $totalRequest;
     }
