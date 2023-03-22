@@ -68,40 +68,6 @@ Route::middleware('auth:api')->group(function () {
     // task //
     Route::resource('task', TaskController::class);
 
-
-    // task status change //
-    Route::post('start_task/{task_id}', [TaskController::class, 'task_start']);
-    Route::post('stop_task/{task_id}', [TaskController::class, 'stop_task']);
-    Route::post('ready_testing_task/{task_id}', [TaskController::class, 'ready_testing_task']);
-    Route::post('done_task/{task_id}', [TaskController::class, 'done_task']);
-    Route::post('reworking_task/{task_id}', [TaskController::class, 'task_reworking']);
-    Route::post('task_pending/{task_id}', [TaskController::class, 'task_pending']);
-    Route::post('task_status_change/{task_id}', [TaskController::class, 'task_status_change']);
-
-
-    // aso status change //
-    Route::post('aso_task_start/{task_id}', [TaskController::class, 'aso_task_start']);
-    Route::post('aso_task_stop/{task_id}', [TaskController::class, 'aso_task_stop']);
-    Route::post('aso_task_done/{task_id}', [TaskController::class, 'aso_task_done']);
-    Route::post('get_aso_task', [TaskController::class, 'getAsoTask']);
-
-
-    //delete attchment //
-    Route::post('deleteAttchment/{id}', [TaskController::class, 'deleteAttchment']);
-
-
-    // show task //
-    Route::get('ready_testing_task_show/{prev_person_id}', [TaskController::class, 'ready_testing_task_show']);
-    Route::get('user_done_task_show/{prev_person_id}', [TaskController::class, 'user_done_task_show']);
-    Route::get('tester_done_task_show', [TaskController::class, 'tester_done_task_show']);
-    Route::get('tester_reworking_task_show/{prev_person_id}', [TaskController::class, 'reworking_task_show']);
-    Route::get('get_delete_task', [TaskController::class, 'getDeleteTask']);
-    Route::get('get_delete_task_show/{id}', [TaskController::class, 'getDeleteTaskShow']);
-    Route::post('get_user_task', [TaskController::class, 'getUserTask']);
-    Route::post('get_task_time', [TaskController::class, 'getTaskTime']);
-    Route::get('get_app_no', [TaskController::class, 'get_app_no']);
-
-
     // notification //
     Route::get('getAllNotification', [NotificationController::class, 'getAllNotification']);
     Route::get('getUnreadNotification', [NotificationController::class, 'getUnreadNotification']);
@@ -109,9 +75,7 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('deleteNotification/{id}', [NotificationController::class, 'deleteNotification']);
 
 
-    // Analytics  //
-    Route::post('employee_task_status', [TaskController::class, 'employeeTaskStatus']);
-    Route::post('employee_task', [TaskController::class, 'employeeTask']);
+
 
     // apps //
     Route::resource('app', AppsController::class);
