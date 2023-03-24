@@ -84,7 +84,6 @@ class RoleTableSeeder extends Seeder
 
 
 
-
         $role1 = Role::create(['name' => 'super_admin']);
         $role1->givePermissionTo('dashboard-view');
         $role1->givePermissionTo('user-view');
@@ -150,10 +149,6 @@ class RoleTableSeeder extends Seeder
         $role1->givePermissionTo('adsNetwork-store');
         $role1->givePermissionTo('adsNetwork-update');
         $role1->givePermissionTo('adsNetwork-delete');
-
-
-
-
 
 
         $user = User::create([

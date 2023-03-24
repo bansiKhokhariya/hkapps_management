@@ -5,6 +5,8 @@ namespace App\Http\Requests;
 use App\Events\RedisDataEvent;
 use App\Models\Task;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Http;
+use App\Models\GitHubToken;
 
 
 class CreateTaskRequest extends FormRequest
@@ -40,8 +42,35 @@ class CreateTaskRequest extends FormRequest
         $task->status = 'pending';
         $task->save();
 
+
+        // create github repo //
+        $name = str_replace(' ', '_', $task->title);
+        $gitRepoName = $name . '_' . $task->id;
+        $getToken = GitHubToken::find(1);
+        $getTokenNew = str_replace("\r\n", '', $getToken->github_access_token);
+
+        $token = 'Bearer '. $getTokenNew ;
+
+        $response = Http::withHeaders([
+            'Authorization' => $token,
+            'Content-Type' => 'application/json',
+        ])->post('https://api.github.com/user/repos',[
+            'name' => $gitRepoName,
+            'description' => 'hkApps Task Repo',
+        ])->json();
+
+
+
+//        $error = $response['errors'][0]['message'];
+        $gettask = Task::find($task->id);
+        $gettask->githubRepoLink = $response['clone_url'];
+        $gettask->save();
+
+        // ************* //
+
+
         // call event
-//         event(new RedisDataEvent());
+        event(new RedisDataEvent());
 
         return $task;
 

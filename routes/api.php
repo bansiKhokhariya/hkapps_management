@@ -67,6 +67,8 @@ Route::middleware('auth:api')->group(function () {
 
     // task //
     Route::resource('task', TaskController::class);
+    Route::get('startTask/{id}', [TaskController::class, 'startTask']);
+    Route::get('endTask/{id}', [TaskController::class, 'endTask']);
 
     // notification //
     Route::get('getAllNotification', [NotificationController::class, 'getAllNotification']);
@@ -74,14 +76,10 @@ Route::middleware('auth:api')->group(function () {
     Route::get('markAsRead', [NotificationController::class, 'markAsRead']);
     Route::delete('deleteNotification/{id}', [NotificationController::class, 'deleteNotification']);
 
-
-
-
     // apps //
     Route::resource('app', AppsController::class);
     Route::get('fetchAppData/{package_name}', [AppsController::class, 'fetchAppData']);
     Route::post('searchApp', [AppsController::class, 'search']);
-
 
     // all apps //
     Route::resource('allApp', AllAppsController::class);
@@ -93,9 +91,6 @@ Route::middleware('auth:api')->group(function () {
     // test All Apps //
     Route::get('testAllApps/{testAllApp}', [AllAppsController::class, 'testShow']);
     Route::post('testAllApps/{testAllApp}', [AllAppsController::class, 'testUpdate']);
-
-
-
 
     // apikey list //
     Route::resource('apikey_list', ApiKeyListController::class);

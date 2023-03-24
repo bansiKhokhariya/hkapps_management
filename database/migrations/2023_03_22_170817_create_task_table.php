@@ -19,8 +19,15 @@ class CreateTaskTable extends Migration
             $table->string('refrence')->nullable();
             $table->text('description')->nullable();
             $table->string('status')->default('pending');
-            $table->string('developer')->nullable();
-            $table->string('designer')->nullable();
+            $table->string('developerStatus')->default('pending');
+            $table->string('developerStartDate')->nullable();
+            $table->string('developerEndDate')->nullable();
+            $table->string('assignDeveloperName')->nullable();
+            $table->string('designerStatus')->default('pending');
+            $table->string('designerEndDate')->nullable();
+            $table->string('designerStartDate')->nullable();
+            $table->string('assignDesignerName')->nullable();
+            $table->string('githubRepoLink')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
