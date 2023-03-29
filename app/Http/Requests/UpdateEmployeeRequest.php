@@ -35,9 +35,7 @@ class UpdateEmployeeRequest extends FormRequest
         return [
             'name' => 'required',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($this->user->id)],
-            'password' => 'required',
             'designation' => 'required',
-//            'company_master_id' => 'required'
         ];
     }
 
@@ -57,7 +55,13 @@ class UpdateEmployeeRequest extends FormRequest
 
         $employee->fill($this->validated());
 
-        $employee->password = bcrypt($this->password);
+
+        if($this->password){
+            $employee->password = bcrypt($this->password);
+        }else{
+            $employee->password = bcrypt($employee->password);
+        }
+
         if ($this->hasFile('profile_image')) {
             $file = $this->file('profile_image');
             $file_name = $file->getClientOriginalName();

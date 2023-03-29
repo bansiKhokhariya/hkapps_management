@@ -24,10 +24,10 @@ class SpyAppsController extends Controller
 
     }
 
+    public function getSpyApp($packageName)
+    {
 
-    public function getSpyApp($packageName){
-
-        $getSpyApp = SpyApps::where('packageName',$packageName)->get();
+        $getSpyApp = SpyApps::where('packageName', $packageName)->get();
         return SpyAppResource::collection($getSpyApp);
 
     }
@@ -130,7 +130,93 @@ class SpyAppsController extends Controller
 
     }
 
+    public function appBrowse(Request $request)
+    {
+        $mode = $request->query('mode');
+        $available = $request->query('available');
+        $query = $request->query('query');
+        $query_short = $request->query('query_short');
+        $query_description = $request->query('query_description');
+        $revenue = $request->query('revenue');
+        $downloads = $request->query('downloads');
+        $installs = $request->query('installs');
+        $ipd = $request->query('ipd');
+        $size = $request->query('size');
+        $store = $request->query('store');
+        $type = $request->query('type');
+        $released = $request->query('released');
+        $ratings = $request->query('ratings');
+        $reviews = $request->query('reviews');
+        $updates = $request->query('updates');
+        $dev = $request->query('dev');
+        $similarapp = $request->query('similarapp');
+        $builder = $request->query('builder');
+        $collection = $request->query('collection');
+        $address_country = $request->query('address_country');
+        $limit = $request->query('limit');
+        $order = $request->query('order');
+        $dir = $request->query('dir');
+        $bucket = $request->query('bucket');
+        $bucket_date = $request->query('bucket_date');
+        $wl = $request->query('wl');
+        $inapp = $request->query('inapp');
+        $creatives = $request->query('creatives');
+        $website = $request->query('website');
+        $country = $request->query('country');
+        $category = $request->query('category');
+        $storepass = $request->query('storepass');
+        $wearos = $request->query('wearos');
 
+
+        $getBrowse = Http::withHeaders([
+            'accept' => "application/json",
+            'API-KEY' => config('global.API-KEY')
+        ])->get('https://appstorespy.com/browse.json', [
+            'mode' => $mode,
+            'available' => $available,
+            'query' => $query,
+            'query_short' => $query_short,
+            'query_description' => $query_description,
+            'revenue' => $revenue,
+            'downloads' => $downloads,
+            'installs' => $installs,
+            'ipd' => $ipd,
+            'size' => $size,
+            'store' => $store,
+            'type' => $type,
+            'released' => $released,
+            'ratings' => $ratings,
+            'reviews' => $reviews,
+            'updates' => $updates,
+            'dev' => $dev,
+            'similarapp' => $similarapp,
+            'builder' => $builder,
+            'address_country' => $address_country,
+            'limit' => $limit,
+            'order' => $order,
+            'dir' => $dir,
+            'bucket' => $bucket,
+            'bucket_date' => $bucket_date,
+            'wl' => $wl,
+            'inapp' => $inapp,
+            'creatives' => $creatives,
+            'website' => $website,
+            'collection' => $collection,
+            'country' => $country,
+            'category' => $category,
+            'storepass' => $storepass,
+            'wearos' => $wearos,
+        ]);
+
+        $response = $getBrowse->json();
+
+        if (array_key_exists('errors', $response)) {
+          return response($response , 422);
+        }
+
+        return $response;
+
+    }
 
 
 }

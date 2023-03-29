@@ -62,13 +62,17 @@ class CheckAppStatusCron extends Command
                         // send app remove notification //
                         $user = User::where('roles', 'super_admin')->first();
                         $auth_user = User::find($user->id);
-                        $notification = $user;
+                        $user_notifiy = User::where('designation', 'production')->get();
+//                        $notification = $user;
                         $app_details = [
                             'Package Name' => $get_app->app_packageName,
                             'App Name' => $get_app->app_name,
                             'Icon' => $get_app->app_logo,
                         ];
-                        $notification->notify(new RemoveAppNotification($app_details, $auth_user));
+                        foreach ($user_notifiy as $notification){
+                            $notification->notify(new RemoveAppNotification($app_details, $auth_user));
+                        }
+
                         //****** //
 
                         $get_app->status = 'removed';

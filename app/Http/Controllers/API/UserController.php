@@ -81,15 +81,15 @@ class UserController extends Controller
         } else {
             $profile->profile_image = $file_path;
         }
-        if ($request->company_master_id) {
-            $profile->company_master_id = $request->company_master_id;
-        }
+//        if ($request->company_master_id) {
+//            $profile->company_master_id = $request->company_master_id;
+//        }
         if ($request->name) {
             $profile->name = $request->name;
         }
-        if ($request->designation) {
-            $profile->designation = $request->designation;
-        }
+//        if ($request->designation) {
+//            $profile->designation = $request->designation;
+//        }
         $profile->save();
         return $profile;
     }

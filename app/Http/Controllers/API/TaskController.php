@@ -20,11 +20,11 @@ class TaskController extends Controller
 
         $authUserDesignation = Auth::user()->designation;
 
-        if($authUserDesignation == 'designer'){
-            $task = Task::where('designerStatus','pending')->where('designerStatus','running')->get();
-        }elseif($authUserDesignation == 'developer'){
-            $task = Task::where('developerStatus','pending')->where('developerStatus','running')->get();
-        }else{
+        if ($authUserDesignation == 'designer') {
+            $task = Task::where('designerStatus', 'pending')->orWhere('designerStatus', 'running')->get();
+        } elseif ($authUserDesignation == 'developer') {
+            $task = Task::where('developerStatus', 'pending')->orWhere('developerStatus', 'running')->get();
+        } else {
             $task = Task::all();
         }
 
@@ -59,10 +59,9 @@ class TaskController extends Controller
         $authUserDesignation = Auth::user()->designation;
         $currentTime = Carbon::now();
 
+        $task = Task::find($id);
 
         if ($authUserDesignation == 'designer' || $authUserDesignation == "developer") {
-
-            $task = Task::find($id);
             if ($authUserDesignation == 'designer') {
                 $task->designerStatus = 'running';
                 $task->designerStartDate = $currentTime->toDateTimeString();
@@ -79,8 +78,14 @@ class TaskController extends Controller
             event(new RedisDataEvent());
 
             return 'Task Start by ' . $authUserName;
+        } elseif ($authUserDesignation == 'superadmin') {
+
+            $task->status = 'running';
+            $task->save();
+
         } else {
-            return response('Only the designer and developer can start a task!', 404);
+            return response('Only the Designer , Developer and SuperAdmin can start a task!', 404);
+
         }
 
 
@@ -123,6 +128,22 @@ class TaskController extends Controller
                     if ($task->developerStatus == 'completed') {
                         $task->status = 'completed';
                     }
+                    $task->save();
+
+                    // call event
+                    event(new RedisDataEvent());
+
+                    return 'Task Done by ' . $authUserName;
+                } else {
+                    return response('Only the person who started This Task can done it', 404);
+                }
+            } else {
+                return response('Only the person who started This Task can done it', 404);
+            }
+        } elseif ($authUserDesignation == 'superadmin') {
+            if ($task->status == 'running') {
+                if ($task->assignSuperAdminName == $authUserName) {
+                    $task->status = 'completed';
                     $task->save();
 
                     // call event

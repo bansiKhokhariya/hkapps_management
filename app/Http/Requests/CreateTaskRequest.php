@@ -44,21 +44,20 @@ class CreateTaskRequest extends FormRequest
 
 
         // create github repo //
-        $name = str_replace(' ', '_', $task->title);
-        $gitRepoName = $name . '_' . $task->id;
+        $name = str_replace(' ', '_', strtolower($task->title));
+        $gitRepoName = $task->id . '_' . $name;
         $getToken = GitHubToken::find(1);
         $getTokenNew = str_replace("\r\n", '', $getToken->github_access_token);
 
-        $token = 'Bearer '. $getTokenNew ;
+        $token = 'Bearer ' . $getTokenNew;
 
         $response = Http::withHeaders([
             'Authorization' => $token,
             'Content-Type' => 'application/json',
-        ])->post('https://api.github.com/user/repos',[
+        ])->post('https://api.github.com/user/repos', [
             'name' => $gitRepoName,
             'description' => 'hkApps Task Repo',
         ])->json();
-
 
 
 //        $error = $response['errors'][0]['message'];

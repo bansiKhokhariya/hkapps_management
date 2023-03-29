@@ -14,6 +14,7 @@ use App\Http\Controllers\API\TaskController;
 use App\Http\Controllers\API\NotificationController;
 use App\Http\Controllers\API\AppsController;
 use App\Http\Controllers\API\AdvertiseContoller;
+
 //use App\Http\Controllers\API\RedisController;
 use App\Http\Controllers\API\RawDataController;
 use App\Http\Controllers\API\AllAppsController;
@@ -157,12 +158,11 @@ Route::get('getWebCreonPackage', [AppsController::class, 'getWebCreonPackage']);
 Route::get('webCreon2List', [AppsController::class, 'webCreon2List']);
 
 
-
 // monetize setting //
 Route::put('store_monetize', [AllAppsController::class, 'store_monetize']);
 
 //generate packagename //
-Route::get('generatePackageName/{name}',[AllAppsController::class,'generatePackageName']);
+Route::get('generatePackageName/{name}', [AllAppsController::class, 'generatePackageName']);
 
 // test monetize setting //
 Route::put('test_store_monetize', [AllAppsController::class, 'test_store_monetize']);
@@ -217,37 +217,37 @@ Route::get('stopSpyAppDetailsCron', [SettingController::class, 'stopSpyAppDetail
 
 Route::get('storeRedisData/{cursor?}', [RawDataController::class, 'storeRedisData']);
 
-Route::get('getCount',[DashboardController::class,'getCount']);
+Route::get('getCount', [DashboardController::class, 'getCount']);
 
 
-
-Route::get('connectQueue', function(){
+Route::get('connectQueue', function () {
     dispatch(new App\Jobs\StoreRedisDataJob());
     dd('done');
 });
 
 // spy app //
-Route::get('saveSpyApps',[SpyAppsController::class,'saveSpyApps']);
-Route::post('saveSpyApp',[SpyAppsController::class,'saveSpyApp']);
-Route::get('getSpyApps',[SpyAppsController::class,'getSpyApps']);
-Route::get('getSpyApp/{packageName}',[SpyAppsController::class,'getSpyApp']);
+Route::get('saveSpyApps', [SpyAppsController::class, 'saveSpyApps']);
+Route::post('saveSpyApp', [SpyAppsController::class, 'saveSpyApp']);
+Route::get('getSpyApps', [SpyAppsController::class, 'getSpyApps']);
+Route::get('getSpyApp/{packageName}', [SpyAppsController::class, 'getSpyApp']);
+Route::get('appStoreSpy/browse/{mode?}/{available?}/{query?}/{query_short?}/{query_description?}/{revenue?}/{downloads?}/{installs?}/{ipd?}/{size?}/{store?}/{type?}/{released?}/{ratings?}/{reviews?}/{updates?}/{dev?}/{similarapp?}/{builder?}/{address_country?}/{limit?}/{order?}/{dir?}/{bucket?}/{bucket_date?}/{wl?}/{inapp?}/{creatives?}/{website?}/{collection?}/{country?}/{category?}/{storepass?}/{wearos?}', [SpyAppsController::class, 'appBrowse']);
 
 // county //
-Route::get('getCountry',[CommanMasterController::class,'getCountry']);
+Route::get('getCountry', [CommanMasterController::class, 'getCountry']);
 
 //google play //
 
-Route::get('play/apps/{id}',[GooglePlayApiController::class,'GetGooglePLayAppById']);
-Route::post('play/apps',[GooglePlayApiController::class,'SearchGooglePlayAppsByQuery']);
-Route::post('play/apps/query',[GooglePlayApiController::class,'SearchGooglePlayAppsByQueryPost']);
-Route::post('play/apps/{id}/reviews',[GooglePlayApiController::class,'appReview']);
-Route::get('play/info/countries',[GooglePlayApiController::class,'GetGooglePlayAppAvailableCountry']);
-Route::get('play/info/languages',[GooglePlayApiController::class,'GetGooglePlayAppAvailableLanguage']);
-Route::post('play/developers/{id}',[GooglePlayApiController::class,'getDeveloper']);
-Route::post('play/developers',[GooglePlayApiController::class,'devSearch']);
-Route::post('play/esimates',[GooglePlayApiController::class,'getAppsEsimates']);
-Route::post('play/suggestions',[GooglePlayApiController::class,'getSuggest']);
-Route::post('play/liveops',[GooglePlayApiController::class,'getEvents']);
+Route::get('play/apps/{id}', [GooglePlayApiController::class, 'GetGooglePLayAppById']);
+Route::post('play/apps', [GooglePlayApiController::class, 'SearchGooglePlayAppsByQuery']);
+Route::post('play/apps/query', [GooglePlayApiController::class, 'SearchGooglePlayAppsByQueryPost']);
+Route::post('play/apps/{id}/reviews', [GooglePlayApiController::class, 'appReview']);
+Route::get('play/info/countries', [GooglePlayApiController::class, 'GetGooglePlayAppAvailableCountry']);
+Route::get('play/info/languages', [GooglePlayApiController::class, 'GetGooglePlayAppAvailableLanguage']);
+Route::post('play/developers/{id}', [GooglePlayApiController::class, 'getDeveloper']);
+Route::post('play/developers', [GooglePlayApiController::class, 'devSearch']);
+Route::post('play/esimates', [GooglePlayApiController::class, 'getAppsEsimates']);
+Route::post('play/suggestions', [GooglePlayApiController::class, 'getSuggest']);
+Route::post('play/liveops', [GooglePlayApiController::class, 'getEvents']);
 
 
 

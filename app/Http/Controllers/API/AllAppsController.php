@@ -14,46 +14,44 @@ use App\Models\AdPlacement;
 use App\Models\AllApps;
 use App\Models\ApikeyList;
 use App\Models\AppDetails;
-use App\Models\AppRelatedWord;
-use App\Models\GitHubToken;
 use App\Models\TestAdPlacement;
 use App\Models\TestAllApp;
 use App\Models\User;
-use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Events\RedisDataEvent;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Redis;
+use App\Models\GitHubToken;
+use App\Models\AppRelatedWord;
 
 class AllAppsController extends Controller
 {
+
     public function index()
     {
-
         $companyUser = Auth::user()->company_master_id;
         if (!$companyUser) {
-            $allApp = AllApps::where('status', 'live')->filter()->latest()->get();
+            $allApp = AllApps::where('status', 'live')->latest()->get();
         } else {
-            $allApp = AllApps::where('company_master_id', $companyUser)->where('status', 'live')->filter()->get();
+            $allApp = AllApps::where('company_master_id', $companyUser)->where('status', 'live')->latest()->get();
         }
         return AllAppResource::collection($allApp);
     }
 
     public function store(CreateAllAppRequest $request)
-
     {
+
         $app_details_link = "https://play.google.com/store/apps/details?id=" . $request->app_packageName;
         $res = Http::get($app_details_link);
         if ($res->status() == 200) {
             return response()->json([
-                'message' => 'This packageName already exists in playStore!',
+                'message' => 'This package name already exists in playStore!',
             ], 422);
         } else {
             $allApps = AllAppResource::make($request->persist());
-            return $allApps;
         }
-
+        return $allApps;
     }
 
     public function show(AllApps $allApp)
@@ -161,14 +159,11 @@ class AllAppsController extends Controller
     public function viewAppRes(Request $request)
     {
 
+
         $package_name = $request->packageName;
         $api_key = $request->apikey;
         $redis = Redis::connection('RedisApp');
         $response = $redis->get($package_name);
-
-# with ThreadPoolExecutor(max_workers=100) as exw :
-#   exw.map(req,List)
-
 
         $res_obj = json_decode($response);
 
@@ -242,11 +237,11 @@ class AllAppsController extends Controller
 
     public function storePackage()
     {
-        $redis6 = Redis::connection('RedisApp6');
+        $redis6 = Redis::connection('RedisApp2');
         $keys = $redis6->keys('*');
 
-//        $allApps = AllApps::pluck('app_packageName')->toArray();
-//        $result = array_diff($keys, $allApps);
+        $allApps = AllApps::pluck('app_packageName')->toArray();
+        $result = array_diff($keys, $allApps);
 
         $redis = Redis::connection('RedisApp');
 
@@ -254,7 +249,8 @@ class AllAppsController extends Controller
 
             $app_details_link = "https://play.google.com/store/apps/details?id=" . $key;
             $res = Http::get($app_details_link);
-            if ($res->status() == 200) {
+            if ($res->status() === 200) {
+
                 $get_App = AllApps::where('app_packageName', $key)->first();
                 if (!$get_App) {
                     $allApps = new AllApps();
@@ -262,6 +258,7 @@ class AllAppsController extends Controller
                     $allApps->app_apikey = $this->generateApikey();
                     $allApps->status = 'live';
                     $allApps->save();
+
 
                     // create github repo //
                     $getToken = GitHubToken::find(1);
@@ -303,143 +300,148 @@ class AllAppsController extends Controller
         $redis = Redis::connection('RedisApp6');
         $response = $redis->get($package_name);
         $db_response = json_decode($response);
+        if ($db_response) {
 
-        $dd = $db_response->APP_SETTINGS;
 
-        // **** app parameter **** //
-        $app_parameter = [];
-        foreach ($dd as $key => $value) {
-            $contains = str_starts_with($key, 'app_');
-            if (!$contains) {
-                $hint = json_encode(array($key => $value));
-                $rewardedVideo_object = array('name' => $key, 'value' => $value, 'hint' => $hint);
-                array_push($app_parameter, $rewardedVideo_object);
+            $dd = $db_response->APP_SETTINGS;
+
+            // **** app parameter **** //
+            $app_parameter = [];
+            foreach ($dd as $key => $value) {
+                $contains = str_starts_with($key, 'app_');
+                if (!$contains) {
+                    $hint = json_encode(array($key => $value));
+                    $rewardedVideo_object = array('name' => $key, 'value' => $value, 'hint' => $hint);
+                    array_push($app_parameter, $rewardedVideo_object);
+                }
             }
+
+            $app_parameter_array = ['app_parameter' => $app_parameter];
+            $dd = array_merge((array)$dd, $app_parameter_array);
+            // **** //
+
+
+            // **** app setting **** //
+            $app_setting = [];
+            foreach ($dd as $key => $value) {
+                $contains = str_starts_with($key, 'app_');
+                if ($contains) {
+                    $rewardedVideo_object = array($key => $value);
+                    $app_setting = array_merge((array)$app_setting, $rewardedVideo_object);
+                }
+            }
+            // **** //
+
+
+            // **** app extra **** //
+            $app_extra = $db_response->EXTRA_DATA;
+            $extra_obj = array('app_extra' => $app_extra);
+            $app_setting = array_merge($app_setting, $extra_obj);
+            // **** //
+
+
+            // **** monetize setting **** //
+
+            $placement = $db_response->PLACEMENT;
+            $monetize_setting = [];
+
+            foreach ($placement as $key => $value) {
+                $platform_adFormat = [];
+                if (isset($value->AppID) && $value->AppID != '') {
+                    $ad_Appid = $value->AppID;
+                    array_push($platform_adFormat, 'App ID');
+                } else {
+                    $ad_Appid = '';
+                }
+
+
+                $ad_Banner = [];
+                $ad_Interstitial = [];
+                $ad_Native = [];
+                $ad_NativeBanner = [];
+                $ad_RewardedVideo = [];
+                $ad_RewardedInterstitial = [];
+                $ad_AppOpen = [];
+
+                foreach ($value as $item => $i) {
+                    if (str_starts_with($item, 'Banner')) {
+                        array_push($ad_Banner, $i);
+                        array_push($platform_adFormat, 'Banner');
+                    }
+                    if (str_starts_with($item, 'Interstitial')) {
+                        array_push($ad_Interstitial, $i);
+                        array_push($platform_adFormat, 'Interstitial');
+                    }
+                    if (str_starts_with($item, 'Native')) {
+                        array_push($ad_Native, $i);
+                        array_push($platform_adFormat, 'Native');
+                    }
+                    if (str_starts_with($item, 'NativeBanner')) {
+                        array_push($ad_NativeBanner, $i);
+                        array_push($platform_adFormat, 'Native Banner');
+                    }
+                    if (str_starts_with($item, 'RewardedVideo')) {
+                        array_push($ad_RewardedVideo, $i);
+                        array_push($platform_adFormat, 'Rewarded Video');
+                    }
+                    if (str_starts_with($item, 'RewardedInterstitial')) {
+                        array_push($ad_RewardedInterstitial, $i);
+                        array_push($platform_adFormat, 'Rewarded Interstitial');
+                    }
+                    if (str_starts_with($item, 'AppOpen')) {
+                        array_push($ad_AppOpen, $i);
+                        array_push($platform_adFormat, 'App Open');
+                    }
+                }
+
+
+                $monetize_setting_object = array('platform_name' => $key, 'platform_adFormat' => array_unique($platform_adFormat), 'ad_AppID' => $ad_Appid, 'ad_Banner' => $ad_Banner, 'ad_Interstitial'
+                => $ad_Interstitial, 'ad_Native' => $ad_Native, 'ad_NativeBanner' => $ad_NativeBanner, 'ad_RewardedVideo' => $ad_RewardedVideo
+                , 'ad_RewardedInterstitial' => $ad_RewardedInterstitial, 'ad_AppOpen' => $ad_AppOpen, 'ad_loadAdIdsType' => $value->ad_loadAdIdsType, 'ad_showAdStatus' => $value->ad_showAdStatus);
+                array_push($monetize_setting, $monetize_setting_object);
+
+            }
+            $monetize_array = ['monetize_setting' => $monetize_setting];
+            $app_setting = array_merge((array)$app_setting, $monetize_array);
+
+            // **** //
+
+
+            // **** status **** //
+            $status = $db_response->STATUS;
+            $status_obj = array('STATUS' => $status);
+            $app_setting = array_merge($app_setting, $status_obj);
+            // **** //
+
+            // **** MSG **** //
+            $msg = $db_response->MSG;
+            $msg_obj = array('MSG' => $msg);
+            $app_setting = array_merge($app_setting, $msg_obj);
+            // **** //
+
+            // **** Advertise_List **** //
+            $Advertise_List = $db_response->Advertise_List;
+            $Advertise_List_obj = array('Advertise_List' => $Advertise_List);
+            $app_setting = array_merge($app_setting, $Advertise_List_obj);
+            // **** //
+
+            // **** MORE_APP_SPLASH **** //
+            $more_app_splash = $db_response->MORE_APP_SPLASH;
+            $more_app_splash_obj = array('MORE_APP_SPLASH' => $more_app_splash);
+            $app_setting = array_merge($app_setting, $more_app_splash_obj);
+            // **** //
+
+            // **** MORE_APP_EXIT **** //
+            $more_app_exit = $db_response->MORE_APP_EXIT;
+            $more_app_exit_obj = array('MORE_APP_EXIT' => $more_app_exit);
+            $app_setting = array_merge($app_setting, $more_app_exit_obj);
+            // **** //
+
+            return response()->json(['data' => $app_setting]);
+
+        } else {
+            return response()->json(['message' => 'This app Redis 6 data is null!'], 404);
         }
-
-        $app_parameter_array = ['app_parameter' => $app_parameter];
-        $dd = array_merge((array)$dd, $app_parameter_array);
-        // **** //
-
-
-        // **** app setting **** //
-        $app_setting = [];
-        foreach ($dd as $key => $value) {
-            $contains = str_starts_with($key, 'app_');
-            if ($contains) {
-                $rewardedVideo_object = array($key => $value);
-                $app_setting = array_merge((array)$app_setting, $rewardedVideo_object);
-            }
-        }
-        // **** //
-
-
-        // **** app extra **** //
-        $app_extra = $db_response->EXTRA_DATA;
-        $extra_obj = array('app_extra' => $app_extra);
-        $app_setting = array_merge($app_setting, $extra_obj);
-        // **** //
-
-
-        // **** monetize setting **** //
-
-        $placement = $db_response->PLACEMENT;
-        $monetize_setting = [];
-
-        foreach ($placement as $key => $value) {
-            $platform_adFormat = [];
-            if (isset($value->AppID) && $value->AppID != '') {
-                $ad_Appid = $value->AppID;
-                array_push($platform_adFormat, 'App ID');
-            } else {
-                $ad_Appid = '';
-            }
-
-
-            $ad_Banner = [];
-            $ad_Interstitial = [];
-            $ad_Native = [];
-            $ad_NativeBanner = [];
-            $ad_RewardedVideo = [];
-            $ad_RewardedInterstitial = [];
-            $ad_AppOpen = [];
-
-            foreach ($value as $item => $i) {
-                if (str_starts_with($item, 'Banner')) {
-                    array_push($ad_Banner, $i);
-                    array_push($platform_adFormat, 'Banner');
-                }
-                if (str_starts_with($item, 'Interstitial')) {
-                    array_push($ad_Interstitial, $i);
-                    array_push($platform_adFormat, 'Interstitial');
-                }
-                if (str_starts_with($item, 'Native')) {
-                    array_push($ad_Native, $i);
-                    array_push($platform_adFormat, 'Native');
-                }
-                if (str_starts_with($item, 'NativeBanner')) {
-                    array_push($ad_NativeBanner, $i);
-                    array_push($platform_adFormat, 'Native Banner');
-                }
-                if (str_starts_with($item, 'RewardedVideo')) {
-                    array_push($ad_RewardedVideo, $i);
-                    array_push($platform_adFormat, 'Rewarded Video');
-                }
-                if (str_starts_with($item, 'RewardedInterstitial')) {
-                    array_push($ad_RewardedInterstitial, $i);
-                    array_push($platform_adFormat, 'Rewarded Interstitial');
-                }
-                if (str_starts_with($item, 'AppOpen')) {
-                    array_push($ad_AppOpen, $i);
-                    array_push($platform_adFormat, 'App Open');
-                }
-            }
-
-
-            $monetize_setting_object = array('platform_name' => $key, 'platform_adFormat' => array_unique($platform_adFormat), 'ad_AppID' => $ad_Appid, 'ad_Banner' => $ad_Banner, 'ad_Interstitial'
-            => $ad_Interstitial, 'ad_Native' => $ad_Native, 'ad_NativeBanner' => $ad_NativeBanner, 'ad_RewardedVideo' => $ad_RewardedVideo
-            , 'ad_RewardedInterstitial' => $ad_RewardedInterstitial, 'ad_AppOpen' => $ad_AppOpen, 'ad_loadAdIdsType' => $value->ad_loadAdIdsType, 'ad_showAdStatus' => $value->ad_showAdStatus);
-            array_push($monetize_setting, $monetize_setting_object);
-
-        }
-        $monetize_array = ['monetize_setting' => $monetize_setting];
-        $app_setting = array_merge((array)$app_setting, $monetize_array);
-
-        // **** //
-
-
-        // **** status **** //
-        $status = $db_response->STATUS;
-        $status_obj = array('STATUS' => $status);
-        $app_setting = array_merge($app_setting, $status_obj);
-        // **** //
-
-        // **** MSG **** //
-        $msg = $db_response->MSG;
-        $msg_obj = array('MSG' => $msg);
-        $app_setting = array_merge($app_setting, $msg_obj);
-        // **** //
-
-        // **** Advertise_List **** //
-        $Advertise_List = $db_response->Advertise_List;
-        $Advertise_List_obj = array('Advertise_List' => $Advertise_List);
-        $app_setting = array_merge($app_setting, $Advertise_List_obj);
-        // **** //
-
-        // **** MORE_APP_SPLASH **** //
-        $more_app_splash = $db_response->MORE_APP_SPLASH;
-        $more_app_splash_obj = array('MORE_APP_SPLASH' => $more_app_splash);
-        $app_setting = array_merge($app_setting, $more_app_splash_obj);
-        // **** //
-
-        // **** MORE_APP_EXIT **** //
-        $more_app_exit = $db_response->MORE_APP_EXIT;
-        $more_app_exit_obj = array('MORE_APP_EXIT' => $more_app_exit);
-        $app_setting = array_merge($app_setting, $more_app_exit_obj);
-        // **** //
-
-
-        return response()->json(['data' => $app_setting]);
 
     }
 
@@ -633,9 +635,9 @@ class AllAppsController extends Controller
 
         $companyUser = Auth::user()->company_master_id;
         if (!$companyUser) {
-            $allApp = AllApps::filter()->latest()->get();
+            $allApp = AllApps::latest()->get();
         } else {
-            $allApp = AllApps::where('company_master_id', $companyUser)->filter()->get();
+            $allApp = AllApps::where('company_master_id', $companyUser)->get();
         }
         return AllAppResource::collection($allApp);
 
@@ -681,5 +683,4 @@ class AllAppsController extends Controller
         }
         return $newArray;
     }
-
 }
