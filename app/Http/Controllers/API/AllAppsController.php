@@ -237,19 +237,19 @@ class AllAppsController extends Controller
 
     public function storePackage()
     {
-        $redis6 = Redis::connection('RedisApp2');
-        $keys = $redis6->keys('*');
+        $redis2 = Redis::connection('RedisApp2');
+        $keys = $redis2->keys('*');
 
         $allApps = AllApps::pluck('app_packageName')->toArray();
         $result = array_diff($keys, $allApps);
 
-        $redis = Redis::connection('RedisApp');
+        $redis = Redis::connection('RedisApp10');
 
         foreach ($keys as $key) {
 
-            $app_details_link = "https://play.google.com/store/apps/details?id=" . $key;
-            $res = Http::get($app_details_link);
-            if ($res->status() === 200) {
+//            $app_details_link = "https://play.google.com/store/apps/details?id=" . $key;
+//            $res = Http::get($app_details_link);
+//            if ($res->status() === 200) {
 
                 $get_App = AllApps::where('app_packageName', $key)->first();
                 if (!$get_App) {
@@ -277,7 +277,7 @@ class AllAppsController extends Controller
                 $result = $getApp->viewResponse($key, $this->generateApikey());
                 $redis->set($key, json_encode($result));
                 //**********//
-            }
+//            }
 
 
         }

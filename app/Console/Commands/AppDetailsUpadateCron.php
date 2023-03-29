@@ -10,6 +10,7 @@ use App\Notifications\RemoveAppNotification;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Redis;
 
 class AppDetailsUpadateCron extends Command
 {
@@ -160,10 +161,18 @@ class AppDetailsUpadateCron extends Command
 
                     // **** update all_apps **** //
 
+                    $redis = Redis::connection('RedisApp2');
+                    $response = $redis->get($allApp->app_packageName);
+                    $app_res_redis = json_decode($response);
+
                     $allApp = AllApps::find($allApp->id);
                     $allApp->app_logo = $value->icon;
                     $allApp->app_name = $value->title;
+                    if($app_res_redis->STATUS == 'true'){
+                        $allApp->app_accountName = $app_res_redis->APP_SETTINGS->app_accountName;
+                    }
                     $allApp->app_privacyPolicyLink = $value->privacyPolicy;
+
                     $allApp->save();
 
                     // **** //

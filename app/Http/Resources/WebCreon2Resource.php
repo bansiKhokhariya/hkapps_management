@@ -17,17 +17,23 @@ class WebCreon2Resource extends JsonResource
 
         if ($this->appDetails() == null) {
             $total_downloads = '';
+            $status = '';
+            $developer = '';
         } else {
             $total_downloads = $this->appDetails()->realInstalls;
+            $status = $this->appDetails()->status;
+            $developer = $this->appDetails()->developer;
         }
 
         return [
-            'icon' => $this->icon,
+            'icon' => $this->app_logo,
             'app_accountName' => $this->app_accountName,
-            'package_name' => $this->package_name,
-            'developer_name' => $this->developer,
+            'package_name' => $this->app_packageName,
+            'title' => $this->app_name,
+            'developer_name' =>$developer,
             'total_downloads' => intval(str_replace(",", "", $total_downloads)),
             'avg_per_day' => 0,
+            'status' => $status,
             'unauthorize' => $this->TotalRequestCount(),
         ];
     }

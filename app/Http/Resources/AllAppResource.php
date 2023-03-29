@@ -44,6 +44,7 @@ class AllAppResource extends JsonResource
             'app_logo' => $this->app_logo,
             'app_name' => $this->app_name,
             'app_packageName' => $this->app_packageName,
+            'app_accountName' => $this->app_accountName,
             'app_apikey' => $this->app_apikey,
             'app_note' => $this->app_note,
             'app_updateAppDialogStatus' => $this->app_updateAppDialogStatus,

@@ -68,7 +68,7 @@ class ApiKeyListController extends Controller
         $getApp = new AllApps();
         $result = $getApp->viewResponse($package_name,$apikey);
 
-        $redis = Redis::connection('RedisApp');
+        $redis = Redis::connection('RedisApp10');
         $redis->set($package_name, json_encode($result));
 
 

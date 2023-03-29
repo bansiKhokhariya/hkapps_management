@@ -108,7 +108,7 @@ class CreateAllAppRequest extends FormRequest
             $getApp = new AllApps();
             $result = $getApp->viewResponse($this->app_packageName,$this->app_apikey);
 
-            $redis = Redis::connection('RedisApp');
+            $redis = Redis::connection('RedisApp10');
             $redis->set($this->app_packageName, json_encode($result));
 
 

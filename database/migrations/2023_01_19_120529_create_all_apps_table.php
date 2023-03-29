@@ -36,6 +36,7 @@ class CreateAllAppsTable extends Migration
             $table->integer('app_mainClickCntSwAd')->nullable();
             $table->integer('app_innerClickCntSwAd')->nullable();
             $table->text('app_parameter')->nullable();
+            $table->string('app_accountName')->nullable();
             $table->string('status')->nullable();
             $table->integer('company_master_id')->unsigned()->nullable();
             $table->foreign('company_master_id')->references('id')->on('hk_apps_management.company_master')->onDelete('cascade')->onUpdate('cascade');

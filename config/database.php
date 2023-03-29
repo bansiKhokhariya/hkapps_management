@@ -215,7 +215,7 @@ return [
             'database' => env('REDIS_DB', '0'),
         ],
 
-        'RedisApp' => [
+        'RedisApp10' => [
             'url' => 'tcp://139.144.4.223:6379',
             'host' => env('REDIS_APP_HOST', '139.144.4.223'),
             'password' => env('REDIS_APP_PASSWORD', 'middle@Server'),

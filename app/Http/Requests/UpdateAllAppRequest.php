@@ -106,7 +106,7 @@ class UpdateAllAppRequest extends FormRequest
         $getApp = new AllApps();
         $result = $allApps->viewResponse($this->app_packageName);
 
-        $redis = Redis::connection('RedisApp');
+        $redis = Redis::connection('RedisApp10');
         $redis->set($this->app_packageName, json_encode($result));
 
         // call event
