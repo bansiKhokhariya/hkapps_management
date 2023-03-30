@@ -14,8 +14,6 @@ use App\Http\Controllers\API\TaskController;
 use App\Http\Controllers\API\NotificationController;
 use App\Http\Controllers\API\AppsController;
 use App\Http\Controllers\API\AdvertiseContoller;
-
-//use App\Http\Controllers\API\RedisController;
 use App\Http\Controllers\API\RawDataController;
 use App\Http\Controllers\API\AllAppsController;
 use App\Http\Controllers\API\PlatformController;
@@ -68,7 +66,7 @@ Route::middleware('auth:api')->group(function () {
 
     // task //
     Route::resource('task', TaskController::class);
-    Route::get('startTask/{id}', [TaskController::class, 'startTask']);
+    Route::post('startTask/{id}', [TaskController::class, 'startTask']);
     Route::get('endTask/{id}', [TaskController::class, 'endTask']);
 
     // notification //
@@ -76,6 +74,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('getUnreadNotification', [NotificationController::class, 'getUnreadNotification']);
     Route::get('markAsRead', [NotificationController::class, 'markAsRead']);
     Route::delete('deleteNotification/{id}', [NotificationController::class, 'deleteNotification']);
+    Route::get('markAsReadSpecific/{id}', [NotificationController::class, 'markAsReadSpecific']);
 
     // apps //
     Route::resource('app', AppsController::class);
@@ -214,6 +213,7 @@ Route::get('startSpyAppCron', [SettingController::class, 'startSpyAppCron']);
 Route::get('stopSpyAppCron', [SettingController::class, 'stopSpyAppCron']);
 Route::get('startSpyAppDetailsCron', [SettingController::class, 'startSpyAppDetailsCron']);
 Route::get('stopSpyAppDetailsCron', [SettingController::class, 'stopSpyAppDetailsCron']);
+Route::get('refreshCheckStatus', [SettingController::class, 'refreshCheckStatus']);
 
 Route::get('storeRedisData/{cursor?}', [RawDataController::class, 'storeRedisData']);
 
@@ -232,8 +232,14 @@ Route::get('getSpyApps', [SpyAppsController::class, 'getSpyApps']);
 Route::get('getSpyApp/{packageName}', [SpyAppsController::class, 'getSpyApp']);
 Route::get('appStoreSpy/browse/{mode?}/{available?}/{query?}/{query_short?}/{query_description?}/{revenue?}/{downloads?}/{installs?}/{ipd?}/{size?}/{store?}/{type?}/{released?}/{ratings?}/{reviews?}/{updates?}/{dev?}/{similarapp?}/{builder?}/{address_country?}/{limit?}/{order?}/{dir?}/{bucket?}/{bucket_date?}/{wl?}/{inapp?}/{creatives?}/{website?}/{collection?}/{country?}/{category?}/{storepass?}/{wearos?}', [SpyAppsController::class, 'appBrowse']);
 
+
+// expense revenue //
+Route::get('getAppInfoByPackage/{packageName}', [ExpenseRevenueController::class, 'getAppInfoByPackage']);
+
+
 // county //
 Route::get('getCountry', [CommanMasterController::class, 'getCountry']);
+
 
 //google play //
 
@@ -251,7 +257,7 @@ Route::post('play/liveops', [GooglePlayApiController::class, 'getEvents']);
 
 
 
-
+Route::post('db3', [AllAppsController::class, 'db3']);
 
 
 

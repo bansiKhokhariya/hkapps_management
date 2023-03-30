@@ -32,10 +32,13 @@ class AllAppResource extends JsonResource
             $developer_name = '';
             $total_downloads = '';
             $status = '';
+            $ratings ='';
         }else{
             $developer_name = $this->appDetails()->developer;
             $total_downloads = $this->appDetails()->realInstalls;
             $status = $this->appDetails()->status;
+            $ratings = $this->appDetails()->ratings;
+
         }
 
         return [
@@ -72,6 +75,7 @@ class AllAppResource extends JsonResource
             'company_master_id' => $company,
             'ads_master' => $this->ads_master,
             'adx' => $this->adx,
+            'ratings' => $ratings,
 //            'created_at' => $this->created_at->format('d-m-Y'),
 //            'updated_at' => $this->updated_at->format('d-m-Y'),
         ];

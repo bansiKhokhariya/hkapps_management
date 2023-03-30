@@ -7,7 +7,10 @@ use App\Http\Requests\CreateExpenseRequest;
 use App\Http\Requests\CreateExpenseRevenueRequest;
 use App\Http\Requests\CreateRevenueRequest;
 use App\Http\Requests\UpdateExpenseRevenueRequest;
+use App\Http\Resources\AllAppResource;
 use App\Http\Resources\ExepenseRevenueResource;
+use App\Http\Resources\WebCreon2Resource;
+use App\Models\AllApps;
 use App\Models\ExpenseRevenue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -74,4 +77,11 @@ class ExpenseRevenueController extends Controller
 
         return ExepenseRevenueResource::make($request->persist());
     }
+
+    public function getAppInfoByPackage($packageName)
+    {
+        $adplacement = AllApps::where('app_packageName', $packageName)->get();
+        return AllAppResource::collection($adplacement);
+    }
+
 }

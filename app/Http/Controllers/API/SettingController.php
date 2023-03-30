@@ -187,5 +187,11 @@ class SettingController extends Controller
 
     }
 
+    public function refreshCheckStatus (){
+
+        \Artisan::call('CheckAppStatus:cron');
+
+    }
+
 
 }

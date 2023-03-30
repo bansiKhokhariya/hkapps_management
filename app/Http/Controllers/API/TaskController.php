@@ -8,6 +8,7 @@ use App\Http\Requests\CreateTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Resources\TaskResoruce;
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -52,7 +53,7 @@ class TaskController extends Controller
         return response('Task Deleted Successfully');
     }
 
-    public function startTask($id)
+    public function startTask($id, Request $request)
     {
 
         $authUserName = Auth::user()->name;
@@ -80,8 +81,23 @@ class TaskController extends Controller
             return 'Task Start by ' . $authUserName;
         } elseif ($authUserDesignation == 'superadmin') {
 
+            if ($request->designation == 'developer') {
+                $task->developerStatus = 'running';
+                $task->developerStartDate = $currentTime->toDateTimeString();
+                $task->assignDeveloperName = $authUserName;
+            } elseif ($request->designation == 'designer') {
+                $task->designerStatus = 'running';
+                $task->designerStartDate = $currentTime->toDateTimeString();
+                $task->assignDesignerName = $authUserName;
+            }
+
             $task->status = 'running';
             $task->save();
+
+            // call event
+            event(new RedisDataEvent());
+
+            return 'Task Start by ' . $authUserName;
 
         } else {
             return response('Only the Designer , Developer and SuperAdmin can start a task!', 404);
@@ -141,21 +157,38 @@ class TaskController extends Controller
                 return response('Only the person who started This Task can done it', 404);
             }
         } elseif ($authUserDesignation == 'superadmin') {
-            if ($task->status == 'running') {
-                if ($task->assignSuperAdminName == $authUserName) {
+
+            if ($authUserName == $task->assignDeveloperName) {
+                $task->developerStatus = 'completed';
+                $task->developerEndDate = $currentTime->toDateTimeString();
+                if ($task->designerStatus == 'completed') {
                     $task->status = 'completed';
-                    $task->save();
-
-                    // call event
-                    event(new RedisDataEvent());
-
-                    return 'Task Done by ' . $authUserName;
-                } else {
-                    return response('Only the person who started This Task can done it', 404);
                 }
+                $task->save();
+
+                //call event
+                event(new RedisDataEvent());
+
+                return 'Task Done by ' . $authUserName;
+
+            } elseif ($authUserName == $task->assignDesignerName) {
+                $task->designerStatus = 'completed';
+                $task->designerEndDate = $currentTime->toDateTimeString();
+                if ($task->developerStatus == 'completed') {
+                    $task->status = 'completed';
+                }
+                $task->save();
+
+                //  call event
+                event(new RedisDataEvent());
+
+                return 'Task Done by ' . $authUserName;
+
             } else {
                 return response('Only the person who started This Task can done it', 404);
             }
+
+
         } else {
             return response('Only the person who started This Task can done it', 404);
         }

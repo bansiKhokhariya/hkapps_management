@@ -6,7 +6,6 @@ use App\Events\UserEvent;
 use App\Models\AdPlacement;
 use App\Models\AllApps;
 use App\Models\AppDetails;
-use App\Models\GitHubToken;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
@@ -14,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Redis;
 use App\Models\ApikeyList;
+use App\Models\GitHubToken;
 
 class CreateAllAppRequest extends FormRequest
 {
@@ -22,10 +22,6 @@ class CreateAllAppRequest extends FormRequest
      *
      * @return bool
      */
-
-    protected $connection = 'mysql4';
-    protected $table = 'all_apps';
-
     public function authorize()
     {
         return true;
@@ -39,9 +35,7 @@ class CreateAllAppRequest extends FormRequest
     public function rules()
     {
         return [
-
-
-        // 'app_logo'=>'required',
+            // 'app_logo'=>'required',
             'app_name' => 'required',
             'app_packageName' => 'required|unique:mysql4.all_apps,app_packageName',
 //            'app_apikey' => 'nullable|unique:all_apps,app_apikey,NULL,id,deleted_at,NULL'
@@ -72,14 +66,11 @@ class CreateAllAppRequest extends FormRequest
                 $allApp->app_logo = $file_path_logo;
             }
             $allApp->app_apikey = $this->app_apikey;
-            if(Auth::user()->role !== 'super_admin'){
+            if(Auth::user()->roles !== 'super_admin'){
                 $allApp->company_master_id = $user_company;
             }
             //
-
             $allApp->save();
-
-
 
             // create github repo //
             $getToken = GitHubToken::find(1);
@@ -92,10 +83,6 @@ class CreateAllAppRequest extends FormRequest
             // ************* //
 
 
-//            $jsonData = $response->json();
-
-
-
             // delete apikey list //
             $apikeyList = ApikeyList::where('apikey_packageName', $this->app_packageName)->where('apikey_text',$this->app_apikey)->first();
             if($apikeyList){
@@ -104,12 +91,12 @@ class CreateAllAppRequest extends FormRequest
 
 
 
-            // ***************** view app response json ******************** //
-            $getApp = new AllApps();
-            $result = $getApp->viewResponse($this->app_packageName,$this->app_apikey);
-
-            $redis = Redis::connection('RedisApp10');
-            $redis->set($this->app_packageName, json_encode($result));
+//            // ***************** view app response json ******************** //
+//            $getApp = new AllApps();
+//            $result = $getApp->viewResponse($this->app_packageName,$this->app_apikey);
+//
+//            $redis = Redis::connection('RedisApp10');
+//            $redis->set($this->app_packageName, json_encode($result));
 
 
             // **************** create app_details entry *************************** //
@@ -215,14 +202,6 @@ class CreateAllAppRequest extends FormRequest
 
                 }
 
-            }else{
-//                $get_app_details = AppDetails::where('allApps_id', $allApp->id)->first();
-//                if(!$get_app_details){
-//                    $appDetails = new AppDetails();
-//                    $appDetails->allApps_id = $allApp->id;
-//                    $appDetails->status = 'removed';
-//                    $appDetails->save();
-//                }
             }
 
             // **************** //

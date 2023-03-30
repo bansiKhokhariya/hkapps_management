@@ -215,12 +215,12 @@ return [
             'database' => env('REDIS_DB', '0'),
         ],
 
-        'RedisApp10' => [
+        'RedisApp3' => [
             'url' => 'tcp://139.144.4.223:6379',
             'host' => env('REDIS_APP_HOST', '139.144.4.223'),
             'password' => env('REDIS_APP_PASSWORD', 'middle@Server'),
             'port' => env('REDIS_APP_PORT', '6379'),
-            'database' => env('REDIS_APP_DB', '10'),
+            'database' => env('REDIS_APP_DB', '3'),
             'read_timeout' => 0,
         ],
         'RedisApp14' => [

@@ -12,7 +12,7 @@ class NotificationController extends Controller
 {
     public function getAllNotification()
     {
-        $notification = auth()->user()->notifications()->where('deleted_at',null)->get();
+        $notification = auth()->user()->notifications()->where('deleted_at', null)->get();
         return NotificationResource::collection($notification);
     }
 
@@ -25,6 +25,12 @@ class NotificationController extends Controller
     public function markAsRead()
     {
         $notification = auth()->user()->unreadNotifications->markAsRead();
+        return response()->json($notification);
+    }
+
+    public function markAsReadSpecific($id)
+    {
+        $notification = auth()->user()->unreadNotifications->where('id', $id)->markAsRead();
         return response()->json($notification);
     }
 

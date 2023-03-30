@@ -17,6 +17,7 @@ use App\Models\AppDetails;
 use App\Models\TestAdPlacement;
 use App\Models\TestAllApp;
 use App\Models\User;
+use App\Notifications\RemoveAppNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Events\RedisDataEvent;
@@ -69,11 +70,6 @@ class AllAppsController extends Controller
         return AllAppResource::make($request->persist($allApp));
     }
 
-    public function testUpdate(UpdateTestAllAppRequest $request, TestAllApp $testAllApp)
-    {
-        return TestAllAppResource::make($request->persist($testAllApp));
-    }
-
     public function destroy(AllApps $allApp)
     {
         $id = Auth::user()->id;
@@ -120,57 +116,26 @@ class AllAppsController extends Controller
 
     }
 
-    public function test_store_monetize(Request $request)
-    {
-        $get_adplacement = TestAdPlacement::where('allApps_id', $request->allApps_id)->where('platform_id', $request->platform_id)->first();
-        if ($get_adplacement) {
-            $ad_placement = TestAdPlacement::find($get_adplacement->id);
-            $ad_placement->allApps_id = $request->allApps_id;
-            $ad_placement->platform_id = $request->platform_id;
-            $ad_placement->ad_loadAdIdsType = $request->ad_loadAdIdsType;
-            $ad_placement->ad_AppID = $request->ad_AppID;
-            $ad_placement->ad_Banner = $request->ad_Banner;
-            $ad_placement->ad_Interstitial = $request->ad_Interstitial;
-            $ad_placement->ad_Native = $request->ad_Native;
-            $ad_placement->ad_NativeBanner = $request->ad_NativeBanner;
-            $ad_placement->ad_RewardedVideo = $request->ad_RewardedVideo;
-            $ad_placement->ad_AppOpen = $request->ad_AppOpen;
-            $ad_placement->save();
-        } else {
-            $ad_placement = new TestAdPlacement();
-            $ad_placement->allApps_id = $request->allApps_id;
-            $ad_placement->platform_id = $request->platform_id;
-            $ad_placement->ad_loadAdIdsType = $request->ad_loadAdIdsType;
-            $ad_placement->ad_AppID = $request->ad_AppID;
-            $ad_placement->ad_Banner = json_encode($request->ad_Banner);
-            $ad_placement->ad_Interstitial = json_encode($request->ad_Interstitial);
-            $ad_placement->ad_Native = json_encode($request->ad_Native);
-            $ad_placement->ad_NativeBanner = json_encode($request->ad_NativeBanner);
-            $ad_placement->ad_RewardedVideo = json_encode($request->ad_RewardedVideo);
-            $ad_placement->ad_AppOpen = json_encode($request->ad_AppOpen);
-            $ad_placement->save();
-        }
-
-        return $ad_placement;
-
-    }
-
-
     public function viewAppRes(Request $request)
     {
 
-
         $package_name = $request->packageName;
         $api_key = $request->apikey;
-        $redis = Redis::connection('RedisApp');
-        $response = $redis->get($package_name);
+        $redis2 = Redis::connection('RedisApp2');
+        $response = $redis2->get($package_name);
 
         $res_obj = json_decode($response);
 
-//        $get_allApps = AllApps::where('app_packageName', $package_name)->first();
+
         if ($res_obj) {
-            $meta_keywords = explode(',', $res_obj->APP_SETTINGS->app_apikey);
-            if (!in_array($api_key, $meta_keywords)) {
+            $redis3 = Redis::connection('RedisApp3');
+            $response3 = $redis3->get($package_name);
+            $response3Convert = str_replace(["'"], '"', $response3);
+
+            $meta_keywords = json_decode($response3Convert)->AFHJNTGDGD563200K;
+
+//            $meta_keywords = explode(',', $res_obj->APP_SETTINGS->app_apikey);
+            if ($api_key == $meta_keywords) {
                 $get_api_key = ApikeyList::where('apikey_packageName', $package_name)->where('apikey_text', $api_key)->first();
                 if ($get_api_key) {
                     $apikey_request_count = $get_api_key->apikey_request;
@@ -184,6 +149,12 @@ class AllAppsController extends Controller
                     $apiKey->is_available = 1;
                     $apiKey->save();
                 }
+            } else {
+                $apiKey = new ApikeyList();
+                $apiKey->apikey_packageName = $package_name;
+                $apiKey->apikey_text = $api_key;
+                $apiKey->is_available = 0;
+                $apiKey->save();
             }
         } else {
             $apiKey = new ApikeyList();
@@ -251,32 +222,32 @@ class AllAppsController extends Controller
 //            $res = Http::get($app_details_link);
 //            if ($res->status() === 200) {
 
-                $get_App = AllApps::where('app_packageName', $key)->first();
-                if (!$get_App) {
-                    $allApps = new AllApps();
-                    $allApps->app_packageName = $key;
-                    $allApps->app_apikey = $this->generateApikey();
-                    $allApps->status = 'live';
-                    $allApps->save();
+            $get_App = AllApps::where('app_packageName', $key)->first();
+            if (!$get_App) {
+                $allApps = new AllApps();
+                $allApps->app_packageName = $key;
+                $allApps->app_apikey = $this->generateApikey();
+                // $allApps->status = 'live';
+                $allApps->save();
 
 
-                    // create github repo //
-                    $getToken = GitHubToken::find(1);
-                    $response = Http::withHeaders([
-                        'Authorization' => 'Bearer ' . $getToken->github_access_token,
-                    ])->post('https://api.github.com/user/repos', [
-                        'name' => $allApps->app_packageName . '_' . $allApps->id,
-                        'description' => 'hkApps repo',
-                    ]);
-                    // ************* //
+                // create github repo //
+                // $getToken = GitHubToken::find(1);
+                // $response = Http::withHeaders([
+                //     'Authorization' => 'Bearer ' . $getToken->github_access_token,
+                // ])->post('https://api.github.com/user/repos', [
+                //     'name' => $allApps->app_packageName . '_' . $allApps->id,
+                //     'description' => 'hkApps repo',
+                // ]);
+                // ************* //
 
-                }
+            }
 
-                // ***************** view app response json ******************** //
-                $getApp = new AllApps();
-                $result = $getApp->viewResponse($key, $this->generateApikey());
-                $redis->set($key, json_encode($result));
-                //**********//
+            // ***************** view app response json ******************** //
+            $getApp = new AllApps();
+            $result = $getApp->viewResponse($key, $this->generateApikey());
+            $redis->set($key, json_encode($result));
+            //**********//
 //            }
 
 
@@ -683,4 +654,6 @@ class AllAppsController extends Controller
         }
         return $newArray;
     }
+
+
 }
