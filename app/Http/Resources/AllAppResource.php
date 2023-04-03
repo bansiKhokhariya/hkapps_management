@@ -65,7 +65,7 @@ class AllAppResource extends JsonResource
             'app_testAdStatus' => $this->app_testAdStatus,
             'app_mainClickCntSwAd' => $this->app_mainClickCntSwAd,
             'app_innerClickCntSwAd' => $this->app_innerClickCntSwAd,
-            'monetize_setting' => $this->AdPlacement(),
+//            'monetize_setting' => $this->AdPlacement(),
             'app_parameter' => $app_parameter,
             'developer_name' => $developer_name,
             'total_downloads' =>intval(str_replace(",","",$total_downloads)),

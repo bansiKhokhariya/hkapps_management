@@ -81,7 +81,10 @@ class RoleTableSeeder extends Seeder
         Permission::create(['name' => 'adsNetwork-store']);
         Permission::create(['name' => 'adsNetwork-update']);
         Permission::create(['name' => 'adsNetwork-delete']);
-
+        Permission::create(['name' => 'todo-view']);
+        Permission::create(['name' => 'todo-store']);
+        Permission::create(['name' => 'todo-update']);
+        Permission::create(['name' => 'todo-delete']);
 
 
         $role1 = Role::create(['name' => 'super_admin']);
@@ -149,6 +152,10 @@ class RoleTableSeeder extends Seeder
         $role1->givePermissionTo('adsNetwork-store');
         $role1->givePermissionTo('adsNetwork-update');
         $role1->givePermissionTo('adsNetwork-delete');
+        $role1->givePermissionTo('todo-view');
+        $role1->givePermissionTo('todo-store');
+        $role1->givePermissionTo('todo-update');
+        $role1->givePermissionTo('todo-delete');
 
 
         $user = User::create([

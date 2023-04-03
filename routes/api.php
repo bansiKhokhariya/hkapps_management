@@ -6,6 +6,7 @@ use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\GithubTokenController;
 use App\Http\Controllers\API\GooglePlayApiController;
 use App\Http\Controllers\API\SpyAppsController;
+use App\Http\Controllers\API\TodoListController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
@@ -136,6 +137,9 @@ Route::middleware('auth:api')->group(function () {
 
     // AdsNetwork //
     Route::resource('adsNetwork', AdsNetworkConroller::class);
+
+    // TodoList //
+    Route::resource('todoList', TodoListController::class);
 });
 
 
@@ -254,7 +258,6 @@ Route::post('play/developers', [GooglePlayApiController::class, 'devSearch']);
 Route::post('play/esimates', [GooglePlayApiController::class, 'getAppsEsimates']);
 Route::post('play/suggestions', [GooglePlayApiController::class, 'getSuggest']);
 Route::post('play/liveops', [GooglePlayApiController::class, 'getEvents']);
-
 
 
 Route::post('db3', [AllAppsController::class, 'db3']);
