@@ -199,7 +199,9 @@ class AllAppsController extends Controller
             $app_setting = array_merge($app_setting, $more_app_exit_obj);
             // **** //
 
-            return response()->json(['data' => $app_setting]);
+            $app_details = AllAppResource::make($allApp);
+
+            return response()->json(['data' => $app_setting , 'app_details'=> $app_details]);
 
         } else {
             return response()->json(['message' => 'This app Redis 6 data is null!'], 404);
@@ -1037,6 +1039,14 @@ class AllAppsController extends Controller
 
         }
         return $newArray;
+    }
+
+    public function getDeletedApp(){
+
+        $allApp = AllApps::onlyTrashed()->get();
+
+        return AllAppResource::collection($allApp);
+
     }
 
 

@@ -37,4 +37,9 @@ class TodoListController extends Controller
         $todoList->delete();
         return response('Todo List Deleted Successfully');
     }
+
+    public function task_todo($task_id){
+        $todoList = TodoList::where('task_id',$task_id)->get();
+        return TodoListResource::collection($todoList);
+    }
 }

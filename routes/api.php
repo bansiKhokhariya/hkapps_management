@@ -140,6 +140,8 @@ Route::middleware('auth:api')->group(function () {
 
     // TodoList //
     Route::resource('todoList', TodoListController::class);
+    Route::get('task_todo/{task_id}', [TodoListController::class, 'task_todo']);
+
 });
 
 
