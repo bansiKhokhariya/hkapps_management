@@ -35,8 +35,17 @@ class TaskResoruce extends JsonResource
             $designer_profile = null;
         }
 
+        // tester profile //
+        $tester_name = $this->assignTesterName;
+        if ($tester_name) {
+            $user = User::where('name', $tester_name)->first();
+            $tester_profile = $user->profile_image;
+        } else {
+            $tester_profile = null;
+        }
+
         return [
-            'srno' => $this->id,
+            'id' => $this->id,
             'title' => $this->title,
             'refrence' => $this->refrence,
             'description' => $this->description,
@@ -51,7 +60,12 @@ class TaskResoruce extends JsonResource
             'designerEndDate' => $this->designerEndDate,
             'assignDesignerName' => $this->assignDesignerName,
             'designerProfile' => $designer_profile,
+            'testerStatus' => $this->testerStatus,
+            'assignTesterName' => $this->assignTesterName,
+            'testerProfile' => $tester_profile,
             'githubRepoLink' => $this->githubRepoLink,
+            'dev_testing' => $this->dev_testing,
+            'des_testing' => $this->des_testing,
             'deleted_at' => $this->deleted_at,
             'created_at' => $this->created_at->format('d-m-Y h:i:s'),
             'updated_at' => $this->updated_at->format('d-m-Y h:i:s'),

@@ -25,9 +25,9 @@ class AppsController extends Controller
         $companyMaster = CompanyMaster::where('id', $companyUser)->first();
 
         if (!$companyUser) {
-            $app = AllApps::where('status','live')->filter()->latest()->paginate(9);
+            $app = AllApps::where('status', 'live')->filter()->latest()->paginate(9);
         } else {
-            $app = AllApps::where('status','live')->where('app_accountName', $companyMaster->company)->filter()->latest()->paginate(9);
+            $app = AllApps::where('status', 'live')->where('app_accountName', $companyMaster->company)->filter()->latest()->paginate(9);
         }
 
 //        return response()->json($app);
@@ -72,7 +72,7 @@ class AppsController extends Controller
             $app_res_redis = json_decode($response);
 
 
-            $get_app = App::where('package_name', $package_name)->first();
+            $get_app = App::where('app_packageName', $package_name)->first();
             if (!($get_app)) {
                 $app = new AllApps();
                 $app->app_name = $app_response->app_name;
@@ -87,7 +87,7 @@ class AppsController extends Controller
                 // event(new UserEvent($auth_user));
 
                 $get_app_details = AppDetails::where('app_packageName', $package_name)->first();
-                if(!$get_app_details){
+                if (!$get_app_details) {
                     $appDetails = new AppDetails();
                     $appDetails->app_packageName = $package_name;
                     $appDetails->description = $app_response->description;
@@ -137,6 +137,114 @@ class AppsController extends Controller
 
 
                 return response()->json($app);
+            } else {
+
+                $app = AllApps::find($get_app->id);
+                $app->app_name = $app_response->app_name;
+                $app->app_packageName = $package_name;
+                $app->app_logo = $app_response->app_logo;
+//                $app->developer = $app_response->developer;
+                $app->app_accountName = $app_res_redis->APP_SETTINGS->app_accountName;
+                $app->status = 'live';
+                $app->save();
+
+
+                $get_app_details = AppDetails::where('app_packageName', $package_name)->first();
+                if (!$get_app_details) {
+                    $appDetails = new AppDetails();
+                    $appDetails->app_packageName = $package_name;
+                    $appDetails->description = $app_response->description;
+                    $appDetails->descriptionHTML = $app_response->descriptionHTML;
+                    $appDetails->summary = $app_response->summary;
+                    $appDetails->installs = $app_response->installs;
+                    $appDetails->minInstalls = $app_response->minInstalls;
+                    $appDetails->realInstalls = $app_response->realInstalls;
+                    $appDetails->score = $app_response->score;
+                    $appDetails->ratings = $app_response->ratings;
+                    $appDetails->reviews = $app_response->reviews;
+                    $appDetails->histogram = json_encode($app_response->histogram);
+                    $appDetails->price = $app_response->price;
+                    $appDetails->free = $app_response->free;
+                    $appDetails->currency = $app_response->currency;
+                    $appDetails->sale = $app_response->sale;
+                    $appDetails->saleTime = $app_response->saleTime;
+                    $appDetails->originalPrice = $app_response->originalPrice;
+                    $appDetails->saleText = $app_response->saleText;
+                    $appDetails->offersIAP = $app_response->offersIAP;
+                    $appDetails->inAppProductPrice = $app_response->inAppProductPrice;
+                    $appDetails->developer = $app_response->developer;
+                    $appDetails->developerId = $app_response->developerId;
+                    $appDetails->developerEmail = $app_response->developerEmail;
+                    $appDetails->developerWebsite = $app_response->developerWebsite;
+                    $appDetails->developerAddress = $app_response->developerAddress;
+                    $appDetails->genre = $app_response->genre;
+                    $appDetails->genreId = $app_response->genreId;
+                    $appDetails->headerImage = $app_response->headerImage;
+                    $appDetails->screenshots = json_encode($app_response->screenshots);
+                    $appDetails->video = $app_response->video;
+                    $appDetails->videoImage = $app_response->videoImage;
+                    $appDetails->contentRating = $app_response->contentRating;
+                    $appDetails->contentRatingDescription = $app_response->contentRatingDescription;
+                    $appDetails->adSupported = $app_response->adSupported;
+                    $appDetails->containsAds = $app_response->containsAds;
+                    $appDetails->released = $app_response->released;
+                    $appDetails->updated = $app_response->updated;
+                    $appDetails->version = $app_response->version;
+                    $appDetails->recentChanges = $app_response->recentChanges;
+                    $appDetails->recentChangesHTML = $app_response->recentChangesHTML;
+                    $appDetails->comments = json_encode($app_response->comments);
+                    $appDetails->url = $app_response->url;
+                    $appDetails->status = 'live';
+                    $appDetails->save();
+                } else {
+                    $appDetails = AppDetails::find($get_app_details->id);
+                    $appDetails->app_packageName = $package_name;
+                    $appDetails->description = $app_response->description;
+                    $appDetails->descriptionHTML = $app_response->descriptionHTML;
+                    $appDetails->summary = $app_response->summary;
+                    $appDetails->installs = $app_response->installs;
+                    $appDetails->minInstalls = $app_response->minInstalls;
+                    $appDetails->realInstalls = $app_response->realInstalls;
+                    $appDetails->score = $app_response->score;
+                    $appDetails->ratings = $app_response->ratings;
+                    $appDetails->reviews = $app_response->reviews;
+                    $appDetails->histogram = json_encode($app_response->histogram);
+                    $appDetails->price = $app_response->price;
+                    $appDetails->free = $app_response->free;
+                    $appDetails->currency = $app_response->currency;
+                    $appDetails->sale = $app_response->sale;
+                    $appDetails->saleTime = $app_response->saleTime;
+                    $appDetails->originalPrice = $app_response->originalPrice;
+                    $appDetails->saleText = $app_response->saleText;
+                    $appDetails->offersIAP = $app_response->offersIAP;
+                    $appDetails->inAppProductPrice = $app_response->inAppProductPrice;
+                    $appDetails->developer = $app_response->developer;
+                    $appDetails->developerId = $app_response->developerId;
+                    $appDetails->developerEmail = $app_response->developerEmail;
+                    $appDetails->developerWebsite = $app_response->developerWebsite;
+                    $appDetails->developerAddress = $app_response->developerAddress;
+                    $appDetails->genre = $app_response->genre;
+                    $appDetails->genreId = $app_response->genreId;
+                    $appDetails->headerImage = $app_response->headerImage;
+                    $appDetails->screenshots = json_encode($app_response->screenshots);
+                    $appDetails->video = $app_response->video;
+                    $appDetails->videoImage = $app_response->videoImage;
+                    $appDetails->contentRating = $app_response->contentRating;
+                    $appDetails->contentRatingDescription = $app_response->contentRatingDescription;
+                    $appDetails->adSupported = $app_response->adSupported;
+                    $appDetails->containsAds = $app_response->containsAds;
+                    $appDetails->released = $app_response->released;
+                    $appDetails->updated = $app_response->updated;
+                    $appDetails->version = $app_response->version;
+                    $appDetails->recentChanges = $app_response->recentChanges;
+                    $appDetails->recentChangesHTML = $app_response->recentChangesHTML;
+                    $appDetails->comments = json_encode($app_response->comments);
+                    $appDetails->url = $app_response->url;
+                    $appDetails->status = 'live';
+                    $appDetails->save();
+                }
+
+
             }
 
         } else {
@@ -225,21 +333,22 @@ class AppsController extends Controller
     public function getWebCreonPackage()
     {
 
-        $getWebCreonPackage = AllApps::where('status','live')->pluck('app_packageName');
+        $getWebCreonPackage = AllApps::where('status', 'live')->pluck('app_packageName');
         return $getWebCreonPackage;
 
     }
 
     public function webCreon2List()
     {
-        $app = AllApps::where('status','live')->get();
+        $app = AllApps::where('status', 'live')->get();
 //        return response()->json($app);
         return WebCreon2Resource::collection($app);
     }
 
-    public function getAppInfoWebCreon2($packageName){
+    public function getAppInfoWebCreon2($packageName)
+    {
 
-        $adplacement = AllApps::where('app_packageName', $packageName)->where('status','live')->get();
+        $adplacement = AllApps::where('app_packageName', $packageName)->where('status', 'live')->get();
         return WebCreon2Resource::collection($adplacement);
 
     }

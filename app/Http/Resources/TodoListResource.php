@@ -18,7 +18,7 @@ class TodoListResource extends JsonResource
             'id' => $this->id,
             'task_id' => $this->task(),
             'todoName' => $this->todoName,
-            'completed' => $this->completed,
+            'completed' => json_decode($this->completed),
             'created_at' => $this->created_at->format('Y-m-d'),
             'updated_at' => $this->updated_at->format('Y-m-d'),
         ];

@@ -69,6 +69,7 @@ Route::middleware('auth:api')->group(function () {
     Route::resource('task', TaskController::class);
     Route::post('startTask/{id}', [TaskController::class, 'startTask']);
     Route::get('endTask/{id}', [TaskController::class, 'endTask']);
+    Route::get('taskSendToTester/{id}', [TaskController::class, 'taskSendToTester']);
 
     // notification //
     Route::get('getAllNotification', [NotificationController::class, 'getAllNotification']);
