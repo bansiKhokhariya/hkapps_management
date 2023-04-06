@@ -70,6 +70,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('startTask/{id}', [TaskController::class, 'startTask']);
     Route::get('endTask/{id}', [TaskController::class, 'endTask']);
     Route::get('taskSendToTester/{id}', [TaskController::class, 'taskSendToTester']);
+    Route::get('getCompletedTask', [TaskController::class, 'getCompletedTask']);
 
     // notification //
     Route::get('getAllNotification', [NotificationController::class, 'getAllNotification']);
@@ -142,6 +143,8 @@ Route::middleware('auth:api')->group(function () {
     // TodoList //
     Route::resource('todoList', TodoListController::class);
     Route::get('task_todo/{task_id}', [TodoListController::class, 'task_todo']);
+    Route::post('addDefaultTodo', [TodoListController::class, 'addDefaultTodo']);
+    Route::get('getDefaultTodo', [TodoListController::class, 'getDefaultTodo']);
 
 });
 

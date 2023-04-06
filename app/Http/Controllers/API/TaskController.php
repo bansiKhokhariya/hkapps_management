@@ -19,6 +19,8 @@ class TaskController extends Controller
     {
 
         $authUserDesignation = Auth::user()->designation;
+        $authUserName = Auth::user()->name;
+
 
         if ($authUserDesignation == 'designer') {
             $task = Task::where('designerStatus', 'pending')->orWhere('designerStatus', 'running')->get();
@@ -156,7 +158,7 @@ class TaskController extends Controller
                         if ($task->designerStatus == 'completed') {
                             $task->status = 'completed';
                         } else {
-                            $task->status = 'running';
+                            $task->status = 'pending';
                         }
                         $task->save();
                         // call event
@@ -180,7 +182,7 @@ class TaskController extends Controller
                         if ($task->developerStatus == 'completed') {
                             $task->status = 'completed';
                         } else {
-                            $task->status = 'running';
+                            $task->status = 'pending';
                         }
                         $task->save();
 
@@ -205,9 +207,12 @@ class TaskController extends Controller
 
                     if ($task->developerStatus == 'completed') {
                         $task->status = 'completed';
+                    }else{
+                        $task->status = 'pending';
                     }
+
                     $task->save();
-                    $task->status = 'running';
+
 
                     //  call event
                     event(new RedisDataEvent());
@@ -222,8 +227,10 @@ class TaskController extends Controller
                     $task->developerEndDate = $currentTime->toDateTimeString();
                     if ($task->designerStatus == 'completed') {
                         $task->status = 'completed';
+                    }else{
+                        $task->status = 'pending';
                     }
-                    $task->status = 'running';
+
                     $task->save();
 
                     //call event
@@ -291,6 +298,23 @@ class TaskController extends Controller
         } else {
             return response('Only the person who started This Task can done it', 404);
         }
+    }
+
+    public function getCompletedTask()
+    {
+        $authUserName = Auth::user()->name;
+        $authDesignation = Auth::user()->designation;
+        if ($authDesignation == 'developer') {
+            $task = Task::where('assignDeveloperName', $authUserName)->where('developerStatus', 'completed')->get();
+        } elseif ($authDesignation == 'designer') {
+            $task = Task::where('assignDesignerName', $authUserName)->where('designerStatus', 'completed')->get();
+        } elseif ($authDesignation == 'tester') {
+            $task = Task::where('assignTesterName', $authUserName)->where('testerStatus', 'completed')->get();
+        } else {
+            $task = Task::where('status', 'completed')->get();
+        }
+        return TaskResoruce::collection($task);
+
     }
 
 }

@@ -27,12 +27,14 @@ class CreateTodoListRequest extends FormRequest
         return [
             'todoName' => 'required',
             'task_id' => 'required',
+            'category' => 'required',
         ];
     }
 
     public function persist()
     {
         $todoList = new TodoList($this->validated());
+        $todoList->category = $this->category;
         $todoList->completed = 'false';
         $todoList->save();
         return $todoList;
