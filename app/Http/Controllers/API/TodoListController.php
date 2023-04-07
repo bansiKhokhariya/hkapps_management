@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateTodoListRequest;
 use App\Http\Requests\UpdateTodoListRequest;
 use App\Http\Resources\TodoListResource;
+use App\Models\DefaultTodo;
+use App\Models\Task;
 use App\Models\TodoList;
 use Illuminate\Http\Request;
 
@@ -45,15 +47,15 @@ class TodoListController extends Controller
         $designerTodo = TodoList::where('task_id', $task_id)->where('category', 'designer')->with('task')->get();
         $developerTodo = TodoList::where('task_id', $task_id)->where('category', 'developer')->with('task')->get();
         $testerTodo = TodoList::where('task_id', $task_id)->where('category', 'tester')->with('task')->get();
-        $defaultDesignerTodo = TodoList::where('task_id', null)->where('category', 'designer')->get();
-        $defaultDeveloperTodo = TodoList::where('task_id', null)->where('category', 'developer')->get();
-        $defaultTesterTodo = TodoList::where('task_id', null)->where('category', 'tester')->get();
+//        $defaultDesignerTodo = DefaultTodo::where('task_id', null)->where('category', 'designer')->get();
+//        $defaultDeveloperTodo = DefaultTodo::where('task_id', null)->where('category', 'developer')->get();
+//        $defaultTesterTodo = DefaultTodo::where('task_id', null)->where('category', 'tester')->get();
 
-        $designerTodoList = (object)array_merge((array)$designerTodo, $defaultDesignerTodo);
-        $developerTodoList = (object)array_merge((array)$developerTodo, $defaultDeveloperTodo);
-        $testerTodoList = (object)array_merge((array)$testerTodo, $defaultTesterTodo);
+//        $developerTodoList = $developerTodo->concat($defaultDeveloperTodo);
+//        $designerTodoList = $designerTodo->concat($defaultDesignerTodo);
+//        $testerTodoList = $testerTodo->concat($defaultTesterTodo);
 
-        return response()->json(['generalTodo' => $todoList, 'designerTodo' => $designerTodoList, 'developerTodo' => $developerTodoList, 'testerTodo' => $testerTodoList]);
+        return response()->json(['generalTodo' => $todoList, 'designerTodo' => $designerTodo, 'developerTodo' => $developerTodo, 'testerTodo' => $testerTodo]);
 
 //        return TodoListResource::collection($todoList);
 
@@ -66,22 +68,40 @@ class TodoListController extends Controller
             'category' => 'required',
         ]);
 
-        $todoList = new TodoList();
-        $todoList->todoName = $request->todoName;
-        $todoList->category = $request->category;
-        $todoList->save();
+        $defaultTodo = new DefaultTodo();
+        $defaultTodo->todoName = $request->todoName;
+        $defaultTodo->category = $request->category;
+        $defaultTodo->save();
 
-        return $todoList;
+        $task = Task::all();
+        if ($task) {
+            foreach ($task as $taskId) {
+                $todo = TodoList::where('task_id', $taskId->id)->where('category', $defaultTodo->category)->where('todoName', $defaultTodo->todoName)->first();
+                if (!$todo) {
+                    $todoList = new TodoList();
+                    $todoList->task_id = $taskId->id;
+                    $todoList->todoName = $request->todoName;
+                    $todoList->category = $request->category;
+                    $todoList->completed = 'false';
+                    $todoList->save();
+                }
+            }
+        }
+
+
+        return $defaultTodo;
 
     }
 
-    public function getDefaultTodo(){
+    public function getDefaultTodo()
+    {
 
-        $designerTodo = TodoList::where('task_id', null)->where('category', 'designer')->get();
-        $developerTodo = TodoList::where('task_id', null)->where('category', 'developer')->get();
-        $testerTodo = TodoList::where('task_id', null)->where('category', 'tester')->get();
+        $designerTodo = DefaultTodo::where('category', 'designer')->get();
+        $developerTodo = DefaultTodo::where('category', 'developer')->get();
+        $testerTodo = DefaultTodo::where('category', 'tester')->get();
 
         return response()->json(['designerTodo' => $designerTodo, 'developerTodo' => $developerTodo, 'testerTodo' => $testerTodo]);
+
     }
 
 

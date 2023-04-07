@@ -3,7 +3,9 @@
 namespace App\Http\Requests;
 
 use App\Events\RedisDataEvent;
+use App\Models\DefaultTodo;
 use App\Models\Task;
+use App\Models\TodoList;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Http;
 use App\Models\GitHubToken;
@@ -41,6 +43,22 @@ class CreateTaskRequest extends FormRequest
         $task->description = $this->description;
         $task->status = 'pending';
         $task->save();
+
+
+        $defaultTodos = DefaultTodo::all();
+        if($defaultTodos){
+            foreach($defaultTodos as $defaultTodo){
+                $todo = TodoList::where('task_id', $task->id)->where('category', $defaultTodo->category)->where('todoName', $defaultTodo->todoName)->first();
+                if (!$todo) {
+                    $todoList = new TodoList();
+                    $todoList->task_id = $task->id;
+                    $todoList->todoName = $defaultTodo->todoName;
+                    $todoList->category = $defaultTodo->category;
+                    $todoList->completed = 'false';
+                    $todoList->save();
+                }
+            }
+        }
 
 
         // create github repo //
