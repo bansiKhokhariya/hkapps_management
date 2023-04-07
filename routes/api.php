@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\AdsNetworkConroller;
+use App\Http\Controllers\API\AllConsoleController;
 use App\Http\Controllers\API\CommanMasterController;
 use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\GithubTokenController;
@@ -145,6 +146,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('task_todo/{task_id}', [TodoListController::class, 'task_todo']);
     Route::post('addDefaultTodo', [TodoListController::class, 'addDefaultTodo']);
     Route::get('getDefaultTodo', [TodoListController::class, 'getDefaultTodo']);
+
+    // all console //
+    Route::resource('console', AllConsoleController::class);
 
 });
 
