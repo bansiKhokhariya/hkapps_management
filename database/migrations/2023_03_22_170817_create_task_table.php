@@ -34,6 +34,10 @@ class CreateTaskTable extends Migration
             $table->string('dev_testing')->default('false');
             $table->string('des_testing')->default('false');
             $table->string('githubRepoLink')->nullable();
+            $table->string('figmaLink')->nullable();
+            $table->string('logo')->nullable();
+            $table->string('banner')->nullable();
+            $table->text('screenshots')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

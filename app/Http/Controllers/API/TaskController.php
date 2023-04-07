@@ -128,8 +128,12 @@ class TaskController extends Controller
             }
         } elseif ($task->status == 'des-running') {
             if ($authUserName == $task->assignDesignerName) {
-                $task->status = 'test-pending';
-                $task->des_testing = 'true';
+                if($task->figmaLink){
+                    $task->status = 'test-pending';
+                    $task->des_testing = 'true';
+                }else{
+                    return response('You need to add figma link before sending to tester!', 422);
+                }
             } else {
                 return response('Only the person who started this task can send to tester!', 404);
             }
@@ -177,19 +181,32 @@ class TaskController extends Controller
             if ($task->designerStatus == 'running') {
                 if ($task->assignDesignerName == $authUserName) {
                     if ($task->des_testing == 'completed') {
-                        $task->designerStatus = 'completed';
-                        $task->designerEndDate = $currentTime->toDateTimeString();
-                        if ($task->developerStatus == 'completed') {
-                            $task->status = 'completed';
-                        } else {
-                            $task->status = 'pending';
+                        if($task->screenshots){
+                            $ss = json_decode($task->screenshots);
+                            $ss_count = count($ss);
+                        }else{
+                            $ss_count = 0;
                         }
-                        $task->save();
+                        if($task->logo && $task->banner && $ss_count > 2){
+                            $task->designerStatus = 'completed';
+                            $task->designerEndDate = $currentTime->toDateTimeString();
 
-                        // call event
-                        event(new RedisDataEvent());
+                            if ($task->developerStatus == 'completed') {
+                                $task->status = 'completed';
+                            }else{
+                                $task->status = 'pending';
+                            }
 
-                        return 'Task Done by ' . $authUserName;
+                            $task->save();
+
+
+                            //  call event
+                            event(new RedisDataEvent());
+
+                            return 'Task Done by ' . $authUserName;
+                        }else{
+                            return response('you need to upload 1 logo , 1 banner and minimum 2 screenshots before task done!', 422);
+                        }
                     } else {
                         return response('You can done this task after tester done it!', 404);
                     }
@@ -202,27 +219,39 @@ class TaskController extends Controller
         } elseif ($authUserDesignation == 'superadmin') {
             if ($task->designerStatus == 'running' && $task->status == 'des-running') {
                 if ($authUserName == $task->assignDesignerName) {
-                    $task->designerStatus = 'completed';
-                    $task->designerEndDate = $currentTime->toDateTimeString();
-
-                    if ($task->developerStatus == 'completed') {
-                        $task->status = 'completed';
+                    if($task->screenshots){
+                        $ss = json_decode($task->screenshots);
+                        $ss_count = count($ss);
                     }else{
-                        $task->status = 'pending';
+                        $ss_count = 0;
+                    }
+                    if($task->logo && $task->banner && $ss_count > 2){
+                        $task->designerStatus = 'completed';
+                        $task->designerEndDate = $currentTime->toDateTimeString();
+
+                        if ($task->developerStatus == 'completed') {
+                            $task->status = 'completed';
+                        }else{
+                            $task->status = 'pending';
+                        }
+
+                        $task->save();
+
+
+                        //  call event
+                        event(new RedisDataEvent());
+
+                        return 'Task Done by ' . $authUserName;
+                    }else{
+                        return response('you need to upload 1 logo , 1 banner and minimum 2 screenshots before task done!', 422);
                     }
 
-                    $task->save();
-
-
-                    //  call event
-                    event(new RedisDataEvent());
-
-                    return 'Task Done by ' . $authUserName;
                 } else {
                     return response('Only the person who started This Task can done it', 404);
                 }
             } elseif ($task->developerStatus == 'running' && $task->status == 'dev-running') {
                 if ($authUserName == $task->assignDeveloperName) {
+
                     $task->developerStatus = 'completed';
                     $task->developerEndDate = $currentTime->toDateTimeString();
                     if ($task->designerStatus == 'completed') {
