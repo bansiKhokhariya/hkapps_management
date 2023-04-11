@@ -33,7 +33,8 @@ class User extends Authenticatable
     const aso = 'ASO';
     const admin = 'admin';
     const production = 'production';
-    const superadmin = 'Super Admin';
+    const superadmin = 'superadmin';
+    const consoleManager = 'consoleManager';
 
     protected $fillable = [
         'name',

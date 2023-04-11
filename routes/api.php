@@ -149,6 +149,7 @@ Route::middleware('auth:api')->group(function () {
 
     // all console //
     Route::resource('console', AllConsoleController::class);
+    Route::get('getConsoleManager', [AllConsoleController::class, 'getConsoleManager']);
 
 });
 

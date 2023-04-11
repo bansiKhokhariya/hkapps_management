@@ -15,7 +15,7 @@ class CreateAllConsoleTable extends Migration
     {
         Schema::connection('mysql4')->create('all_console', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('manageBy')->nullable();
+            $table->integer('manageBy_id')->unsigned()->nullable();
             $table->string('email')->nullable();
             $table->string('password')->nullable();
             $table->string('consoleName')->nullable();
@@ -26,6 +26,9 @@ class CreateAllConsoleTable extends Migration
             $table->string('blogger')->nullable();
             $table->string('privacy')->nullable();
             $table->timestamps();
+        });
+        Schema::connection('mysql4')->table('all_console', function ($table) {
+            $table->foreign('manageBy_id')->references('id')->on('hk_apps_management.users');
         });
     }
 

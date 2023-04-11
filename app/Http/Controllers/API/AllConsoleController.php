@@ -7,6 +7,7 @@ use App\Http\Requests\CreateAllConsoleRequest;
 use App\Http\Requests\UpdateAllConsoleRequest;
 use App\Http\Resources\AllConsoleResource;
 use App\Models\AllConsole;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class AllConsoleController extends Controller
@@ -36,5 +37,11 @@ class AllConsoleController extends Controller
     {
         $allConsole->delete();
         return response('Console Deleted Successfully');
+    }
+    public function getConsoleManager(){
+
+        $user = User::where('designation','consoleManager')->get();
+        return $user;
+
     }
 }

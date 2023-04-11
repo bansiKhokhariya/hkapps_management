@@ -16,7 +16,7 @@ class AllConsoleResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'manageBy' => $this->manageBy,
+            'manageBy' => $this->manageBy(),
             'email' => $this->email,
             'password' => $this->password,
             'consoleName' => $this->consoleName,
@@ -31,3 +31,4 @@ class AllConsoleResource extends JsonResource
         ];
     }
 }
+

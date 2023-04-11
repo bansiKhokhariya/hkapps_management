@@ -20,14 +20,14 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('designation',[
-                'Super Admin'=>\App\Models\User::superadmin,
+                'superadmin'=>\App\Models\User::superadmin,
                 'admin'=>\App\Models\User::admin,
                 'designer' => \App\Models\User::designer,
                 'developer'  => \App\Models\User::developer,
                 'tester' => \App\Models\User::tester,
                 'ASO' => \App\Models\User::aso,
                 'production'=>\App\Models\User::production,
-
+                'consoleManager'=>\App\Models\User::consoleManager,
             ])->nullable();
             $table->string('roles');
             $table->string('profile_image')->nullable();

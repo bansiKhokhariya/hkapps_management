@@ -18,5 +18,9 @@ class AllConsole extends Model
     {
         return "{$eventName} Console - ID:{$this->id}, ConsoleName:{$this->apikey_text}";
     }
+    public function manageBy()
+    {
+        return $this->belongsTo(User::class);
+    }
 
 }
