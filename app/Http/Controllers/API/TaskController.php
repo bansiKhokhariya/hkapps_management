@@ -128,10 +128,10 @@ class TaskController extends Controller
             }
         } elseif ($task->status == 'des-running') {
             if ($authUserName == $task->assignDesignerName) {
-                if($task->figmaLink){
+                if ($task->figmaLink) {
                     $task->status = 'test-pending';
                     $task->des_testing = 'true';
-                }else{
+                } else {
                     return response('You need to add figma link before sending to tester!', 422);
                 }
             } else {
@@ -181,19 +181,19 @@ class TaskController extends Controller
             if ($task->designerStatus == 'running') {
                 if ($task->assignDesignerName == $authUserName) {
                     if ($task->des_testing == 'completed') {
-                        if($task->screenshots){
+                        if ($task->screenshots) {
                             $ss = json_decode($task->screenshots);
                             $ss_count = count($ss);
-                        }else{
+                        } else {
                             $ss_count = 0;
                         }
-                        if($task->logo && $task->banner && $ss_count > 2){
+                        if ($task->logo && $task->banner && $ss_count > 2) {
                             $task->designerStatus = 'completed';
                             $task->designerEndDate = $currentTime->toDateTimeString();
 
                             if ($task->developerStatus == 'completed') {
                                 $task->status = 'completed';
-                            }else{
+                            } else {
                                 $task->status = 'pending';
                             }
 
@@ -204,7 +204,7 @@ class TaskController extends Controller
                             event(new RedisDataEvent());
 
                             return 'Task Done by ' . $authUserName;
-                        }else{
+                        } else {
                             return response('you need to upload 1 logo , 1 banner and minimum 2 screenshots before task done!', 422);
                         }
                     } else {
@@ -219,19 +219,19 @@ class TaskController extends Controller
         } elseif ($authUserDesignation == 'superadmin') {
             if ($task->designerStatus == 'running' && $task->status == 'des-running') {
                 if ($authUserName == $task->assignDesignerName) {
-                    if($task->screenshots){
+                    if ($task->screenshots) {
                         $ss = json_decode($task->screenshots);
                         $ss_count = count($ss);
-                    }else{
+                    } else {
                         $ss_count = 0;
                     }
-                    if($task->logo && $task->banner && $ss_count > 2){
+                    if ($task->logo && $task->banner && $ss_count > 2) {
                         $task->designerStatus = 'completed';
                         $task->designerEndDate = $currentTime->toDateTimeString();
 
                         if ($task->developerStatus == 'completed') {
                             $task->status = 'completed';
-                        }else{
+                        } else {
                             $task->status = 'pending';
                         }
 
@@ -242,7 +242,7 @@ class TaskController extends Controller
                         event(new RedisDataEvent());
 
                         return 'Task Done by ' . $authUserName;
-                    }else{
+                    } else {
                         return response('you need to upload 1 logo , 1 banner and minimum 2 screenshots before task done!', 422);
                     }
 
@@ -256,7 +256,7 @@ class TaskController extends Controller
                     $task->developerEndDate = $currentTime->toDateTimeString();
                     if ($task->designerStatus == 'completed') {
                         $task->status = 'completed';
-                    }else{
+                    } else {
                         $task->status = 'pending';
                     }
 
@@ -343,6 +343,52 @@ class TaskController extends Controller
             $task = Task::where('status', 'completed')->get();
         }
         return TaskResoruce::collection($task);
+
+    }
+
+    public function deleteLogoBanner(Request $request)
+    {
+        $id = $request->id;
+        if ($request->imageType == 'logo') {
+            Task::where('id', $id)
+                ->update([
+                    'logo' => NULL
+                ]);
+        }elseif ($request->imageType == 'banner'){
+            Task::where('id', $id)
+                ->update([
+                    'banner' => NULL
+                ]);
+        }
+    }
+
+    public function deleteScreenshots(Request $request)
+    {
+        $id = $request->id;
+        $get_screenshots = Task::where('id', $id)->pluck('screenshots');
+        $screenshots = json_decode($get_screenshots);
+        $screenshot = json_decode($screenshots[0]);
+
+        if (($key = array_search($request->screenshots, $screenshot)) !== false) {
+            unset($screenshot[$key]);
+        }
+
+        $file_path[] = $screenshot;
+        $new_file_path = $file_path[0];
+        $mySSArr = implode(',', $new_file_path);
+
+        $new_array = explode(',', $mySSArr);
+
+        $task = Task::find($id);
+
+        if ($new_array == [""]) {
+            $task->screenshots = null;
+        } else {
+            $task->screenshots = $new_array;
+        }
+
+        $task->save();
+        return response()->json(['message' => 'Screenshot delete successfully!']);
 
     }
 

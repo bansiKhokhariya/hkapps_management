@@ -7,6 +7,8 @@ use App\Models\Task;
 use App\Models\TodoList;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\URL;
+use App\Rules\DimensionRule;
+use Illuminate\Support\Facades\Validator;
 
 
 class UpdateTaskRequest extends FormRequest
@@ -26,17 +28,22 @@ class UpdateTaskRequest extends FormRequest
      *
      * @return array
      */
+
     public function rules()
     {
         return [
             'title' => 'required',
+            'logo' => 'nullable|dimensions:width=512,height=512',
+            'banner' => 'nullable|dimensions:width=1024,height=500',
+            'screenshots' => [new DimensionRule()],
         ];
     }
 
     public function persist(Task $task)
     {
-
+        $myAttchArr = json_decode($task->screenshots);
         $task->fill($this->validated());
+
         $task->refrence = $this->refrence;
         $task->description = $this->description;
         $task->figmaLink = $this->figmaLink;
@@ -50,7 +57,12 @@ class UpdateTaskRequest extends FormRequest
         } else {
             $logo = null;
         }
-        $task->logo = $logo;
+        if(!$this->hasFile('logo')){
+            $task->logo = $task->logo;
+        }else{
+            $task->logo = $logo;
+        }
+
         // ******** //
 
         // banner //
@@ -62,7 +74,13 @@ class UpdateTaskRequest extends FormRequest
         } else {
             $banner = null;
         }
-        $task->banner = $banner;
+        if(!$this->hasFile('banner')){
+            $task->banner = $task->banner;
+        }else{
+            $task->banner = $banner;
+        }
+
+
         // ******* //
 
         // screenshots //
@@ -75,15 +93,17 @@ class UpdateTaskRequest extends FormRequest
             }
         }
 
-        if (!$task->screenshots) {
+        if ($task->screenshots == '' || $task->screenshots == null) {
+
             if (!$this->screenshots) {
                 $task->screenshots = NULL;
             } else {
                 $myAttchArr1 = json_encode($file_path);
                 $task->screenshots = $myAttchArr1;
             }
+
         } else {
-            $myAttchArr = json_decode($task->screenshots);
+
             if ($this->screenshots == null) {
                 $task->screenshots = $task->screenshots;
             } else {

@@ -168,6 +168,7 @@ class AppDetailsUpadateCron extends Command
                     $allApp = AllApps::find($allApp->id);
                     $allApp->app_logo = $value->icon;
                     $allApp->app_name = $value->title;
+                    $allApp->developer = $value->developer;
                     if($app_res_redis->STATUS == 'true'){
                         $allApp->app_accountName = $app_res_redis->APP_SETTINGS->app_accountName;
                     }

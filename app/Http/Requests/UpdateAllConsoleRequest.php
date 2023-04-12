@@ -25,7 +25,7 @@ class UpdateAllConsoleRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|email',
+//            'email' => 'required|email',
         ];
     }
     public function persist(AllConsole $allConsole)

@@ -11,7 +11,7 @@ class AllAppsFilters extends Filter
 
     public function search_app($search_app)
     {
-        $this->builder->where('app_name', 'like', "%{$search_app}%")->orWhere('app_packageName', 'like', "%{$search_app}%");
+        $this->builder->where('app_name', 'like', "%{$search_app}%")->orWhere('app_packageName', 'like', "%{$search_app}%")->orWhere('developer', 'like', "%{$search_app}%");
     }
 
 }

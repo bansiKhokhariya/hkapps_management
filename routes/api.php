@@ -72,6 +72,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('endTask/{id}', [TaskController::class, 'endTask']);
     Route::get('taskSendToTester/{id}', [TaskController::class, 'taskSendToTester']);
     Route::get('getCompletedTask', [TaskController::class, 'getCompletedTask']);
+    Route::post('deleteLogoBanner', [TaskController::class, 'deleteLogoBanner']);
+    Route::post('deleteScreenshots', [TaskController::class, 'deleteScreenshots']);
+
 
     // notification //
     Route::get('getAllNotification', [NotificationController::class, 'getAllNotification']);
