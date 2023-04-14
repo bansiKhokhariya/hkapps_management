@@ -17,7 +17,6 @@ use App\Models\AppDetails;
 use App\Models\TestAdPlacement;
 use App\Models\TestAllApp;
 use App\Models\User;
-use App\Notifications\RemoveAppNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Events\RedisDataEvent;
@@ -31,13 +30,44 @@ class AllAppsController extends Controller
 
     public function index()
     {
-        $companyUser = Auth::user()->company_master_id;
-        if (!$companyUser) {
-            $allApp = AllApps::where('status', 'live')->latest()->get();
-        } else {
-            $allApp = AllApps::where('company_master_id', $companyUser)->where('status', 'live')->latest()->get();
-        }
-        return AllAppResource::collection($allApp);
+        // $companyUser = Auth::user()->company_master_id;
+        // if (!$companyUser) {
+        //     $allApp = AllApps::where('status', 'live')->latest()->get();
+        // } else {
+        //     $allApp = AllApps::where('company_master_id', $companyUser)->where('status', 'live')->latest()->get();
+        // }
+        // return AllAppResource::collection($allApp);
+
+
+        $redis3 = Redis::connection('RedisApp3');
+        $response3 = $redis3->keys("*");
+        $emptyArray = [];
+
+        $collection = collect($response3);
+
+        $allApps = AllApps::whereIn('app_packageName',$response3)->pluck('app_packageName');
+
+        $diff = $collection->diffKeys($allApps);
+        $rr = $diff->all();
+
+        $map = array_map(function($value){
+            return  (object)[
+                "app_packageName" => $value,
+            ];
+        },$rr);
+
+        $tt = array_values($map);
+
+        $allApp = AllApps::whereIn('app_packageName',$response3)->where('status', 'live')->latest()->get()->toArray();
+
+        $temp =   array_merge((array)$tt,$allApp);
+
+        $final =   array_values($temp);
+        return $final;
+//   return  AllAppResource::collection($final);
+
+
+
     }
 
     public function store(CreateAllAppRequest $request)
@@ -55,11 +85,10 @@ class AllAppsController extends Controller
         return $allApps;
     }
 
-    public function show(AllApps $allApp)
+    public function show($package_name)
     {
 
-        $package_name = $allApp->app_packageName;
-
+        $allApp = AllApps::where('app_packageName',$package_name)->first();
         $redis = Redis::connection('RedisApp2');
         $response = $redis->get($package_name);
         $db_response = json_decode($response);
@@ -108,11 +137,12 @@ class AllAppsController extends Controller
             $monetize_setting = [];
 
             foreach ($placement as $key => $value) {
-                $platform_adFormat = [];
+
+                $platform_adFormat = ['App ID' , 'Banner' , 'Interstitial' , 'Native' , 'Rewarded Video' ,'Native Banner','App Open'];
                 if (isset($value->AppID) && $value->AppID != '') {
                     $ad_Appid = $value->AppID;
-                    array_push($platform_adFormat, 'App ID');
-                } else {
+                    // array_push($platform_adFormat, 'App ID');
+                }else {
                     $ad_Appid = '';
                 }
 
@@ -128,36 +158,36 @@ class AllAppsController extends Controller
                 foreach ($value as $item => $i) {
                     if (str_starts_with($item, 'Banner')) {
                         array_push($ad_Banner, $i);
-                        array_push($platform_adFormat, 'Banner');
+                        // array_push($platform_adFormat, 'Banner');
                     }
                     if (str_starts_with($item, 'Interstitial')) {
                         array_push($ad_Interstitial, $i);
-                        array_push($platform_adFormat, 'Interstitial');
+                        // array_push($platform_adFormat, 'Interstitial');
                     }
-                    if (str_starts_with($item, 'Native')) {
+                    if (str_starts_with($item, 'Native') && !str_starts_with($item, 'NativeBanner')) {
                         array_push($ad_Native, $i);
-                        array_push($platform_adFormat, 'Native');
+                        // array_push($platform_adFormat, 'Native');
                     }
                     if (str_starts_with($item, 'NativeBanner')) {
                         array_push($ad_NativeBanner, $i);
-                        array_push($platform_adFormat, 'Native Banner');
+                        // array_push($platform_adFormat, 'Native Banner');
                     }
                     if (str_starts_with($item, 'RewardedVideo')) {
                         array_push($ad_RewardedVideo, $i);
-                        array_push($platform_adFormat, 'Rewarded Video');
+                        // array_push($platform_adFormat, 'Rewarded Video');
                     }
                     if (str_starts_with($item, 'RewardedInterstitial')) {
                         array_push($ad_RewardedInterstitial, $i);
-                        array_push($platform_adFormat, 'Rewarded Interstitial');
+                        // array_push($platform_adFormat, 'Rewarded Interstitial');
                     }
                     if (str_starts_with($item, 'AppOpen')) {
                         array_push($ad_AppOpen, $i);
-                        array_push($platform_adFormat, 'App Open');
+                        // array_push($platform_adFormat, 'App Open');
                     }
                 }
 
 
-                $monetize_setting_object = array('platform_name' => $key, 'platform_adFormat' => array_unique($platform_adFormat), 'ad_AppID' => $ad_Appid, 'ad_Banner' => $ad_Banner, 'ad_Interstitial'
+                $monetize_setting_object = array('platform_name' => $key, 'platform_adFormat' => $platform_adFormat, 'ad_AppID' => $ad_Appid, 'ad_Banner' => $ad_Banner, 'ad_Interstitial'
                 => $ad_Interstitial, 'ad_Native' => $ad_Native, 'ad_NativeBanner' => $ad_NativeBanner, 'ad_RewardedVideo' => $ad_RewardedVideo
                 , 'ad_RewardedInterstitial' => $ad_RewardedInterstitial, 'ad_AppOpen' => $ad_AppOpen, 'ad_loadAdIdsType' => $value->ad_loadAdIdsType, 'ad_showAdStatus' => $value->ad_showAdStatus);
                 array_push($monetize_setting, $monetize_setting_object);
@@ -206,19 +236,26 @@ class AllAppsController extends Controller
         } else {
             return response()->json(['message' => 'This app Redis 6 data is null!'], 404);
         }
-
-
-//        return AllAppResource::make($allApp);
+        // return AllAppResource::make($allApp);
     }
 
-    public function update(Request $request, AllApps $allApp)
+    public function testShow(TestAllApp $testAllApp)
+    {
+        return TestAllAppResource::make($testAllApp);
+    }
+
+    public function update(Request $request ,$package_name)
     {
 
-        $package_name = $allApp->package_name;
+//        $package_name = $allApp->package_name;
         $db2_response = json_decode($request->db2_response);
 
 
+
         // sql db save //
+
+        $allApp = AllApps::where('app_packageName',$package_name)->first();
+
         $AllApps = AllApps::find($allApp->id);
 
         if ($db2_response->app_updateAppDialogStatus == null) {
@@ -263,16 +300,11 @@ class AllAppsController extends Controller
         }
         $AllApps->app_howShowAd = $db2_response->app_howShowAd;
         $AllApps->app_adPlatformSequence = $db2_response->app_adPlatformSequence;
-        $AllApps->app_alternateAdShow = $db2_response->app_alternateAdShow;
-        if ($db2_response->app_testAdStatus == null) {
-            $AllApps->app_testAdStatus = $AllApps->app_testAdStatus;
-        } else {
-            if (json_decode($db2_response->app_testAdStatus)) {
-                $AllApps->app_testAdStatus = 1;
-            } else {
-                $AllApps->app_testAdStatus = 0;
-            }
+        $AllApps->app_alternateAdShow = $db2_response->app_alernateAdShow;
+        if (isset($db2_response->app_testAdStatus)) {
+            $AllApps->app_testAdStatus = $db2_response->app_testAdStatus;
         }
+
         $AllApps->app_mainClickCntSwAd = $db2_response->app_mainClickCntSwAd;
         $AllApps->app_innerClickCntSwAd = $db2_response->app_innerClickCntSwAd;
         $AllApps->app_parameter = $db2_response->app_parameter;
@@ -405,11 +437,18 @@ class AllAppsController extends Controller
 
             $allAdformat = array_merge($banner_array, $interstitial_array, $native_array, $nativeBanner_array, $rewardedVideo_array, $rewardedInterstitial_array, $appOpen_array);
             $placement = array_merge($new_placement, $allAdformat);
+
+
             array_push($placement_array, $placement);
         }
 
+
+
         $new_placement_array = [];
         foreach ($placement_array as $key => $value) {
+            if(isset($value['ad_AppID']) && $value['ad_AppID'] == ''){
+                unset($value['ad_AppID']);
+            }
             unset($value['ad_Banner']);
             unset($value['ad_Interstitial']);
             unset($value['ad_Native']);
@@ -425,16 +464,20 @@ class AllAppsController extends Controller
             $new_placement_array = array_merge($new_placement_array, $object1);
         }
 
+
         $response = (object)["STATUS" => $db2_response->STATUS, "MSG" => $db2_response->MSG, "APP_SETTINGS" => $app_settings, "PLACEMENT" => $new_placement_array,
             "Advertise_List" => $db2_response->Advertise_List, "MORE_APP_SPLASH" => $db2_response->MORE_APP_SPLASH, "MORE_APP_EXIT" => $db2_response->MORE_APP_EXIT, "EXTRA_DATA" => $db2_response->app_extra];
 
-//        $redis = Redis::connection('RedisApp2');
-//        $redis->set($package_name, json_encode($response));
+        return $response;
+
+        $redis = Redis::connection('RedisApp2');
+        $redis->set($package_name, json_encode($response));
 
         // ****************** //
 
 
         return 'data set succesfully!';
+
 
 
 //        return AllAppResource::make($request->persist($allApp));
@@ -454,11 +497,11 @@ class AllAppsController extends Controller
     public function store_monetize(Request $request)
     {
 
-        $get_adplacement = AdPlacement::where('allApps_id', $request->allApps_id)->where('platform_id', $request->platform_id)->first();
+        $get_adplacement = AdPlacement::where('allApps_id', $request->allApps_id)->where('platform_name', $request->platform_name)->first();
         if ($get_adplacement) {
             $ad_placement = AdPlacement::find($get_adplacement->id);
             $ad_placement->allApps_id = $request->allApps_id;
-            $ad_placement->platform_id = $request->platform_id;
+            $ad_placement->platform_name = $request->platform_name;
             $ad_placement->ad_loadAdIdsType = $request->ad_loadAdIdsType;
             $ad_placement->ad_AppID = $request->ad_AppID;
             $ad_placement->ad_Banner = $request->ad_Banner;
@@ -471,7 +514,7 @@ class AllAppsController extends Controller
         } else {
             $ad_placement = new AdPlacement();
             $ad_placement->allApps_id = $request->allApps_id;
-            $ad_placement->platform_id = $request->platform_id;
+            $ad_placement->platform_name = $request->platform_name;
             $ad_placement->ad_loadAdIdsType = $request->ad_loadAdIdsType;
             $ad_placement->ad_AppID = $request->ad_AppID;
             $ad_placement->ad_Banner = json_encode($request->ad_Banner);
@@ -495,58 +538,58 @@ class AllAppsController extends Controller
         $redis2 = Redis::connection('RedisApp2');
         $response = $redis2->get($package_name);
 
-        $res_obj = json_decode($response);
+        // $res_obj = json_decode($response);
 
-        $allApps = AllApps::Where('app_packageName', $package_name)->first();
+        // $allApps = AllApps::Where('app_packageName', $package_name)->first();
 
-        if ($res_obj) {
-            $redis3 = Redis::connection('RedisApp3');
-            $response3 = $redis3->get($package_name);
-            $response3Convert = str_replace(["'"], '"', $response3);
+//         if ($res_obj) {
+//             $redis3 = Redis::connection('RedisApp3');
+//             $response3 = $redis3->get($package_name);
+//             $response3Convert = str_replace(["'"], '"', $response3);
 
-            $meta_keywords = json_decode($response3Convert)->AFHJNTGDGD563200K;
+//             $meta_keywords = json_decode($response3Convert)->AFHJNTGDGD563200K;
 
-//            $meta_keywords = explode(',', $res_obj->APP_SETTINGS->app_apikey);
-            if ($api_key == $meta_keywords) {
-                $get_api_key = ApikeyList::where('apikey_packageName', $package_name)->where('apikey_text', $api_key)->first();
-                if ($get_api_key) {
-                    $apikey_request_count = $get_api_key->apikey_request;
-                    $apiKey = ApikeyList::find($get_api_key->id);
-                    $apiKey->apikey_request = $apikey_request_count + 1;
-                    $apiKey->save();
-                } else {
-                    $apiKey = new ApikeyList();
-                    $apiKey->apikey_packageName = $package_name;
-                    $apiKey->apikey_text = $api_key;
-                    if ($allApps) {
-                        $apiKey->is_available = 1;
-                    } else {
-                        $apiKey->is_available = 0;
-                    }
-                    $apiKey->save();
-                }
-            } else {
-                $apiKey = new ApikeyList();
-                $apiKey->apikey_packageName = $package_name;
-                $apiKey->apikey_text = $api_key;
-                if ($allApps) {
-                    $apiKey->is_available = 1;
-                } else {
-                    $apiKey->is_available = 0;
-                }
-                $apiKey->save();
-            }
-        } else {
-            $apiKey = new ApikeyList();
-            $apiKey->apikey_packageName = $package_name;
-            $apiKey->apikey_text = $api_key;
-            if ($allApps) {
-                $apiKey->is_available = 1;
-            } else {
-                $apiKey->is_available = 0;
-            }
-            $apiKey->save();
-        }
+// //            $meta_keywords = explode(',', $res_obj->APP_SETTINGS->app_apikey);
+//             if ($api_key == $meta_keywords) {
+//                 $get_api_key = ApikeyList::where('apikey_packageName', $package_name)->where('apikey_text', $api_key)->first();
+//                 if ($get_api_key) {
+//                     $apikey_request_count = $get_api_key->apikey_request;
+//                     $apiKey = ApikeyList::find($get_api_key->id);
+//                     $apiKey->apikey_request = $apikey_request_count + 1;
+//                     $apiKey->save();
+//                 } else {
+//                     $apiKey = new ApikeyList();
+//                     $apiKey->apikey_packageName = $package_name;
+//                     $apiKey->apikey_text = $api_key;
+//                     if ($allApps) {
+//                         $apiKey->is_available = 1;
+//                     } else {
+//                         $apiKey->is_available = 0;
+//                     }
+//                     $apiKey->save();
+//                 }
+//             } else {
+//                 $apiKey = new ApikeyList();
+//                 $apiKey->apikey_packageName = $package_name;
+//                 $apiKey->apikey_text = $api_key;
+//                 if ($allApps) {
+//                     $apiKey->is_available = 1;
+//                 } else {
+//                     $apiKey->is_available = 0;
+//                 }
+//                 $apiKey->save();
+//             }
+//         } else {
+//             $apiKey = new ApikeyList();
+//             $apiKey->apikey_packageName = $package_name;
+//             $apiKey->apikey_text = $api_key;
+//             if ($allApps) {
+//                 $apiKey->is_available = 1;
+//             } else {
+//                 $apiKey->is_available = 0;
+//             }
+//             $apiKey->save();
+//         }
 
 
         // call event
@@ -701,12 +744,10 @@ class AllAppsController extends Controller
             $monetize_setting = [];
 
             foreach ($placement as $key => $value) {
-
-                $platform_adFormat = ['App ID', 'Banner', 'Interstitial', 'Native', 'Rewarded Video', 'App Open'];
-
+                $platform_adFormat = ['App ID' , 'Banner' , 'Interstitial' , 'Native' , 'Rewarded Video' ,'Native Banner' ,'App Open'];
                 if (isset($value->AppID) && $value->AppID != '') {
                     $ad_Appid = $value->AppID;
-//                    array_push($platform_adFormat, 'App ID');
+                    // array_push($platform_adFormat, 'App ID');
                 } else {
                     $ad_Appid = '';
                 }
@@ -723,31 +764,31 @@ class AllAppsController extends Controller
                 foreach ($value as $item => $i) {
                     if (str_starts_with($item, 'Banner')) {
                         array_push($ad_Banner, $i);
-//                        array_push($platform_adFormat, 'Banner');
+                        // array_push($platform_adFormat, 'Banner');
                     }
                     if (str_starts_with($item, 'Interstitial')) {
                         array_push($ad_Interstitial, $i);
-//                        array_push($platform_adFormat, 'Interstitial');
+                        // array_push($platform_adFormat, 'Interstitial');
                     }
                     if (str_starts_with($item, 'Native')) {
                         array_push($ad_Native, $i);
-//                        array_push($platform_adFormat, 'Native');
+                        // array_push($platform_adFormat, 'Native');
                     }
                     if (str_starts_with($item, 'NativeBanner')) {
                         array_push($ad_NativeBanner, $i);
-//                        array_push($platform_adFormat, 'Native Banner');
+                        // array_push($platform_adFormat, 'Native Banner');
                     }
                     if (str_starts_with($item, 'RewardedVideo')) {
                         array_push($ad_RewardedVideo, $i);
-//                        array_push($platform_adFormat, 'Rewarded Video');
+                        // array_push($platform_adFormat, 'Rewarded Video');
                     }
                     if (str_starts_with($item, 'RewardedInterstitial')) {
                         array_push($ad_RewardedInterstitial, $i);
-//                        array_push($platform_adFormat, 'Rewarded Interstitial');
+                        // array_push($platform_adFormat, 'Rewarded Interstitial');
                     }
                     if (str_starts_with($item, 'AppOpen')) {
                         array_push($ad_AppOpen, $i);
-//                        array_push($platform_adFormat, 'App Open');
+                        // array_push($platform_adFormat, 'App Open');
                     }
                 }
 
@@ -832,6 +873,7 @@ class AllAppsController extends Controller
             $app_parameter_array = [];
         }
         $app_settings = array_merge($app_settings, $app_parameter_array);
+
         // ****** //
 
 
@@ -936,6 +978,9 @@ class AllAppsController extends Controller
 
         $new_placement_array = [];
         foreach ($placement_array as $key => $value) {
+            if(isset($value['ad_AppID']) && $value['ad_AppID'] == ''){
+                unset($value['ad_AppID']);
+            }
             unset($value['ad_Banner']);
             unset($value['ad_Interstitial']);
             unset($value['ad_Native']);
@@ -990,13 +1035,38 @@ class AllAppsController extends Controller
     public function getRemovedApp()
     {
 
-        $companyUser = Auth::user()->company_master_id;
-        if (!$companyUser) {
-            $allApp = AllApps::latest()->get();
-        } else {
-            $allApp = AllApps::where('company_master_id', $companyUser)->get();
-        }
-        return AllAppResource::collection($allApp);
+        // $companyUser = Auth::user()->company_master_id;
+        // if (!$companyUser) {
+        //     $allApp = AllApps::latest()->get();
+        // } else {
+        //     $allApp = AllApps::where('company_master_id', $companyUser)->get();
+        // }
+        // return AllAppResource::collection($allApp);
+
+        $redis3 = Redis::connection('RedisApp3');
+        $response3 = $redis3->keys("*");
+        $emptyArray = [];
+
+        $collection = collect($response3);
+
+        $allApps = AllApps::whereIn('app_packageName',$response3)->pluck('app_packageName');
+
+        $diff = $collection->diffKeys($allApps);
+        $rr = $diff->all();
+
+        $map = array_map(function($value){
+            return  (object)[
+                "app_packageName" => $value,
+            ];
+        },$rr);
+
+        $tt = array_values($map);
+
+        $allApp = AllApps::whereIn('app_packageName',$response3)->latest()->get()->toArray();
+
+        $temp =   array_merge((array)$tt,(array)$allApp);
+        $final =   array_values($temp);
+        return $final;
 
     }
 
@@ -1044,10 +1114,10 @@ class AllAppsController extends Controller
     public function getDeletedApp(){
 
         $allApp = AllApps::onlyTrashed()->get();
-
-        return AllAppResource::collection($allApp);
+        return $allApp;
 
     }
+
 
 
 }

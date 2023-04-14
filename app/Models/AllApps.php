@@ -21,6 +21,7 @@ class AllApps extends Model
 
     protected static $logName = 'All Apps';
 
+    protected $appends = ['TotalDownloads'];
     public function getDescriptionForEvent(string $eventName): string
     {
         return "{$eventName} All Apps - ID:{$this->id}, appName:{$this->appPackageName}";
@@ -50,6 +51,16 @@ class AllApps extends Model
         $app_details = AppDetails::where('app_packageName', $this->app_packageName)->first();
         return $app_details;
 
+    }
+
+    public function getTotalDownloadsAttribute()
+    {
+        $app_details = AppDetails::where('app_packageName', $this->app_packageName)->first();
+        if($app_details){
+            $installs = $app_details->realInstalls;
+            $total_downloads =   intval(str_replace(",","",$installs));
+            return $total_downloads;
+        }
     }
 
     public function appDetailsWebCreon()

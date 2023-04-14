@@ -10,6 +10,7 @@ use App\Models\AllApps;
 use App\Models\ApikeyList;
 use Illuminate\Http\Request;
 use App\Events\RedisDataEvent;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Redis;
 
 class ApiKeyListController extends Controller
@@ -66,20 +67,52 @@ class ApiKeyListController extends Controller
 
         // ***************** view app response json ******************** //
         $getApp = new AllApps();
-        $result = $getApp->viewResponse($package_name,$apikey);
+        $result = $getApp->viewResponse($package_name, $apikey);
 
         $redis = Redis::connection('RedisApp10');
         $redis->set($package_name, json_encode($result));
 
 
         // delete apikey list //
-        $apikeyList = ApikeyList::where('apikey_packageName', $package_name)->where('apikey_text',$apikey)->first();
+        $apikeyList = ApikeyList::where('apikey_packageName', $package_name)->where('apikey_text', $apikey)->first();
         $apikeyList->forceDelete();
 
         // call event
         // event(new RedisDataEvent());
 
         return response()->json('apikey assign succesfully!');
+
+    }
+
+    public function getRedisApiKey()
+    {
+        $redis3 = Redis::connection('RedisApp3');
+        $response3 = $redis3->keys("*");
+        $getValue = $redis3->mget($response3);
+        $apikeyList = array_map(function ($value) {
+            return json_decode($value);
+        }, $getValue);
+
+        $apikey = Arr::where($apikeyList, function ($value, $key)  {
+            if(isset($value->status)){
+                return $value->status == 'unauthorized';
+            }
+        });
+
+        return array_values($apikey);
+
+    }
+
+    public function setRedisApiKey(Request $request){
+
+        $redis3 = Redis::connection('RedisApp3');
+
+        $package_name = $request->package_name;
+        $response = $request->jsonData;
+
+        $redis3->set($package_name, $response);
+
+        return 'Data set succesfully!';
 
     }
 

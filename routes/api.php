@@ -90,6 +90,8 @@ Route::middleware('auth:api')->group(function () {
 
     // all apps //
     Route::resource('allApp', AllAppsController::class);
+    Route::get('allApp/{package_name}', [AllAppsController::class, 'show']);
+    Route::post('allApp/{package_name}', [AllAppsController::class, 'update']);
     Route::post('appForceDelete', [AllAppsController::class, 'forceDelete']);
     Route::post('appRestore/{id}', [AllAppsController::class, 'appRestore']);
     Route::get('getDeletedApp', [AllAppsController::class, 'getDeletedApp']);
@@ -101,6 +103,7 @@ Route::middleware('auth:api')->group(function () {
 
     // apikey list //
     Route::resource('apikey_list', ApiKeyListController::class);
+    Route::post('assignApiKey', [ApiKeyListController::class, 'assignApiKey']);
 
     // adx master //
     Route::resource('adx_master', AdxMasterController::class);
@@ -118,9 +121,6 @@ Route::middleware('auth:api')->group(function () {
 
     // all apps with DB 6//
     Route::get('storePackage', [AllAppsController::class, 'storePackage']);
-
-    // apikey list //
-    Route::post('assignApiKey', [ApiKeyListController::class, 'assignApiKey']);
 
     // privacy policy link update  //
     Route::post('updatePrivacypolicyLink/{id}', [AllAppsController::class, 'updatePrivacypolicyLink']);
@@ -257,6 +257,12 @@ Route::get('getAppInfoByPackage/{packageName}', [ExpenseRevenueController::class
 
 // county //
 Route::get('getCountry', [CommanMasterController::class, 'getCountry']);
+
+// apikey redis db3 //
+Route::get('getRedisApiKey', [ApiKeyListController::class, 'getRedisApiKey']);
+Route::post('setRedisApiKey', [ApiKeyListController::class, 'setRedisApiKey']);
+
+
 
 
 //google play //
