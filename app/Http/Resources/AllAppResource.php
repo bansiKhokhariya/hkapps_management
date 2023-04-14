@@ -28,13 +28,15 @@ class AllAppResource extends JsonResource
             $company = [];
         }
 
-        if(isset($this->appDetails) && $this->appDetails !== null){
+        if($this->appDetails() !== null){
+
             $developer_name = $this->appDetails()->developer;
             $total_downloads = $this->appDetails()->realInstalls;
             $status = $this->appDetails()->status;
             $ratings = $this->appDetails()->ratings;
 
         }else{
+
             $developer_name = '';
             $total_downloads = '';
             $status = '';
@@ -71,7 +73,7 @@ class AllAppResource extends JsonResource
             'TotalDownloads' =>intval(str_replace(",","",$total_downloads)),
             'avg_per_day' => 0,
             'status' => isset($this->status) ? $this->status : null,
-            'unauthorize' => $this->TotalRequestCount(),
+            // 'unauthorize' => $this->TotalRequestCount(),
             'company_master_id' => $company,
             'ads_master' => isset($this->ads_master) ? $this->ads_master : null,
             'adx' => isset($this->adx) ? $this->adx : null,

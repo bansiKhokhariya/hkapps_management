@@ -24,49 +24,130 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Redis;
 use App\Models\GitHubToken;
 use App\Models\AppRelatedWord;
+use Illuminate\Support\Arr;
 
 class AllAppsController extends Controller
 {
 
     public function index()
     {
-        // $companyUser = Auth::user()->company_master_id;
-        // if (!$companyUser) {
-        //     $allApp = AllApps::where('status', 'live')->latest()->get();
-        // } else {
-        //     $allApp = AllApps::where('company_master_id', $companyUser)->where('status', 'live')->latest()->get();
-        // }
-        // return AllAppResource::collection($allApp);
 
+        $companyUser = Auth::user()->company_master_id;
 
         $redis3 = Redis::connection('RedisApp3');
         $response3 = $redis3->keys("*");
-        $emptyArray = [];
 
         $collection = collect($response3);
 
-        $allApps = AllApps::whereIn('app_packageName',$response3)->pluck('app_packageName');
+        $allApps = AllApps::whereIn('app_packageName', $response3)->pluck('app_packageName');
 
-        $diff = $collection->diffKeys($allApps);
+        $diff = $collection->diff($allApps);
         $rr = $diff->all();
 
-        $map = array_map(function($value){
-            return  (object)[
-                "app_packageName" => $value,
-            ];
-        },$rr);
+        $mm = array_values($rr);
+        if (count($mm) > 0) {
+            $getValue = $redis3->mget($mm);
+            $apikeyList = array_map(function ($value) {
+                return json_decode($value);
+            }, $getValue);
 
-        $tt = array_values($map);
+            $apikey = Arr::where($apikeyList, function ($value, $key) {
+                if (isset($value->status)) {
+                    return $value->status == 'approved';
+                }
+            });
 
-        $allApp = AllApps::whereIn('app_packageName',$response3)->where('status', 'live')->latest()->get()->toArray();
+            $getApiKey = array_values($apikey);
 
-        $temp =   array_merge((array)$tt,$allApp);
+            foreach ($getApiKey as $app) {
 
-        $final =   array_values($temp);
-        return $final;
-//   return  AllAppResource::collection($final);
+                $app_link = "https://lplciltdwh6kd6qjl4ytd6tzoq0iaumr.lambda-url.us-east-1.on.aws/?id=" . $app->PHSUGSG6783019KG;
+                $res = Http::get($app_link);
+                if ($res->status() == 200) {
+                    // \Log::info($app->PHSUGSG6783019KG);
+                    $app_response = json_decode($res->getBody()->getContents());
+
+                    $redis = Redis::connection('RedisApp2');
+                    $response = $redis->get($app->PHSUGSG6783019KG);
+                    $app_res_redis = json_decode($response);
+
+                    $setApp = new AllApps();
+                    $setApp->app_name = $app_response->title;
+                    $setApp->app_packageName = $app->PHSUGSG6783019KG;
+                    $setApp->app_logo = $app_response->icon;
+                    $setApp->developer = $app_response->developer;
+                    if ($app_res_redis->STATUS == true) {
+                        $setApp->app_accountName = $app_res_redis->APP_SETTINGS->app_accountName;
+                    }
+                    $setApp->status = 'live';
+                    $setApp->save();
+
+                    $appDetails = new AppDetails();
+                    $appDetails->app_packageName = $app->PHSUGSG6783019KG;
+                    $appDetails->description = $app_response->description;
+                    $appDetails->descriptionHTML = $app_response->descriptionHTML;
+                    $appDetails->summary = $app_response->summary;
+                    $appDetails->installs = $app_response->installs;
+                    $appDetails->minInstalls = $app_response->minInstalls;
+                    $appDetails->realInstalls = $app_response->realInstalls;
+                    $appDetails->score = $app_response->score;
+                    $appDetails->ratings = $app_response->ratings;
+                    $appDetails->reviews = $app_response->reviews;
+                    $appDetails->histogram = json_encode($app_response->histogram);
+                    $appDetails->price = $app_response->price;
+                    $appDetails->free = $app_response->free;
+                    $appDetails->currency = $app_response->currency;
+                    $appDetails->sale = $app_response->sale;
+                    $appDetails->saleTime = $app_response->saleTime;
+                    $appDetails->originalPrice = $app_response->originalPrice;
+                    $appDetails->saleText = $app_response->saleText;
+                    $appDetails->offersIAP = $app_response->offersIAP;
+                    $appDetails->inAppProductPrice = $app_response->inAppProductPrice;
+                    $appDetails->developer = $app_response->developer;
+                    $appDetails->developerId = $app_response->developerId;
+                    $appDetails->developerEmail = $app_response->developerEmail;
+                    $appDetails->developerWebsite = $app_response->developerWebsite;
+                    $appDetails->developerAddress = $app_response->developerAddress;
+                    $appDetails->genre = $app_response->genre;
+                    $appDetails->genreId = $app_response->genreId;
+                    $appDetails->headerImage = $app_response->headerImage;
+                    $appDetails->screenshots = json_encode($app_response->screenshots);
+                    $appDetails->video = $app_response->video;
+                    $appDetails->videoImage = $app_response->videoImage;
+                    $appDetails->contentRating = $app_response->contentRating;
+                    $appDetails->contentRatingDescription = $app_response->contentRatingDescription;
+                    $appDetails->adSupported = $app_response->adSupported;
+                    $appDetails->containsAds = $app_response->containsAds;
+                    $appDetails->released = $app_response->released;
+                    $appDetails->updated = $app_response->updated;
+                    $appDetails->version = $app_response->version;
+                    $appDetails->recentChanges = $app_response->recentChanges;
+                    $appDetails->recentChangesHTML = $app_response->recentChangesHTML;
+                    $appDetails->comments = json_encode($app_response->comments);
+                    $appDetails->url = $app_response->url;
+                    $appDetails->status = 'live';
+                    $appDetails->save();
+
+                } else {
+                    // \Log::info($app->PHSUGSG6783019KG . ' =>>>>>> add');
+                    $setApp = new AllApps();
+                    $setApp->app_packageName = $app->PHSUGSG6783019KG;
+                    $setApp->app_apikey = $app->AFHJNTGDGD563200K;
+                    $setApp->status = 'removed';
+                    $setApp->save();
+                }
+            }
+
+        }
 
 
+        if (!$companyUser) {
+            $allApp = AllApps::latest()->get();
+        } else {
+            $allApp = AllApps::where('company_master_id', $companyUser)->latest()->get();
+        }
+
+        return AllAppResource::collection($allApp);
 
     }
 
@@ -88,7 +169,7 @@ class AllAppsController extends Controller
     public function show($package_name)
     {
 
-        $allApp = AllApps::where('app_packageName',$package_name)->first();
+        $allApp = AllApps::where('app_packageName', $package_name)->first();
         $redis = Redis::connection('RedisApp2');
         $response = $redis->get($package_name);
         $db_response = json_decode($response);
@@ -138,11 +219,11 @@ class AllAppsController extends Controller
 
             foreach ($placement as $key => $value) {
 
-                $platform_adFormat = ['App ID' , 'Banner' , 'Interstitial' , 'Native' , 'Rewarded Video' ,'Native Banner','App Open'];
+                $platform_adFormat = ['App ID', 'Banner', 'Interstitial', 'Native', 'Rewarded Video', 'Native Banner', 'App Open'];
                 if (isset($value->AppID) && $value->AppID != '') {
                     $ad_Appid = $value->AppID;
                     // array_push($platform_adFormat, 'App ID');
-                }else {
+                } else {
                     $ad_Appid = '';
                 }
 
@@ -231,7 +312,7 @@ class AllAppsController extends Controller
 
             $app_details = AllAppResource::make($allApp);
 
-            return response()->json(['data' => $app_setting , 'app_details'=> $app_details]);
+            return response()->json(['data' => $app_setting, 'app_details' => $app_details]);
 
         } else {
             return response()->json(['message' => 'This app Redis 6 data is null!'], 404);
@@ -244,18 +325,15 @@ class AllAppsController extends Controller
         return TestAllAppResource::make($testAllApp);
     }
 
-    public function update(Request $request ,$package_name)
+    public function update(Request $request, $package_name)
     {
 
-//        $package_name = $allApp->package_name;
+        // $package_name = $allApp->package_name;
         $db2_response = json_decode($request->db2_response);
 
 
-
         // sql db save //
-
-        $allApp = AllApps::where('app_packageName',$package_name)->first();
-
+        $allApp = AllApps::where('app_packageName', $package_name)->first();
         $AllApps = AllApps::find($allApp->id);
 
         if ($db2_response->app_updateAppDialogStatus == null) {
@@ -443,10 +521,9 @@ class AllAppsController extends Controller
         }
 
 
-
         $new_placement_array = [];
         foreach ($placement_array as $key => $value) {
-            if(isset($value['ad_AppID']) && $value['ad_AppID'] == ''){
+            if (isset($value['ad_AppID']) && $value['ad_AppID'] == '') {
                 unset($value['ad_AppID']);
             }
             unset($value['ad_Banner']);
@@ -477,7 +554,6 @@ class AllAppsController extends Controller
 
 
         return 'data set succesfully!';
-
 
 
 //        return AllAppResource::make($request->persist($allApp));
@@ -744,7 +820,7 @@ class AllAppsController extends Controller
             $monetize_setting = [];
 
             foreach ($placement as $key => $value) {
-                $platform_adFormat = ['App ID' , 'Banner' , 'Interstitial' , 'Native' , 'Rewarded Video' ,'Native Banner' ,'App Open'];
+                $platform_adFormat = ['App ID', 'Banner', 'Interstitial', 'Native', 'Rewarded Video', 'Native Banner', 'App Open'];
                 if (isset($value->AppID) && $value->AppID != '') {
                     $ad_Appid = $value->AppID;
                     // array_push($platform_adFormat, 'App ID');
@@ -978,7 +1054,7 @@ class AllAppsController extends Controller
 
         $new_placement_array = [];
         foreach ($placement_array as $key => $value) {
-            if(isset($value['ad_AppID']) && $value['ad_AppID'] == ''){
+            if (isset($value['ad_AppID']) && $value['ad_AppID'] == '') {
                 unset($value['ad_AppID']);
             }
             unset($value['ad_Banner']);
@@ -1032,41 +1108,50 @@ class AllAppsController extends Controller
 
     }
 
-    public function getRemovedApp()
+    public function getRemovedApp($appType)
     {
 
-        // $companyUser = Auth::user()->company_master_id;
-        // if (!$companyUser) {
-        //     $allApp = AllApps::latest()->get();
-        // } else {
-        //     $allApp = AllApps::where('company_master_id', $companyUser)->get();
-        // }
-        // return AllAppResource::collection($allApp);
+        $companyUser = Auth::user()->company_master_id;
+        if (!$companyUser) {
+            if ($appType == 'live') {
+                $allApp = AllApps::where('status', 'live')->latest()->get();
+            } else if ($appType == 'removed') {
+                $allApp = AllApps::where('status', 'removed')->latest()->get();
+            }
+        } else {
+            if ($appType == 'live') {
+                $allApp = AllApps::where('company_master_id', $companyUser)->where('status', 'live')->latest()->get();
+            } else if ($appType == 'removed') {
+                $allApp = AllApps::where('company_master_id', $companyUser)->where('status', 'removed')->latest()->get();
+            }
+        }
 
-        $redis3 = Redis::connection('RedisApp3');
-        $response3 = $redis3->keys("*");
-        $emptyArray = [];
+        return AllAppResource::collection($allApp);
 
-        $collection = collect($response3);
+        //   $redis3 = Redis::connection('RedisApp3');
+        // $response3 = $redis3->keys("*");
+        // $emptyArray = [];
 
-        $allApps = AllApps::whereIn('app_packageName',$response3)->pluck('app_packageName');
+        // $collection = collect($response3);
 
-        $diff = $collection->diffKeys($allApps);
-        $rr = $diff->all();
+        // $allApps = AllApps::whereIn('app_packageName',$response3)->pluck('app_packageName');
 
-        $map = array_map(function($value){
-            return  (object)[
-                "app_packageName" => $value,
-            ];
-        },$rr);
+        // $diff = $collection->diffKeys($allApps);
+        // $rr = $diff->all();
 
-        $tt = array_values($map);
+        // $map = array_map(function($value){
+        //     return  (object)[
+        //         "app_packageName" => $value,
+        //     ];
+        // },$rr);
 
-        $allApp = AllApps::whereIn('app_packageName',$response3)->latest()->get()->toArray();
+        // $tt = array_values($map);
 
-        $temp =   array_merge((array)$tt,(array)$allApp);
-        $final =   array_values($temp);
-        return $final;
+        // $allApp = AllApps::whereIn('app_packageName',$response3)->latest()->get()->toArray();
+
+        // $temp =   array_merge((array)$tt,(array)$allApp);
+        // $final =   array_values($temp);
+        // return $final;
 
     }
 
@@ -1111,13 +1196,27 @@ class AllAppsController extends Controller
         return $newArray;
     }
 
-    public function getDeletedApp(){
+    public function getDeletedApp()
+    {
 
         $allApp = AllApps::onlyTrashed()->get();
         return $allApp;
 
     }
 
+    public function forceDelete(Request $request)
+    {
+
+        $id = Auth::user()->id;
+        $auth_user = User::find($id);
+        $ids = $request->ids;
+        foreach ($ids as $aa) {
+            $deleteApp = AllApps::onlyTrashed()->where('id', $aa)->forceDelete();
+        }
+        // call event
+        event(new UserEvent($auth_user));
+        return 'app delete succesfully';
+    }
 
 
 }

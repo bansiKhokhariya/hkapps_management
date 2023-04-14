@@ -95,7 +95,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('appForceDelete', [AllAppsController::class, 'forceDelete']);
     Route::post('appRestore/{id}', [AllAppsController::class, 'appRestore']);
     Route::get('getDeletedApp', [AllAppsController::class, 'getDeletedApp']);
-    Route::get('getRemovedApp', [AllAppsController::class, 'getRemovedApp']);
+    Route::get('getRemovedApp/{appType}', [AllAppsController::class, 'getRemovedApp']);
 
     // test All Apps //
     Route::get('testAllApps/{testAllApp}', [AllAppsController::class, 'testShow']);
