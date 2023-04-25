@@ -79,7 +79,9 @@ class AppsController extends Controller
                 $app->app_packageName = $package_name;
                 $app->app_logo = $app_response->app_logo;
                 $app->developer = $app_response->developer;
-                $app->app_accountName = $app_res_redis->APP_SETTINGS->app_accountName;
+                if($app_res_redis->STATUS == true){
+                    $app->app_accountName = $app_res_redis->APP_SETTINGS->app_accountName;
+                }
                 $app->status = 'live';
                 $app->save();
 
@@ -144,7 +146,9 @@ class AppsController extends Controller
                 $app->app_packageName = $package_name;
                 $app->app_logo = $app_response->app_logo;
                 $app->developer = $app_response->developer;
-                $app->app_accountName = $app_res_redis->APP_SETTINGS->app_accountName;
+                if ($app_res_redis->STATUS == true) {
+                    $app->app_accountName = $app_res_redis->APP_SETTINGS->app_accountName;
+                }
                 $app->status = 'live';
                 $app->save();
 

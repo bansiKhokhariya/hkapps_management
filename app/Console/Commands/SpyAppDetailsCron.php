@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Setting;
 use App\Models\SpyAppDetails;
 use App\Models\SpyApps;
 use Illuminate\Console\Command;
@@ -39,38 +40,36 @@ class SpyAppDetailsCron extends Command
      */
     public function handle()
     {
-        $getSpyApp = SpyApps::get();
+        $spyAppDetailsData = Setting::where('cron', 'SpyAppDetails')->first();
 
-        if ($getSpyApp->count() > 0) {
-            foreach ($getSpyApp as $spyApp) {
+        if ($spyAppDetailsData->infinity == 1) {
+            \Log::info('spy app details cron start');
+            $getSpyApp = SpyApps::get();
 
-                $gPlay = new \Nelexa\GPlay\GPlayApps();
-
-                $checkApp = $gPlay->existsApp($spyApp->packageName);
-
-                if ($checkApp > 0) {
-
-                    $appInfo = $gPlay->getAppInfo($spyApp->packageName);
-
-                    $spyAppDetails = SpyAppDetails::where('packageName', $spyApp->packageName)->latest()->first();
-                    if ($spyAppDetails) {
-                        $dailyInstalls = $appInfo->installs - $spyAppDetails->downloads;
-                    } else {
-                        $dailyInstalls = 0;
+            if ($getSpyApp->count() > 0) {
+                foreach ($getSpyApp as $spyApp) {
+                    $gPlay = new \Nelexa\GPlay\GPlayApps();
+                    $checkApp = $gPlay->existsApp($spyApp->packageName);
+                    if ($checkApp > 0) {
+                        $appInfo = $gPlay->getAppInfo($spyApp->packageName);
+                        $spyAppDetails = SpyAppDetails::where('packageName', $spyApp->packageName)->latest()->first();
+                        if ($spyAppDetails) {
+                            $dailyInstalls = $appInfo->installs - $spyAppDetails->downloads;
+                        } else {
+                            $dailyInstalls = 0;
+                        }
+                        $spyAppDetails = new SpyAppDetails();
+                        $spyAppDetails->packageName = $spyApp->packageName;
+                        $spyAppDetails->downloads = $appInfo->installs;
+                        $spyAppDetails->ratings = $appInfo->score;
+                        $spyAppDetails->reviews = $appInfo->numberReviews;
+                        $spyAppDetails->daily_installs = $dailyInstalls;
+                        $spyAppDetails->save();
                     }
-                    $spyAppDetails = new SpyAppDetails();
-                    $spyAppDetails->packageName = $spyApp->packageName;
-                    $spyAppDetails->downloads = $appInfo->installs;
-                    $spyAppDetails->ratings = $appInfo->score;
-                    $spyAppDetails->reviews = $appInfo->numberReviews;
-                    $spyAppDetails->daily_installs = $dailyInstalls;
-                    $spyAppDetails->save();
                 }
-
             }
-
-            \Log::info('all spy app details save!');
-
         }
+
+        \Log::info(' spy app details cron stop!');
     }
 }

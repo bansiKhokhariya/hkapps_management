@@ -28,7 +28,6 @@ class SpyApps extends Model
         return $getSpyApp;
     }
 
-
     public function getAvgDailyInstalls($packageName)
     {
         $countDailyInstalls = SpyAppDetails::where('packageName', $packageName)->count();

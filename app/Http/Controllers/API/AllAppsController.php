@@ -142,9 +142,9 @@ class AllAppsController extends Controller
 
 
         if (!$companyUser) {
-            $allApp = AllApps::latest()->get();
+            $allApp = AllApps::latest()->paginate(100);
         } else {
-            $allApp = AllApps::where('company_master_id', $companyUser)->latest()->get();
+            $allApp = AllApps::where('company_master_id', $companyUser)->latest()->paginate(100);
         }
 
         return AllAppResource::collection($allApp);
@@ -1114,15 +1114,15 @@ class AllAppsController extends Controller
         $companyUser = Auth::user()->company_master_id;
         if (!$companyUser) {
             if ($appType == 'live') {
-                $allApp = AllApps::where('status', 'live')->latest()->get();
+                $allApp = AllApps::where('status', 'live')->latest()->paginate(100);
             } else if ($appType == 'removed') {
-                $allApp = AllApps::where('status', 'removed')->latest()->get();
+                $allApp = AllApps::where('status', 'removed')->latest()->paginate(100);
             }
         } else {
             if ($appType == 'live') {
-                $allApp = AllApps::where('company_master_id', $companyUser)->where('status', 'live')->latest()->get();
+                $allApp = AllApps::where('company_master_id', $companyUser)->where('status', 'live')->latest()->paginate(100);
             } else if ($appType == 'removed') {
-                $allApp = AllApps::where('company_master_id', $companyUser)->where('status', 'removed')->latest()->get();
+                $allApp = AllApps::where('company_master_id', $companyUser)->where('status', 'removed')->latest()->paginate(100);
             }
         }
 
@@ -1216,6 +1216,71 @@ class AllAppsController extends Controller
         // call event
         event(new UserEvent($auth_user));
         return 'app delete succesfully';
+    }
+
+    public function searchApplication(Request $request)
+    {
+
+        $searchApp = $request->searchApp;
+        $status = $request->status;
+        $developer = $request->developer;
+
+        if($searchApp){
+            if ($searchApp && $status && $developer) {
+
+                $data = AllApps::where('status', $status)->where('developer', $developer)->get();
+                $newData =  AllAppResource::collection($data);
+                $appsData = $newData->filter(function ($value, $key) use ($searchApp) {
+                    $pattern = '/' . $searchApp . '/' . 'i';
+                    return preg_match($pattern, $value->app_name) || preg_match($pattern, $value->app_packageName) || preg_match($pattern, $value->developer);
+                });
+
+                $apps = $appsData->values();
+
+            } elseif ($searchApp && $status) {
+
+                $StatusData = AllApps::where('status', $status)->get();
+                $newData =  AllAppResource::collection($StatusData);
+                $appsData = $newData->filter(function ($value, $key) use ($searchApp) {
+                    $pattern = '/' . $searchApp . '/' . 'i';
+                    return preg_match($pattern, $value->app_name) || preg_match($pattern, $value->app_packageName) || preg_match($pattern, $value->developer);
+                });
+
+                $apps = $appsData->values();
+
+            } elseif ($searchApp && $developer) {
+
+                $developerData = AllApps::where('developer', $developer)->get();
+                $newData =  AllAppResource::collection($developerData);
+                $appsData = $newData->filter(function ($value, $key) use ($searchApp) {
+                    $pattern = '/' . $searchApp . '/' . 'i';
+                    return preg_match($pattern, $value->app_name) || preg_match($pattern, $value->app_packageName) || preg_match($pattern, $value->developer);
+                });
+
+                $apps = $appsData->values();
+
+            } elseif ($searchApp) {
+
+                $data = AllApps::get();
+                $newData =  AllAppResource::collection($data);
+
+                $appsData = $newData->filter(function ($value, $key) use ($searchApp) {
+                    $pattern = '/' . $searchApp . '/' . 'i';
+                    return preg_match($pattern, $value->developer) || preg_match($pattern, $value->app_packageName) || preg_match($pattern, $value->app_name);
+                });
+                $apps = $appsData->values();
+
+//            $appsData  = AllApps::where('app_name', 'like', "%{$searchApp}%")->orWhere('app_packageName', 'like', "%{$searchApp}%")->orWhere('developer', 'like', "%{$searchApp}%")->get();
+//            $apps =  AllAppResource::collection($appsData);
+
+
+            }
+            return $apps;
+        }
+
+
+
+
     }
 
 

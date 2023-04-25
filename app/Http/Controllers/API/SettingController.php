@@ -51,12 +51,13 @@ class SettingController extends Controller
     public function startAppDetailsUpdateCron()
     {
 
+        \Log::info('start details cron!');
         $setting = Setting::where('cron', 'AppDetailsUpdate')->first();
         $setting->infinity = 1;
         $setting->save();
 
         for ($i = 1; $i <= INF; $i++) {
-            $getSetting = Setting::where('cron', 'CheckAppStatus')->first();
+            $getSetting = Setting::where('cron', 'AppDetailsUpdate')->first();
             if ((int)$getSetting->infinity === 1) {
                 sleep($getSetting->time * 60);
                 \Artisan::call('AppDetailsUpdate:cron');
@@ -79,19 +80,22 @@ class SettingController extends Controller
     public function startCheckAppStatusCron()
     {
 
-        $setting = Setting::where('cron', 'CheckAppStatus')->first();
-        $setting->infinity = 1;
-        $setting->save();
+        \Log::info('start check status cron!');
+        execInBackground('php artisan CheckAppStatus:cron');
 
-        for ($i = 1; $i <= INF; $i++) {
-            $getSetting = Setting::where('cron', 'CheckAppStatus')->first();
-            if ((int)$getSetting->infinity === 1) {
-                sleep($getSetting->time * 60);
-                \Artisan::call('CheckAppStatus:cron');
-            } elseif ((int)$getSetting->infinity === 0) {
-                break;
-            }
-        }
+//        $setting = Setting::where('cron', 'CheckAppStatus')->first();
+//        $setting->infinity = 1;
+//        $setting->save();
+//
+//        for ($i = 1; $i <= INF; $i++) {
+//            $getSetting = Setting::where('cron', 'CheckAppStatus')->first();
+//            if ((int)$getSetting->infinity === 1) {
+//                sleep($getSetting->time * 60);
+//                \Artisan::call('CheckAppStatus:cron');
+//            } elseif ((int)$getSetting->infinity === 0) {
+//                break;
+//            }
+//        }
     }
 
     public function stopCheckAppStatusCron()
@@ -105,20 +109,22 @@ class SettingController extends Controller
 
     public function startWebCreonCron()
     {
+        \Log::info('start webcreraon cron!');
+        execInBackground('php artisan WebCreon:cron');
 
-        $setting = Setting::where('cron', 'WebCreon')->first();
-        $setting->infinity = 1;
-        $setting->save();
-
-        for ($i = 1; $i <= INF; $i++) {
-            $getSetting = Setting::where('cron', 'WebCreon')->first();
-            if ((int)$getSetting->infinity === 1) {
-                sleep($getSetting->time * 60);
-                \Artisan::call('WebCreon:cron');
-            } elseif ((int)$getSetting->infinity === 0) {
-                break;
-            }
-        }
+//        $setting = Setting::where('cron', 'WebCreon')->first();
+//        $setting->infinity = 1;
+//        $setting->save();
+//
+//        for ($i = 1; $i <= INF; $i++) {
+//            $getSetting = Setting::where('cron', 'WebCreon')->first();
+//            if ((int)$getSetting->infinity === 1) {
+//                sleep($getSetting->time * 60);
+//                \Artisan::call('WebCreon:cron');
+//            } elseif ((int)$getSetting->infinity === 0) {
+//                break;
+//            }
+//        }
     }
 
     public function stopWebCreonCron()

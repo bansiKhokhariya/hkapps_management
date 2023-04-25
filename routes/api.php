@@ -5,8 +5,10 @@ use App\Http\Controllers\API\AllConsoleController;
 use App\Http\Controllers\API\CommanMasterController;
 use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\GithubTokenController;
+use App\Http\Controllers\API\GoogleAdsApiController;
 use App\Http\Controllers\API\GooglePlayApiController;
 use App\Http\Controllers\API\SpyAppsController;
+use App\Http\Controllers\API\TelegramController;
 use App\Http\Controllers\API\TodoListController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -86,7 +88,6 @@ Route::middleware('auth:api')->group(function () {
     // apps //
     Route::resource('app', AppsController::class);
     Route::get('fetchAppData/{package_name}', [AppsController::class, 'fetchAppData']);
-    Route::post('searchApp', [AppsController::class, 'search']);
 
     // all apps //
     Route::resource('allApp', AllAppsController::class);
@@ -96,6 +97,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('appRestore/{id}', [AllAppsController::class, 'appRestore']);
     Route::get('getDeletedApp', [AllAppsController::class, 'getDeletedApp']);
     Route::get('getRemovedApp/{appType}', [AllAppsController::class, 'getRemovedApp']);
+    Route::post('searchApplication', [AllAppsController::class, 'searchApplication']);
 
     // test All Apps //
     Route::get('testAllApps/{testAllApp}', [AllAppsController::class, 'testShow']);
@@ -128,6 +130,9 @@ Route::middleware('auth:api')->group(function () {
 
     // AdsPro Version //
     Route::resource('adsProVersion', AdsProVersionController::class);
+
+    // Telegram //
+    Route::resource('telegram', TelegramController::class);
 
     // github token  //
     Route::resource('gitHubToken', GithubTokenController::class);
@@ -281,6 +286,14 @@ Route::post('play/liveops', [GooglePlayApiController::class, 'getEvents']);
 
 
 Route::post('db3', [AllAppsController::class, 'db3']);
+
+// google ads api //
+Route::get('GetAllNetwork', [GoogleAdsApiController::class, 'GetAllNetwork']);
+Route::get('GetCurrentNetwork', [GoogleAdsApiController::class, 'GetCurrentNetwork']);
+Route::get('index', [GoogleAdsApiController::class, 'index']);
+Route::get('sendTelegramMessage', [\App\Http\Controllers\GitController::class, 'sendTelegramMessage']);
+
+
 
 
 
