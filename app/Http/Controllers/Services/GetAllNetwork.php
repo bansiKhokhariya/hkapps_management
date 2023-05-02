@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Services;
 
 require __DIR__ . '/../../../../vendor/autoload.php';
 
+use Google\AdsApi\AdManager\AdManagerServices;
 use Google\AdsApi\AdManager\AdManagerSession;
 use Google\AdsApi\AdManager\AdManagerSessionBuilder;
 use Google\AdsApi\AdManager\v202302\ApiException;
 use Google\AdsApi\AdManager\v202302\ServiceFactory;
 use Google\AdsApi\Common\OAuth2TokenBuilder;
+use Google\Auth\CredentialsLoader;
+
 
 /**
  * This example gets the current network.
@@ -30,34 +33,46 @@ class GetAllNetwork
      * @throws ApiException if the request for getting all networks fails
      */
     public static function runExample(
-        ServiceFactory $serviceFactory,
+        ServiceFactory   $serviceFactory,
         AdManagerSession $session
-    ) {
+    )
+    {
 
         $networkService = $serviceFactory->createNetworkService($session);
-//        Get All Network
-        $networks = $networkService->getAllNetworks();
-        if (empty($networks)) {
-            printf('No accessible networks found.' . PHP_EOL);
-            return;
+
+        //  Get All Network
+        $getAllNetworks = $networkService->getAllNetworks();
+        $networks = array();
+
+        foreach ($getAllNetworks as $network) {
+            $id = $network->getId();
+            $displayName = $network->getDisplayName();
+            $networkCode = $network->getNetworkCode();
+            $propertyCode = $network->getPropertyCode();
+            $timeZone = $network->getTimeZone();
+            $currencyCode = $network->getCurrencyCode();
+            $secondaryCurrencyCodes = $network->getSecondaryCurrencyCodes();
+            $effectiveRootAdUnitId = $network->getEffectiveRootAdUnitId();
+            $isTest = $network->getIsTest();
+            $childPublishers = $network->getChildPublishers();
+
+            $object = (object)array('id' => $id, 'displayName' => $displayName, 'networkCode' => $networkCode, 'propertyCode' => $propertyCode, 'timeZone' => $timeZone, 'currencyCode' => $currencyCode, 'secondaryCurrencyCodes' => $secondaryCurrencyCodes, 'effectiveRootAdUnitId' => $effectiveRootAdUnitId, 'isTest' => $isTest, 'childPublishers' => $childPublishers);
+            array_push($networks, $object);
         }
 
-        foreach ($networks as $i => $network) {
-            printf(
-                "%d) Network with code %d and display name '%s' was found.%s",
-                $i,
-                $network->getNetworkCode(),
-                $network->getDisplayName(),
-                PHP_EOL
-            );
-        }
-        printf("Number of results found: %d%s", count($networks), PHP_EOL);
+        return $networks;
 
 
     }
 
     public static function main()
     {
+
+        // Path to your credentials file.
+//        $iniPath = 'C:/Users/01/adsapi_php.ini';
+//        $jsonPath = 'C:/Users/01/ad-manager-json.json';
+
+
         // Generate a refreshable OAuth2 credential for authentication.
         $oAuth2Credential = (new OAuth2TokenBuilder())->fromFile()
             ->build();

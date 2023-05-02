@@ -45,6 +45,7 @@ class AllAppsController extends Controller
         $rr = $diff->all();
 
         $mm = array_values($rr);
+
         if (count($mm) > 0) {
             $getValue = $redis3->mget($mm);
             $apikeyList = array_map(function ($value) {
@@ -270,7 +271,7 @@ class AllAppsController extends Controller
 
                 $monetize_setting_object = array('platform_name' => $key, 'platform_adFormat' => $platform_adFormat, 'ad_AppID' => $ad_Appid, 'ad_Banner' => $ad_Banner, 'ad_Interstitial'
                 => $ad_Interstitial, 'ad_Native' => $ad_Native, 'ad_NativeBanner' => $ad_NativeBanner, 'ad_RewardedVideo' => $ad_RewardedVideo
-                , 'ad_RewardedInterstitial' => $ad_RewardedInterstitial, 'ad_AppOpen' => $ad_AppOpen, 'ad_loadAdIdsType' => $value->ad_loadAdIdsType, 'ad_showAdStatus' => $value->ad_showAdStatus);
+                , 'ad_RewardedInterstitial' => $ad_RewardedInterstitial, 'ad_AppOpen' => $ad_AppOpen);
                 array_push($monetize_setting, $monetize_setting_object);
 
             }
@@ -336,17 +337,25 @@ class AllAppsController extends Controller
         $allApp = AllApps::where('app_packageName', $package_name)->first();
         $AllApps = AllApps::find($allApp->id);
 
-        if ($db2_response->app_updateAppDialogStatus == null) {
+
+        if (!isset($db2_response->app_updateAppDialogStatus)) {
             $AllApps->app_updateAppDialogStatus = $AllApps->app_updateAppDialogStatus;
         } else {
+
             if (json_decode($db2_response->app_updateAppDialogStatus)) {
                 $AllApps->app_updateAppDialogStatus = 1;
             } else {
                 $AllApps->app_updateAppDialogStatus = 0;
             }
         }
-        $AllApps->app_versionCode = $db2_response->app_versionCode;
-        if ($db2_response->app_redirectOtherAppStatus == null) {
+
+        if (!isset($db2_response->app_versionCode)) {
+            $AllApps->app_versionCode = $AllApps->app_versionCode;
+        } else {
+            $AllApps->app_versionCode = $db2_response->app_versionCode;
+        }
+
+        if (!isset($db2_response->app_redirectOtherAppStatus)) {
             $AllApps->app_redirectOtherAppStatus = $AllApps->app_redirectOtherAppStatus;
         } else {
             if (json_decode($db2_response->app_redirectOtherAppStatus)) {
@@ -355,10 +364,20 @@ class AllAppsController extends Controller
                 $AllApps->app_redirectOtherAppStatus = 0;
             }
         }
-        $AllApps->app_newPackageName = $db2_response->app_newPackageName;
-        $AllApps->app_privacyPolicyLink = $db2_response->app_privacyPolicyLink;
+        if (!isset($db2_response->app_newPackageName)) {
+            $AllApps->app_newPackageName = $AllApps->app_newPackageName;
+        } else {
+            $AllApps->app_newPackageName = $db2_response->app_newPackageName;
+        }
+        if (!isset($db2_response->app_privacyPolicyLink)) {
+            $AllApps->app_privacyPolicyLink = $AllApps->app_privacyPolicyLink;
+        } else {
+            $AllApps->app_privacyPolicyLink = $db2_response->app_privacyPolicyLink;
+        }
+
+
         // $AllApps->app_accountLink = $db2_response->app_accountLink;
-        if ($db2_response->app_adShowStatus == null) {
+        if (!isset($db2_response->app_adShowStatus)) {
             $AllApps->app_adShowStatus = $AllApps->app_adShowStatus;
         } else {
             if (json_decode($db2_response->app_adShowStatus)) {
@@ -367,7 +386,7 @@ class AllAppsController extends Controller
                 $AllApps->app_adShowStatus = 0;
             }
         }
-        if ($db2_response->app_AppOpenAdStatus == null) {
+        if (!isset($db2_response->app_AppOpenAdStatus)) {
             $AllApps->app_AppOpenAdStatus = $AllApps->app_AppOpenAdStatus;
         } else {
             if (json_decode($db2_response->app_AppOpenAdStatus)) {
@@ -376,17 +395,50 @@ class AllAppsController extends Controller
                 $AllApps->app_AppOpenAdStatus = 0;
             }
         }
-        $AllApps->app_howShowAd = $db2_response->app_howShowAd;
-        $AllApps->app_adPlatformSequence = $db2_response->app_adPlatformSequence;
-        $AllApps->app_alternateAdShow = $db2_response->app_alernateAdShow;
+
+        if (!isset($db2_response->app_howShowAd)) {
+            $AllApps->app_howShowAd = $AllApps->app_howShowAd;
+        } else {
+            $AllApps->app_howShowAd = $db2_response->app_howShowAd;
+        }
+
+        if (!isset($db2_response->app_adPlatformSequence)) {
+            $AllApps->app_adPlatformSequence = $AllApps->app_adPlatformSequence;
+        } else {
+            $AllApps->app_adPlatformSequence = $db2_response->app_adPlatformSequence;
+        }
+
+
+        if (!isset($db2_response->app_alternateAdShow)) {
+            $AllApps->app_alternateAdShow = $AllApps->app_alternateAdShow;
+        } else {
+            $AllApps->app_alternateAdShow = $db2_response->app_alternateAdShow;
+        }
+
+
         if (isset($db2_response->app_testAdStatus)) {
             $AllApps->app_testAdStatus = $db2_response->app_testAdStatus;
         }
 
-        $AllApps->app_mainClickCntSwAd = $db2_response->app_mainClickCntSwAd;
-        $AllApps->app_innerClickCntSwAd = $db2_response->app_innerClickCntSwAd;
-        $AllApps->app_parameter = $db2_response->app_parameter;
+        if (!isset($db2_response->app_mainClickCntSwAd)) {
+            $AllApps->app_mainClickCntSwAd = $AllApps->app_mainClickCntSwAd;
+        } else {
+            $AllApps->app_mainClickCntSwAd = $db2_response->app_mainClickCntSwAd;
+        }
+        if (!isset($db2_response->app_innerClickCntSwAd)) {
+            $AllApps->app_innerClickCntSwAd = $AllApps->app_innerClickCntSwAd;
+        } else {
+            $AllApps->app_innerClickCntSwAd = $db2_response->app_innerClickCntSwAd;
+        }
+        if (!isset($db2_response->app_parameter)) {
+            $AllApps->app_parameter = $AllApps->app_parameter;
+        } else {
+            $AllApps->app_parameter = $db2_response->app_parameter;
+        }
+
+
         $AllApps->save();
+
 
         //  **********  //
 
@@ -405,17 +457,20 @@ class AllAppsController extends Controller
         // ****** //
 
         // *****  app parameter ***** //
-        $app_para_decode = $db2_response->app_parameter;
-        if ($app_para_decode) {
-            $app_parameter_array = [];
-            foreach ($app_para_decode as $key => $value) {
-                $object = array($value->name => $value->value);
-                $app_parameter_array = array_merge($app_parameter_array, $object);
+        if (isset($db2_response->app_parameter)) {
+            $app_para_decode = $db2_response->app_parameter;
+            if ($app_para_decode) {
+                $app_parameter_array = [];
+                foreach ($app_para_decode as $key => $value) {
+                    $object = array($value->name => $value->value);
+                    $app_parameter_array = array_merge($app_parameter_array, $object);
+                }
+            } else {
+                $app_parameter_array = [];
             }
-        } else {
-            $app_parameter_array = [];
+            $app_settings = array_merge($app_settings, $app_parameter_array);
         }
-        $app_settings = array_merge($app_settings, $app_parameter_array);
+
         // ****** //
 
 
@@ -426,129 +481,147 @@ class AllAppsController extends Controller
 
 
         // ****** placement ****** //
-        $get_placement = $db2_response->monetize_setting;
         $placement_array = [];
-        foreach ($get_placement as $key => $value) {
-
-            $new_placement = json_decode(json_encode($value), true);
-            // for banner //
-            $banner_array = array();
-            if (isset($value->ad_Banner)) {
-                $decode_value = $value->ad_Banner;
-                foreach ($decode_value as $key => $banner) {
-                    $plus = $key + 1;
-                    $banner_object = array("Banner{$plus}" => $banner);
-                    $banner_array = array_merge($banner_array, $banner_object);
-                }
-            }
-
-            // for ad_Interstitial //
-            $interstitial_array = array();
-            if (isset($value->ad_Interstitial)) {
-                $decode_value = $value->ad_Interstitial;
-                foreach ($decode_value as $key => $interstitial) {
-                    $plus = $key + 1;
-                    $interstitial_object = array("Interstitial{$plus}" => $interstitial);
-                    $interstitial_array = array_merge($interstitial_array, $interstitial_object);
-                }
-            }
-
-
-            // for native //
-            $native_array = array();
-            if (isset($value->ad_Native)) {
-                $decode_value = $value->ad_Native;
-                foreach ($decode_value as $key => $native) {
-                    $plus = $key + 1;
-                    $native_object = array("Native{$plus}" => $native);
-                    $native_array = array_merge($native_array, $native_object);
-                }
-            }
-
-
-            // for ad_NativeBanner //
-            $nativeBanner_array = array();
-            if (isset($value->ad_NativeBanner)) {
-                $decode_value = $value->ad_NativeBanner;
-                foreach ($decode_value as $key => $native_banner) {
-                    $plus = $key + 1;
-                    $native_banner_object = array("NativeBanner{$plus}" => $native_banner);
-                    $nativeBanner_array = array_merge($nativeBanner_array, $native_banner_object);
-                }
-            }
-
-
-            // for ad_RewardedVideo //
-            $rewardedVideo_array = array();
-            if (isset($value->ad_RewardedVideo)) {
-                $decode_value = $value->ad_RewardedVideo;
-                foreach ($decode_value as $key => $rewardedVideo) {
-                    $plus = $key + 1;
-                    $rewardedVideo_object = array("RewardedVideo{$plus}" => $rewardedVideo);
-                    $rewardedVideo_array = array_merge($rewardedVideo_array, $rewardedVideo_object);
-                }
-            }
-
-
-            // for ad_RewardedInterstitial //
-            $rewardedInterstitial_array = array();
-            if (isset($value->ad_RewardedInterstitial)) {
-                $decode_value = $value->ad_RewardedInterstitial;
-                foreach ($decode_value as $key => $rewardedInterstitial) {
-                    $plus = $key + 1;
-                    $rewardedInterstitial_object = array("RewardedInterstitial{$plus}" => $rewardedInterstitial);
-                    $rewardedInterstitial_array = array_merge($rewardedInterstitial_array, $rewardedInterstitial_object);
-                }
-            }
-
-            // for ad_AppOpen //
-            $appOpen_array = array();
-            if (isset($value->ad_AppOpen)) {
-                $decode_value = $value->ad_AppOpen;
-                foreach ($decode_value as $key => $appOpen) {
-                    $plus = $key + 1;
-                    $appOpen_object = array("AppOpen{$plus}" => $appOpen);
-                    $appOpen_array = array_merge($appOpen_array, $appOpen_object);
-                }
-            }
-
-
-            $allAdformat = array_merge($banner_array, $interstitial_array, $native_array, $nativeBanner_array, $rewardedVideo_array, $rewardedInterstitial_array, $appOpen_array);
-            $placement = array_merge($new_placement, $allAdformat);
-
-
-            array_push($placement_array, $placement);
-        }
-
-
         $new_placement_array = [];
-        foreach ($placement_array as $key => $value) {
-            if (isset($value['ad_AppID']) && $value['ad_AppID'] == '') {
-                unset($value['ad_AppID']);
+        if (isset($db2_response->monetize_setting)) {
+            $get_placement = $db2_response->monetize_setting;
+
+            foreach ($get_placement as $key => $value) {
+
+                $new_placement = json_decode(json_encode($value), true);
+
+
+                // for banner //
+                $banner_array = array();
+                if (isset($value->ad_Banner)) {
+                    $decode_value = $value->ad_Banner;
+                    foreach ($decode_value as $key => $banner) {
+                        $plus = $key + 1;
+                        $banner_object = array("Banner{$plus}" => $banner);
+                        $banner_array = array_merge($banner_array, $banner_object);
+                    }
+                }
+
+                // for ad_Interstitial //
+                $interstitial_array = array();
+                if (isset($value->ad_Interstitial)) {
+                    $decode_value = $value->ad_Interstitial;
+                    foreach ($decode_value as $key => $interstitial) {
+                        $plus = $key + 1;
+                        $interstitial_object = array("Interstitial{$plus}" => $interstitial);
+                        $interstitial_array = array_merge($interstitial_array, $interstitial_object);
+                    }
+                }
+
+
+                // for native //
+                $native_array = array();
+                if (isset($value->ad_Native)) {
+                    $decode_value = $value->ad_Native;
+                    foreach ($decode_value as $key => $native) {
+                        $plus = $key + 1;
+                        $native_object = array("Native{$plus}" => $native);
+                        $native_array = array_merge($native_array, $native_object);
+                    }
+                }
+
+
+                // for ad_NativeBanner //
+                $nativeBanner_array = array();
+                if (isset($value->ad_NativeBanner)) {
+                    $decode_value = $value->ad_NativeBanner;
+                    foreach ($decode_value as $key => $native_banner) {
+                        $plus = $key + 1;
+                        $native_banner_object = array("NativeBanner{$plus}" => $native_banner);
+                        $nativeBanner_array = array_merge($nativeBanner_array, $native_banner_object);
+                    }
+                }
+
+
+                // for ad_RewardedVideo //
+                $rewardedVideo_array = array();
+                if (isset($value->ad_RewardedVideo)) {
+                    $decode_value = $value->ad_RewardedVideo;
+                    foreach ($decode_value as $key => $rewardedVideo) {
+                        $plus = $key + 1;
+                        $rewardedVideo_object = array("RewardedVideo{$plus}" => $rewardedVideo);
+                        $rewardedVideo_array = array_merge($rewardedVideo_array, $rewardedVideo_object);
+                    }
+                }
+
+
+                // for ad_RewardedInterstitial //
+                $rewardedInterstitial_array = array();
+                if (isset($value->ad_RewardedInterstitial)) {
+                    $decode_value = $value->ad_RewardedInterstitial;
+                    foreach ($decode_value as $key => $rewardedInterstitial) {
+                        $plus = $key + 1;
+                        $rewardedInterstitial_object = array("RewardedInterstitial{$plus}" => $rewardedInterstitial);
+                        $rewardedInterstitial_array = array_merge($rewardedInterstitial_array, $rewardedInterstitial_object);
+                    }
+                }
+
+                // for ad_AppOpen //
+                $appOpen_array = array();
+                if (isset($value->ad_AppOpen)) {
+                    $decode_value = $value->ad_AppOpen;
+                    foreach ($decode_value as $key => $appOpen) {
+                        $plus = $key + 1;
+                        $appOpen_object = array("AppOpen{$plus}" => $appOpen);
+                        $appOpen_array = array_merge($appOpen_array, $appOpen_object);
+                    }
+                }
+
+
+                $allAdformat = array_merge($banner_array, $interstitial_array, $native_array, $nativeBanner_array, $rewardedVideo_array, $rewardedInterstitial_array, $appOpen_array);
+                $placement = array_merge($new_placement, $allAdformat);
+
+
+                array_push($placement_array, $placement);
             }
-            unset($value['ad_Banner']);
-            unset($value['ad_Interstitial']);
-            unset($value['ad_Native']);
-            unset($value['ad_NativeBanner']);
-            unset($value['ad_RewardedVideo']);
-            unset($value['ad_RewardedInterstitial']);
-            unset($value['ad_AppOpen']);
-            unset($value['platform_adFormat']);
-            $covert_obj = (object)$value;
-            unset($value['platform_name']);
-            $platformName = str_replace(' ', '', $covert_obj->platform_name);
-            $object1 = array($platformName => $value);
-            $new_placement_array = array_merge($new_placement_array, $object1);
+
+
+            foreach ($placement_array as $key => $value) {
+                if (isset($value['ad_AppID'])) {
+                    if ($value['ad_AppID'] == '') {
+                        unset($value['ad_AppID']);
+                    } else {
+                        $value['AppID'] = $value['ad_AppID'];
+                    }
+
+                }
+
+                if (isset($value['ad_AppID'])) {
+                    unset($value['ad_AppID']);
+                }
+                unset($value['ad_Banner']);
+                unset($value['ad_Interstitial']);
+                unset($value['ad_Native']);
+                unset($value['ad_NativeBanner']);
+                unset($value['ad_RewardedVideo']);
+                unset($value['ad_RewardedInterstitial']);
+                unset($value['ad_AppOpen']);
+                unset($value['platform_adFormat']);
+                unset($value['adFormatIds']);
+                unset($value['allApps_id']);
+                unset($value['platform_id']);
+                $covert_obj = (object)$value;
+                unset($value['platform_name']);
+                $platformName = str_replace(' ', '', $covert_obj->platform_name);
+                $object1 = array($platformName => $value);
+                $new_placement_array = array_merge($new_placement_array, $object1);
+            }
         }
 
+        $new_placement_array_filter = array_filter($new_placement_array);
 
-        $response = (object)["STATUS" => $db2_response->STATUS, "MSG" => $db2_response->MSG, "APP_SETTINGS" => $app_settings, "PLACEMENT" => $new_placement_array,
+        $response = (object)["STATUS" => $db2_response->STATUS, "MSG" => $db2_response->MSG, "APP_SETTINGS" => $app_settings, "PLACEMENT" => $new_placement_array_filter,
             "Advertise_List" => $db2_response->Advertise_List, "MORE_APP_SPLASH" => $db2_response->MORE_APP_SPLASH, "MORE_APP_EXIT" => $db2_response->MORE_APP_EXIT, "EXTRA_DATA" => $db2_response->app_extra];
 
         return $response;
 
-        $redis = Redis::connection('RedisApp2');
-        $redis->set($package_name, json_encode($response));
+        // $redis = Redis::connection('RedisApp2');
+        // $redis->set($package_name, json_encode($response));
 
         // ****************** //
 
@@ -871,7 +944,7 @@ class AllAppsController extends Controller
 
                 $monetize_setting_object = array('platform_name' => $key, 'platform_adFormat' => $platform_adFormat, 'ad_AppID' => $ad_Appid, 'ad_Banner' => $ad_Banner, 'ad_Interstitial'
                 => $ad_Interstitial, 'ad_Native' => $ad_Native, 'ad_NativeBanner' => $ad_NativeBanner, 'ad_RewardedVideo' => $ad_RewardedVideo
-                , 'ad_RewardedInterstitial' => $ad_RewardedInterstitial, 'ad_AppOpen' => $ad_AppOpen, 'ad_loadAdIdsType' => $value->ad_loadAdIdsType, 'ad_showAdStatus' => $value->ad_showAdStatus);
+                , 'ad_RewardedInterstitial' => $ad_RewardedInterstitial, 'ad_AppOpen' => $ad_AppOpen);
                 array_push($monetize_setting, $monetize_setting_object);
 
             }
@@ -965,6 +1038,8 @@ class AllAppsController extends Controller
         foreach ($get_placement as $key => $value) {
 
             $new_placement = json_decode(json_encode($value), true);
+
+
             // for banner //
             $banner_array = array();
             if (isset($value->ad_Banner)) {
@@ -1054,9 +1129,19 @@ class AllAppsController extends Controller
 
         $new_placement_array = [];
         foreach ($placement_array as $key => $value) {
-            if (isset($value['ad_AppID']) && $value['ad_AppID'] == '') {
+            if (isset($value['ad_AppID'])) {
+                if ($value['ad_AppID'] == '') {
+                    unset($value['ad_AppID']);
+                } else {
+                    $value['AppID'] = $value['ad_AppID'];
+                }
+
+            }
+
+            if (isset($value['ad_AppID'])) {
                 unset($value['ad_AppID']);
             }
+
             unset($value['ad_Banner']);
             unset($value['ad_Interstitial']);
             unset($value['ad_Native']);
@@ -1067,19 +1152,23 @@ class AllAppsController extends Controller
             unset($value['platform_adFormat']);
             $covert_obj = (object)$value;
             unset($value['platform_name']);
+            unset($value['adFormatIds']);
+            unset($value['platform_id']);
             $platformName = str_replace(' ', '', $covert_obj->platform_name);
             $object1 = array($platformName => $value);
             $new_placement_array = array_merge($new_placement_array, $object1);
         }
 
-        $response = (object)["STATUS" => $test_response->STATUS, "MSG" => $test_response->MSG, "APP_SETTINGS" => $app_settings, "PLACEMENT" => $new_placement_array,
+        $new_placement_array_filter = array_filter($new_placement_array);
+
+        $response = (object)["STATUS" => $test_response->STATUS, "MSG" => $test_response->MSG, "APP_SETTINGS" => $app_settings, "PLACEMENT" => $new_placement_array_filter,
             "Advertise_List" => $test_response->Advertise_List, "MORE_APP_SPLASH" => $test_response->MORE_APP_SPLASH, "MORE_APP_EXIT" => $test_response->MORE_APP_EXIT, "EXTRA_DATA" => $test_response->app_extra];
 
 
-        // return $response;
+        return $response;
 
-        $redis = Redis::connection('RedisApp6');
-        $redis->set($package_name, json_encode($response));
+        // $redis = Redis::connection('RedisApp6');
+        // $redis->set($package_name, json_encode($response));
 
         return 'data set succesfully!';
 
@@ -1093,13 +1182,15 @@ class AllAppsController extends Controller
 
     }
 
-    public function searchAppByDeveloper($developer, $status)
+    public function searchAppByDeveloper($developer, $status = null)
     {
 
         $app_details = AppDetails::where('developer', $developer)->pluck('app_packageName');
 
         if ($status == 'live') {
             $all_apps = AllApps::whereIn('app_packageName', $app_details)->where('status', 'live')->get();
+        } elseif ($status == 'removed') {
+            $all_apps = AllApps::whereIn('app_packageName', $app_details)->where('status', 'removed')->get();
         } else {
             $all_apps = AllApps::whereIn('app_packageName', $app_details)->get();
         }
@@ -1224,12 +1315,12 @@ class AllAppsController extends Controller
         $searchApp = $request->searchApp;
         $status = $request->status;
         $developer = $request->developer;
-
-        if($searchApp){
+        if ($searchApp) {
             if ($searchApp && $status && $developer) {
 
                 $data = AllApps::where('status', $status)->where('developer', $developer)->get();
-                $newData =  AllAppResource::collection($data);
+                $newData = AllAppResource::collection($data);
+
                 $appsData = $newData->filter(function ($value, $key) use ($searchApp) {
                     $pattern = '/' . $searchApp . '/' . 'i';
                     return preg_match($pattern, $value->app_name) || preg_match($pattern, $value->app_packageName) || preg_match($pattern, $value->developer);
@@ -1240,7 +1331,8 @@ class AllAppsController extends Controller
             } elseif ($searchApp && $status) {
 
                 $StatusData = AllApps::where('status', $status)->get();
-                $newData =  AllAppResource::collection($StatusData);
+                $newData = AllAppResource::collection($StatusData);
+
                 $appsData = $newData->filter(function ($value, $key) use ($searchApp) {
                     $pattern = '/' . $searchApp . '/' . 'i';
                     return preg_match($pattern, $value->app_name) || preg_match($pattern, $value->app_packageName) || preg_match($pattern, $value->developer);
@@ -1251,7 +1343,8 @@ class AllAppsController extends Controller
             } elseif ($searchApp && $developer) {
 
                 $developerData = AllApps::where('developer', $developer)->get();
-                $newData =  AllAppResource::collection($developerData);
+                $newData = AllAppResource::collection($developerData);
+
                 $appsData = $newData->filter(function ($value, $key) use ($searchApp) {
                     $pattern = '/' . $searchApp . '/' . 'i';
                     return preg_match($pattern, $value->app_name) || preg_match($pattern, $value->app_packageName) || preg_match($pattern, $value->developer);
@@ -1262,24 +1355,18 @@ class AllAppsController extends Controller
             } elseif ($searchApp) {
 
                 $data = AllApps::get();
-                $newData =  AllAppResource::collection($data);
+                $newData = AllAppResource::collection($data);
 
                 $appsData = $newData->filter(function ($value, $key) use ($searchApp) {
                     $pattern = '/' . $searchApp . '/' . 'i';
-                    return preg_match($pattern, $value->developer) || preg_match($pattern, $value->app_packageName) || preg_match($pattern, $value->app_name);
+                    return preg_match($pattern, $value->app_name) || preg_match($pattern, $value->app_packageName) || preg_match($pattern, $value->developer);
                 });
+
                 $apps = $appsData->values();
-
-//            $appsData  = AllApps::where('app_name', 'like', "%{$searchApp}%")->orWhere('app_packageName', 'like', "%{$searchApp}%")->orWhere('developer', 'like', "%{$searchApp}%")->get();
-//            $apps =  AllAppResource::collection($appsData);
-
-
             }
+
             return $apps;
         }
-
-
-
 
     }
 

@@ -10,6 +10,7 @@ use App\Http\Controllers\API\GooglePlayApiController;
 use App\Http\Controllers\API\SpyAppsController;
 use App\Http\Controllers\API\TelegramController;
 use App\Http\Controllers\API\TodoListController;
+use App\Http\Controllers\Services\CreateLineItems;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
@@ -290,6 +291,19 @@ Route::post('db3', [AllAppsController::class, 'db3']);
 // google ads api //
 Route::get('GetAllNetwork', [GoogleAdsApiController::class, 'GetAllNetwork']);
 Route::get('GetCurrentNetwork', [GoogleAdsApiController::class, 'GetCurrentNetwork']);
+Route::get('CreateAdvertiser', [GoogleAdsApiController::class, 'CreateAdvertiser']);
+Route::get('CreateOrders', [GoogleAdsApiController::class, 'CreateOrders']);
+Route::get('CreateLineItems', [GoogleAdsApiController::class, 'CreateLineItems']);
+Route::get('getLineItem', [GoogleAdsApiController::class, 'getLineItem']);
+Route::get('GetAllCreatives', [GoogleAdsApiController::class, 'GetAllCreatives']);
+Route::get('CreateCreatives', [GoogleAdsApiController::class, 'CreateCreatives']);
+Route::get('CreatePlacements', [GoogleAdsApiController::class, 'CreatePlacements']);
+Route::get('ApproveOrder', [GoogleAdsApiController::class, 'ApproveOrder']);
+Route::get('CreateMobileApplication', [GoogleAdsApiController::class, 'CreateMobileApplication']);
+Route::get('getAllApplication', [GoogleAdsApiController::class, 'getAllApplication']);
+
+
+
 Route::get('index', [GoogleAdsApiController::class, 'index']);
 Route::get('sendTelegramMessage', [\App\Http\Controllers\GitController::class, 'sendTelegramMessage']);
 

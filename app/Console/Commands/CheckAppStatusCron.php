@@ -9,6 +9,7 @@ use App\Models\Telegram;
 use App\Models\User;
 use App\Notifications\LiveAppNotification;
 use App\Notifications\RemoveAppNotification;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use App\Models\App;
@@ -121,6 +122,7 @@ class CheckAppStatusCron extends Command
 
             \Log::info("check App status cron!");
 
+            $removedDate = Carbon::now()->format('d-m-Y');
             $allApps = AllApps::get();
             $telegram = Telegram::find(1);
 
@@ -152,7 +154,9 @@ class CheckAppStatusCron extends Command
                                 //****** //
 
                                 // send telegram message //
-                                $app_details_link = "https://api.telegram.org/bot" . $telegram->telegramBotToken . "/sendMessage?chat_id=" . $telegram->chat_id . "&text=" . $get_app->app_packageName . " is live";
+                                $playstorelink = 'https://play.google.com/store/apps/details?id=' . $get_app->app_packageName;
+                                $telegramMessage = " <u><b>App Name</b></u> : " . $get_app->app_name . " \n <u><b>Package Name</b></u> : " . $get_app->app_packageName . " \n <u><b>Developer Name</b></u> : " . $get_app->developer . " \n <u><b>Live Date</b></u> : " . $removedDate . " \n <u><b>PlayStore Link</b></u> : " . $playstorelink;
+                                $app_details_link = "https://api.telegram.org/bot" . $telegram->telegramBotToken . "/sendMessage?chat_id=" . $telegram->chat_id . "&parse_mode=HTML&text=" . $telegramMessage;
                                 $res = Http::get($app_details_link);
                                 //****** //
 
@@ -184,7 +188,9 @@ class CheckAppStatusCron extends Command
                             //****** //
 
                             // send telegram message //
-                            $app_details_link = "https://api.telegram.org/bot" . $telegram->telegramBotToken . "/sendMessage?chat_id=" . $telegram->chat_id . "&text=" . $get_app->app_packageName . " is removed";
+                            $appstorespylink = 'https://appstorespy.com/apps/play/HDVideoSaverDownloadVideos/' . $get_app->app_packageName;
+                            $telegramMessage = " <u><b>App Name</b></u> : " . $get_app->app_name . " \n <u><b>Package Name</b></u> : " . $get_app->app_packageName . " \n <u><b>Developer Name</b></u> : " . $get_app->developer . " \n <u><b>Removed Date</b></u> : " . $removedDate . " \n <u><b>AppStoreSpy Link</b></u> : " . $appstorespylink;
+                            $app_details_link = "https://api.telegram.org/bot" . $telegram->telegramBotToken . "/sendMessage?chat_id=" . $telegram->chat_id . "&parse_mode=HTML&text=" . $telegramMessage;
                             $res = Http::get($app_details_link);
                             //****** //
 
