@@ -85,6 +85,10 @@ class RoleTableSeeder extends Seeder
         Permission::create(['name' => 'todo-store']);
         Permission::create(['name' => 'todo-update']);
         Permission::create(['name' => 'todo-delete']);
+        Permission::create(['name' => 'googleAdManager-view']);
+        Permission::create(['name' => 'googleAdManager-store']);
+        Permission::create(['name' => 'googleAdManager-update']);
+        Permission::create(['name' => 'googleAdManager-delete']);
 
 
         $role1 = Role::create(['name' => 'super_admin']);
@@ -156,6 +160,10 @@ class RoleTableSeeder extends Seeder
         $role1->givePermissionTo('todo-store');
         $role1->givePermissionTo('todo-update');
         $role1->givePermissionTo('todo-delete');
+        $role1->givePermissionTo('googleAdManager-view');
+        $role1->givePermissionTo('googleAdManager-store');
+        $role1->givePermissionTo('googleAdManager-update');
+        $role1->givePermissionTo('googleAdManager-delete');
 
 
         $user = User::create([

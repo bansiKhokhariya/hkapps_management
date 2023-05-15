@@ -18,6 +18,12 @@ class CreateGoogleAdmanagerTable extends Migration
             $table->string('name')->nullable();
             $table->string('jsonFilePath')->nullable();
             $table->string('currentNetworkCode')->nullable();
+            $table->string('advertise_id')->nullable();
+            $table->string('order_id')->nullable();
+            $table->string('trafficker_id')->nullable();
+            $table->string('web_property_code')->nullable();
+            $table->string('placementId')->nullable();
+            $table->string('lineItemId')->nullable();
             $table->timestamps();
         });
     }

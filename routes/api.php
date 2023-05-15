@@ -5,6 +5,7 @@ use App\Http\Controllers\API\AllConsoleController;
 use App\Http\Controllers\API\CommanMasterController;
 use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\GithubTokenController;
+use App\Http\Controllers\API\GoogleAdManagerController;
 use App\Http\Controllers\API\GoogleAdsApiController;
 use App\Http\Controllers\API\GooglePlayApiController;
 use App\Http\Controllers\API\SpyAppsController;
@@ -97,7 +98,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('appForceDelete', [AllAppsController::class, 'forceDelete']);
     Route::post('appRestore/{id}', [AllAppsController::class, 'appRestore']);
     Route::get('getDeletedApp', [AllAppsController::class, 'getDeletedApp']);
-    Route::get('getRemovedApp/{appType}', [AllAppsController::class, 'getRemovedApp']);
+    Route::get('getAppByStatus/{appType}', [AllAppsController::class, 'getAppByStatus']);
     Route::post('searchApplication', [AllAppsController::class, 'searchApplication']);
 
     // test All Apps //
@@ -159,6 +160,18 @@ Route::middleware('auth:api')->group(function () {
     // all console //
     Route::resource('console', AllConsoleController::class);
     Route::get('getConsoleManager', [AllConsoleController::class, 'getConsoleManager']);
+
+    // Google AD Manager //
+    Route::get('GoogleAdManagerGetAllNetwork', [GoogleAdManagerController::class, 'GoogleAdManagerGetAllNetwork']);
+    Route::post('GoogleAdManagerSave', [GoogleAdManagerController::class, 'GoogleAdManagerSave']);
+    Route::get('checkGoogleResponse/{id}', [GoogleAdManagerController::class, 'checkGoogleResponse']);
+    Route::get('GetAllNetwork/{id}', [GoogleAdsApiController::class, 'GetAllNetwork']);
+    Route::post('selectNetwork', [GoogleAdsApiController::class, 'selectNetwork']);
+    Route::get('GetAllPlacements/{id}', [GoogleAdsApiController::class, 'GetAllPlacements']);
+    Route::get('GetAllUsers/{id}', [GoogleAdsApiController::class, 'GetAllUsers']);
+    Route::post('createMobileAppAdUnit/{id}', [GoogleAdsApiController::class, 'createMobileAppAdUnit']);
+    Route::get('getAllApplication/{id}', [GoogleAdsApiController::class, 'getAllApplication']);
+
 
 });
 
@@ -289,18 +302,18 @@ Route::post('play/liveops', [GooglePlayApiController::class, 'getEvents']);
 Route::post('db3', [AllAppsController::class, 'db3']);
 
 // google ads api //
-Route::get('GetAllNetwork', [GoogleAdsApiController::class, 'GetAllNetwork']);
+
 Route::get('GetCurrentNetwork', [GoogleAdsApiController::class, 'GetCurrentNetwork']);
-Route::get('CreateAdvertiser', [GoogleAdsApiController::class, 'CreateAdvertiser']);
 Route::get('CreateOrders', [GoogleAdsApiController::class, 'CreateOrders']);
 Route::get('CreateLineItems', [GoogleAdsApiController::class, 'CreateLineItems']);
 Route::get('getLineItem', [GoogleAdsApiController::class, 'getLineItem']);
 Route::get('GetAllCreatives', [GoogleAdsApiController::class, 'GetAllCreatives']);
 Route::get('CreateCreatives', [GoogleAdsApiController::class, 'CreateCreatives']);
-Route::get('CreatePlacements', [GoogleAdsApiController::class, 'CreatePlacements']);
+Route::get('CreatePlacements/{id}', [GoogleAdsApiController::class, 'CreatePlacements']);
 Route::get('ApproveOrder', [GoogleAdsApiController::class, 'ApproveOrder']);
 Route::get('CreateMobileApplication', [GoogleAdsApiController::class, 'CreateMobileApplication']);
-Route::get('getAllApplication', [GoogleAdsApiController::class, 'getAllApplication']);
+
+Route::get('createAdUnit/{id}', [GoogleAdsApiController::class, 'createAdUnit']);
 
 
 
