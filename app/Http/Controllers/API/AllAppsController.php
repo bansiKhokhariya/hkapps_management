@@ -1199,7 +1199,7 @@ class AllAppsController extends Controller
 
     }
 
-    public function getRemovedApp($appType)
+    public function getAppByStatus($appType)
     {
 
         $companyUser = Auth::user()->company_master_id;
