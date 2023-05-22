@@ -7,11 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Models\GoogleAdManager;
 use Carbon\Carbon;
 use Google\AdsApi\AdManager\AdManagerServices;
-use Google\AdsApi\AdManager\AdManagerSession;
 use Google\AdsApi\AdManager\AdManagerSessionBuilder;
 use Google\AdsApi\AdManager\Util\v202302\StatementBuilder;
 use Google\AdsApi\AdManager\v202302\AdUnit;
-use Google\AdsApi\AdManager\v202302\AdUnitTargeting;
 use Google\AdsApi\AdManager\v202302\AdUnitTargetWindow;
 use Google\AdsApi\AdManager\v202302\Company;
 use Google\AdsApi\AdManager\v202302\CompanyType;
@@ -39,7 +37,6 @@ use Google\AdsApi\Common\OAuth2TokenBuilder;
 use Google\AdsApi\AdManager\v202302\ApproveOrders as ApproveOrdersAction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -52,7 +49,7 @@ class GoogleAdsApiController extends Controller
     {
         $googleAdManager = GoogleAdManager::find($id);
 
-        $jsonFilePath = "C:/xampp/htdocs/hkapps_management/public/storage/" . $googleAdManager->jsonFilePath;
+        $jsonFilePath = "/www/wwwroot/panel.goldadx.com/public/storage/" . $googleAdManager->jsonFilePath;
         if ($googleAdManager->currentNetworkCode) {
             $networkCode = $googleAdManager->currentNetworkCode;
         } else {
@@ -104,6 +101,27 @@ class GoogleAdsApiController extends Controller
         }
 
         return $networks;
+
+    }
+
+    public function saveNetwork(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'currentNetworkCode' => 'required'
+        ]);
+
+        $id = $request->id;
+        $networkCode = $request->currentNetworkCode;
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors())->setStatusCode(422);
+        } else {
+            $googleAdManager = GoogleAdManager::find($id);
+            $googleAdManager->currentNetworkCode = $networkCode;
+            $googleAdManager->save();
+            return response()->json('network code saved!');
+        }
 
     }
 
@@ -228,7 +246,7 @@ class GoogleAdsApiController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors())->setStatusCode(422);
         } else {
-            $googleAdManager = GoogleAdManager::find(1);
+            $googleAdManager = GoogleAdManager::find($id);
             $googleAdManager->currentNetworkCode = $networkCode;
             $googleAdManager->web_property_code = $web_property_code;
             $googleAdManager->placementId = $placementId;
@@ -260,11 +278,18 @@ class GoogleAdsApiController extends Controller
         // create line item //
         $lineItem = $this->CreateLineItems($order[0]->id, $id, $placementId, $web_property_code);
 
+        $lineItemData = [
+            'banner' => $lineItem->getData()->banner[0]->name,
+            'inter' => $lineItem->getData()->inter[0]->name,
+            'native' => $lineItem->getData()->native[0]->name,
+            'openApp' => $lineItem->getData()->openApp[0]->name
+        ];
+
         // save lineItemId sql //
-        $googleAdManager->lineItemId = $lineItem[0]->id;
+        $googleAdManager->lineItemId = [$lineItemData];
         $googleAdManager->save();
 
-        return response()->json(['message' => 'Advertise , Order , LineItems created Successfully!']);
+        return response()->json(['message' => 'Advertise , Order , LineItems created Sucessfully!']);
     }
 
     public function GetCurrentNetwork($id)
@@ -307,7 +332,7 @@ class GoogleAdsApiController extends Controller
         $companyService = $serviceFactory->createCompanyService($session);
 
         $company = new Company();
-        $company->setName('Hk Advertiser #' . uniqid());
+        $company->setName('Hk Advertiser -' . uniqid());
         $company->setType(CompanyType::ADVERTISER);
 
 
@@ -358,7 +383,7 @@ class GoogleAdsApiController extends Controller
 
         $orderService = $serviceFactory->createOrderService($session);
         $order = new Order();
-        $order->setName('hk Order #' . uniqid());
+        $order->setName('hk Order -' . uniqid());
         $order->setAdvertiserId($advertiserId);
         $order->setSalespersonId($salespersonId);
         $order->setTraffickerId($trafficker_id);
@@ -417,80 +442,246 @@ class GoogleAdsApiController extends Controller
 
         $lineItemService = $serviceFactory->createLineItemService($session);
 
-        // Create inventory targeting.
+        //  line item Banner //
+
         $inventoryTargeting = new InventoryTargeting();
         $inventoryTargeting->setTargetedPlacementIds([$placementId]);
 
-        // Create targeting.
         $targeting = new Targeting();
         $targeting->setInventoryTargeting($inventoryTargeting);
 
-        // Now setup the line item.
         $lineItem = new LineItem();
-        $lineItem->setName('hk Line item #' . uniqid());
+        $lineItem->setName($orderId . ' - Banner');
         $lineItem->setOrderId($orderId);
         $lineItem->setTargeting($targeting);
         $lineItem->setLineItemType(LineItemType::AD_EXCHANGE);
         $lineItem->setAllowOverbook(true);
 
+        $creativePlaceholdersBanner = array();
+        $creativePlaceholderBanner1 = new CreativePlaceholder();
+        $creativePlaceholderBanner1->setSize(new Size(300, 50)); // 300x50 ad unit
+        $creativePlaceholdersBanner[] = $creativePlaceholderBanner1;
+        $creativePlaceholderBanner2 = new CreativePlaceholder();
+        $creativePlaceholderBanner2->setSize(new Size(300, 100)); // 300x100 ad unit
+        $creativePlaceholdersBanner[] = $creativePlaceholderBanner2;
+        $creativePlaceholderBanner3 = new CreativePlaceholder();
+        $creativePlaceholderBanner3->setSize(new Size(300, 250)); // 300x250 ad unit
+        $creativePlaceholdersBanner[] = $creativePlaceholderBanner3;
+        $creativePlaceholderBanner4 = new CreativePlaceholder();
+        $creativePlaceholderBanner4->setSize(new Size(320, 50)); // 320x50 ad unit
+        $creativePlaceholdersBanner[] = $creativePlaceholderBanner4;
+        $creativePlaceholderBanner5 = new CreativePlaceholder();
+        $creativePlaceholderBanner5->setSize(new Size(320, 100)); // 320x100 ad unit
+        $creativePlaceholdersBanner[] = $creativePlaceholderBanner5;
+        $creativePlaceholderBanner6 = new CreativePlaceholder();
+        $creativePlaceholderBanner6->setSize(new Size(320, 250)); // 320x250 ad unit
+        $creativePlaceholdersBanner[] = $creativePlaceholderBanner6;
 
-        // Define the creative placeholders for the ad unit sizes.
-        $creativePlaceholders = array();
-        $creativePlaceholder1 = new CreativePlaceholder();
-        $creativePlaceholder1->setSize(new Size(300, 250)); // 300x250 ad unit
-        $creativePlaceholders[] = $creativePlaceholder1;
-        $creativePlaceholder2 = new CreativePlaceholder();
-        $creativePlaceholder2->setSize(new Size(320, 100)); // 320x100 ad unit
-        $creativePlaceholders[] = $creativePlaceholder2;
-        $creativePlaceholder3 = new CreativePlaceholder();
-        $creativePlaceholder3->setSize(new Size(300, 50)); // 320x100 ad unit
-        $creativePlaceholders[] = $creativePlaceholder3;
+        $lineItem->setCreativePlaceholders($creativePlaceholdersBanner);
 
-// Set the creative placeholders for the line item.
-        $lineItem->setCreativePlaceholders($creativePlaceholders);
-
-
-        // Set the size of creatives that can be associated with this line item.
-//        $lineItem->setCreativePlaceholders([$creativePlaceholder]);
-
-        // Set the creative rotation type to even.
         $lineItem->setCreativeRotationType(CreativeRotationType::EVEN);
 
-        // Set the length of the line item to run.
         $lineItem->setStartDateTimeType(StartDateTimeType::IMMEDIATELY);
         $lineItem->setUnlimitedEndDateTime(true);
 
-
-        // Set the cost per unit to $2.
         $lineItem->setCostType(CostType::CPM);
         $lineItem->setCostPerUnit(new Money('USD', 0));
 
-        // Set the number of units bought to 500,000 so that the budget is
-        // $1,000.
         $goal = new Goal();
         $goal->setUnits(-1);
         $goal->setUnitType(UnitType::IMPRESSIONS);
         $goal->setGoalType(GoalType::NONE);
+
         $lineItem->setPrimaryGoal($goal);
         $lineItem->setWebPropertyCode($web_property_code);
 
+        $resultsBanner = $lineItemService->createLineItems([$lineItem]);
+
+        //  ?????????????????
+
+        // line item Inter //
+
+        $inventoryTargeting1 = new InventoryTargeting();
+        $inventoryTargeting1->setTargetedPlacementIds([$placementId]);
+
+        $targeting1 = new Targeting();
+        $targeting1->setInventoryTargeting($inventoryTargeting1);
+
+        $lineItem1 = new LineItem();
+        $lineItem1->setName($orderId . ' - Inter');
+        $lineItem1->setOrderId($orderId);
+        $lineItem1->setTargeting($targeting);
+        $lineItem1->setLineItemType(LineItemType::AD_EXCHANGE);
+        $lineItem1->setAllowOverbook(true);
+
+        $creativePlaceholdersInter = array();
+        $creativePlaceholderInter1 = new CreativePlaceholder();
+        $creativePlaceholderInter1->setSize(new Size(320, 480)); // 320x480 ad unit
+        $creativePlaceholdersInter[] = $creativePlaceholderInter1;
+        $creativePlaceholderInter2 = new CreativePlaceholder();
+        $creativePlaceholderInter2->setSize(new Size(480, 320)); // 480x320 ad unit
+        $creativePlaceholdersInter[] = $creativePlaceholderInter2;
+        $creativePlaceholderInter3 = new CreativePlaceholder();
+        $creativePlaceholderInter3->setSize(new Size(768, 1024)); // 768x1024  ad unit
+        $creativePlaceholdersInter[] = $creativePlaceholderInter3;
+        $creativePlaceholderInter4 = new CreativePlaceholder();
+        $creativePlaceholderInter4->setSize(new Size(1024, 768)); // 1024x768  ad unit
+        $creativePlaceholdersInter[] = $creativePlaceholderInter4;
+
+        $lineItem1->setCreativePlaceholders($creativePlaceholdersInter);
+
+        $lineItem1->setCreativeRotationType(CreativeRotationType::EVEN);
+
+        $lineItem1->setStartDateTimeType(StartDateTimeType::IMMEDIATELY);
+        $lineItem1->setUnlimitedEndDateTime(true);
+
+        $lineItem1->setCostType(CostType::CPM);
+        $lineItem1->setCostPerUnit(new Money('USD', 0));
+
+        $goal1 = new Goal();
+        $goal1->setUnits(-1);
+        $goal1->setUnitType(UnitType::IMPRESSIONS);
+        $goal1->setGoalType(GoalType::NONE);
+        $lineItem1->setPrimaryGoal($goal1);
+        $lineItem1->setWebPropertyCode($web_property_code);
+
+        $resultsInter = $lineItemService->createLineItems([$lineItem1]);
+
+        //  ????????????????????
+
+        //  line item Native //
+        $inventoryTargeting2 = new InventoryTargeting();
+        $inventoryTargeting2->setTargetedPlacementIds([$placementId]);
+
+        $targeting2 = new Targeting();
+        $targeting2->setInventoryTargeting($inventoryTargeting2);
+
+        $lineItem2 = new LineItem();
+        $lineItem2->setName($orderId . ' - Native');
+        $lineItem2->setOrderId($orderId);
+        $lineItem2->setTargeting($targeting);
+        $lineItem2->setLineItemType(LineItemType::AD_EXCHANGE);
+        $lineItem2->setAllowOverbook(true);
+
+        $creativePlaceholdersNative = array();
+        $creativePlaceholderNative1 = new CreativePlaceholder();
+        $creativePlaceholderNative1->setSize(new Size(1, 1)); // 1x1 ad unit
+        $creativePlaceholdersNative[] = $creativePlaceholderNative1;
+
+        $lineItem2->setCreativePlaceholders($creativePlaceholdersNative);
+
+        $lineItem2->setCreativeRotationType(CreativeRotationType::EVEN);
+
+        $lineItem2->setStartDateTimeType(StartDateTimeType::IMMEDIATELY);
+        $lineItem2->setUnlimitedEndDateTime(true);
+
+        $lineItem2->setCostType(CostType::CPM);
+        $lineItem2->setCostPerUnit(new Money('USD', 0));
+
+        $goal2 = new Goal();
+        $goal2->setUnits(-1);
+        $goal2->setUnitType(UnitType::IMPRESSIONS);
+        $goal2->setGoalType(GoalType::NONE);
+        $lineItem2->setPrimaryGoal($goal2);
+        $lineItem2->setWebPropertyCode($web_property_code);
+
+        $resultsNative = $lineItemService->createLineItems([$lineItem2]);
+
+        //  ????????????????
+
+        // line item OpenApp //
+
+        $inventoryTargeting3 = new InventoryTargeting();
+        $inventoryTargeting3->setTargetedPlacementIds([$placementId]);
+
+        $targeting3 = new Targeting();
+        $targeting3->setInventoryTargeting($inventoryTargeting3);
+
+        $lineItem3 = new LineItem();
+        $lineItem3->setName($orderId . ' - OpenApp');
+        $lineItem3->setOrderId($orderId);
+        $lineItem3->setTargeting($targeting);
+        $lineItem3->setLineItemType(LineItemType::AD_EXCHANGE);
+        $lineItem3->setAllowOverbook(true);
+
+
+        $creativePlaceholdersOpenApp = array();
+        $creativePlaceholderOpenApp1 = new CreativePlaceholder();
+        $creativePlaceholderOpenApp1->setSize(new Size(320, 480)); // 320x480 ad unit
+        $creativePlaceholdersOpenApp[] = $creativePlaceholderOpenApp1;
+        $creativePlaceholderOpenApp2 = new CreativePlaceholder();
+        $creativePlaceholderOpenApp2->setSize(new Size(480, 320)); // 480x320 ad unit
+        $creativePlaceholdersOpenApp[] = $creativePlaceholderOpenApp2;
+        $creativePlaceholderOpenApp3 = new CreativePlaceholder();
+        $creativePlaceholderOpenApp3->setSize(new Size(768, 1024)); // 768x1024 ad unit
+        $creativePlaceholdersOpenApp[] = $creativePlaceholderOpenApp3;
+        $creativePlaceholderOpenApp4 = new CreativePlaceholder();
+        $creativePlaceholderOpenApp4->setSize(new Size(1024, 768)); // 1024x768 ad unit
+        $creativePlaceholdersOpenApp[] = $creativePlaceholderOpenApp4;
+
+        $lineItem3->setCreativePlaceholders($creativePlaceholdersOpenApp);
+
+        $lineItem3->setCreativeRotationType(CreativeRotationType::EVEN);
+
+        $lineItem3->setStartDateTimeType(StartDateTimeType::IMMEDIATELY);
+        $lineItem3->setUnlimitedEndDateTime(true);
+
+        $lineItem3->setCostType(CostType::CPM);
+        $lineItem3->setCostPerUnit(new Money('USD', 0));
+
+        $goal3 = new Goal();
+        $goal3->setUnits(-1);
+        $goal3->setUnitType(UnitType::IMPRESSIONS);
+        $goal3->setGoalType(GoalType::NONE);
+        $lineItem3->setPrimaryGoal($goal3);
+        $lineItem3->setWebPropertyCode($web_property_code);
+
         // Create the line items on the server.
-        $results = $lineItemService->createLineItems([$lineItem]);
+        $resultsOpenApp = $lineItemService->createLineItems([$lineItem3]);
 
-        // Print out some information for each created line item.
-        $lineItems = array();
+        //  ???????????????
 
-        foreach ($results as $i => $lineItem) {
-
+        // print line item banner //
+        $lineItemsBanner = array();
+        foreach ($resultsBanner as $i => $lineItemBanner) {
             $id = $lineItem->getId();
             $name = $lineItem->getName();
-
             $object = (object)array('id' => $id, 'name' => $name);
-            array_push($lineItems, $object);
-
+            array_push($lineItemsBanner, $object);
         }
+        ////////////////
 
-        return $lineItems;
+        // print line item inter //
+        $lineItemsInter = array();
+        foreach ($resultsInter as $i => $lineItemInter) {
+            $id = $lineItem1->getId();
+            $name = $lineItem1->getName();
+            $object1 = (object)array('id' => $id, 'name' => $name);
+            array_push($lineItemsInter, $object1);
+        }
+        ////////////
+
+        // print line item native //
+        $lineItemsNative = array();
+        foreach ($resultsNative as $i => $lineItemNative) {
+            $id = $lineItem2->getId();
+            $name = $lineItem2->getName();
+            $object2 = (object)array('id' => $id, 'name' => $name);
+            array_push($lineItemsNative, $object2);
+        }
+        ///////////
+
+        // print line item openApp //
+        $lineItemsOpenApp = array();
+        foreach ($resultsOpenApp as $i => $lineItemOpenApp) {
+            $id = $lineItem3->getId();
+            $name = $lineItem3->getName();
+            $object3 = (object)array('id' => $id, 'name' => $name);
+            array_push($lineItemsOpenApp, $object3);
+        }
+        ////////////
+
+        return response()->json(['banner' => $lineItemsBanner, 'inter' => $lineItemsInter, 'native' => $lineItemsNative, 'openApp' => $lineItemsOpenApp]);
 
     }
 
@@ -517,14 +708,89 @@ class GoogleAdsApiController extends Controller
             if (!in_array($package_name, $appStoreId)) {
 
                 $this->CreateMobileApplication($id, $package_name);
-                $this->createAdUnit($id);
-                return response()->json(['message' => 'Mobile Application and AdUnits are created Successfully!'], 422);
+
+                $getApplication = $this->getAppSoreID($id, $package_name);
+                $applicationId = $getApplication[0]->applicationId;
+
+                $this->createAdUnit($id, $package_name, $applicationId);
+                return response()->json(['message' => 'Mobile Application and AdUnits are created Successfully!'], 200);
 
             } else {
-                return response()->json(['message' => 'This application already create.'], 422);
+
+                $getApplication = $this->getAppSoreID($id, $package_name);
+                $applicationId = $getApplication[0]->applicationId;
+
+                $checkIsAvailable = $this->getAdUnit($id, $applicationId);
+
+                if ($checkIsAvailable->getStatusCode() == 400) {
+
+                    $this->createAdUnit($id, $package_name, $applicationId);
+                    return response()->json(['message' => 'AdUnits was created Successfully!'], 200);
+
+                } else {
+                    return response()->json(['message' => 'This application already create.'], 422);
+                }
+
+
             }
         }
 
+    }
+
+    public function getAdUnit($id, $applicationId)
+    {
+        $adManagerSession = $this->AuthConnection($id);
+
+        $serviceFactory = new ServiceFactory();
+
+        $inventoryService = $serviceFactory->createInventoryService($adManagerSession);
+
+        // Create a statement to select ad units.
+        $pageSize = StatementBuilder::SUGGESTED_PAGE_LIMIT;
+        $statementBuilder = (new StatementBuilder())->orderBy('id ASC')
+            ->limit($pageSize);
+
+        // Retrieve a small amount of ad units at a time, paging
+        // through until all ad units have been retrieved.
+        $totalResultSetSize = 0;
+        do {
+            $page = $inventoryService->getAdUnitsByStatement(
+                $statementBuilder->toStatement()
+            );
+
+
+            // Print out some information for each ad unit.
+            if ($page->getResults() !== null) {
+                $totalResultSetSize = $page->getTotalResultSetSize();
+                $i = $page->getStartIndex();
+
+                $adUnitsArray = array();
+
+                foreach ($page->getResults() as $adUnit) {
+                    $id = $adUnit->getId();
+                    $getName = $adUnit->getName();
+                    $getApplicationId = $adUnit->getApplicationId();
+
+                    $object = (object)array('id' => $id, 'name' => $getName, 'applicationId' => $getApplicationId);
+                    array_push($adUnitsArray, $object);
+                }
+
+                $filteredArray = Arr::where($adUnitsArray, function ($value, $key) use ($applicationId) {
+                    return $value->applicationId == $applicationId;
+                });
+
+
+                $checkArray = array_values($filteredArray);
+
+                if ($checkArray) {
+                    return response()->json('Mobile Application and adUnits both are created', 200);
+                } else {
+                    return response()->json('Only Mobile Application is created AdUnits not created', 400);
+                }
+            }
+
+            $statementBuilder->increaseOffsetBy($pageSize);
+        } while ($statementBuilder->getOffset() < $totalResultSetSize);
 
     }
 
@@ -544,7 +810,6 @@ class GoogleAdsApiController extends Controller
             $page = $mobileApplicationService->getMobileApplicationsByStatement(
                 $statementBuilder->toStatement()
             );
-            dd($page);
             $applications = array();
             if ($page->getResults() !== null) {
                 foreach ($page->getResults() as $mobileApplication) {
@@ -580,13 +845,15 @@ class GoogleAdsApiController extends Controller
 
         $serviceFactory = new ServiceFactory();
         $adManagerServices = new AdManagerServices();
+
         $applications = [
             [
-                'displayName' => 'HK Application '.uniqid(),
+                'displayName' => 'HK Application - ' . uniqid(),
                 'appStoreId' => $package_name,
                 'appStores' => ['GOOGLE_PLAY'],
             ]
         ];
+
         // Create each application in the array.
         foreach ($applications as $app) {
             // Create the new application object.
@@ -604,39 +871,188 @@ class GoogleAdsApiController extends Controller
 
     }
 
-    public function createAdUnit($id)
+    public function getAppSoreID($id, $package_name)
     {
 
-        // Set up the Google Ad Manager API client.
+        $session = $this->AuthConnection($id);
+        $adManagerServices = new AdManagerServices();
+
+        $mobileApplicationService = $adManagerServices->get($session, MobileApplicationService::class);
+
+        $statementBuilder = (new StatementBuilder())->orderBy('id DESC');
+
+        do {
+            $page = $mobileApplicationService->getMobileApplicationsByStatement(
+                $statementBuilder->toStatement()
+            );
+
+            $applications = array();
+            if ($page->getResults() !== null) {
+                foreach ($page->getResults() as $mobileApplication) {
+
+                    $id = $mobileApplication->getId();
+                    $applicationId = $mobileApplication->getApplicationId();
+                    $appStoreId = $mobileApplication->getAppStoreId();
+
+                    $object = (object)array('id' => $id, 'applicationId' => $applicationId, 'appStoreId' => $appStoreId);
+                    array_push($applications, $object);
+                }
+
+
+                $filteredArray = Arr::where($applications, function ($value, $key) use ($package_name) {
+                    return $value->appStoreId == $package_name;
+                });
+
+                return array_values($filteredArray);
+
+            }
+
+        } while ($statementBuilder->getOffset() < $page->getTotalResultSetSize());
+
+    }
+
+    public function createAdUnit($id, $package_name, $applicationId)
+    {
+
         $adManagerSession = $this->AuthConnection($id);
 
-        // set up the Ad Manager services and inventory service
         $adManagerServices = new AdManagerServices();
         $inventoryService = $adManagerServices->get($adManagerSession, InventoryService::class);
 
+        $serviceFactory = $serviceFactory = new ServiceFactory();
+        $networkService = $serviceFactory->createNetworkService($adManagerSession);
 
-        $adUnit = new AdUnit();
-        $adUnit->setName('My Ad Unit '.uniqid());
-        $adUnit->setParentId(22907596760); // ID of the parent ad unit (optional)
-        $adUnit->setTargetWindow(AdUnitTargetWindow::BLANK); // open links in a new window
-        $adUnitSizes = [];
-        $adUnitSize = new AdUnitSize();
-        $adUnitSize->setSize(['width' => 300, 'height' => 250]);
-        $adUnitSize->setEnvironmentType('BROWSER');
-        $adUnitSizes[] = $adUnitSize;
-        $adUnit->setAdUnitSizes($adUnitSizes);
+        $network = $networkService->getCurrentNetwork();
+        $effectiveRootAdUnitId = $network->getEffectiveRootAdUnitId();
 
-// create the ad unit in Ad Manager
-        $adUnits = $inventoryService->createAdUnits([$adUnit]);
 
-// print the ID of the new ad unit
-//        echo 'Ad unit created with ID: ' . $adUnits[0]->getId();
+        // ad unit for banner //
+
+        $adUnitBanner = new AdUnit();
+        $adUnitBanner->setName($package_name . ' - Banner');
+        $adUnitBanner->setAdUnitCode($package_name . 'banner');
+        $adUnitBanner->setParentId($effectiveRootAdUnitId);
+        $adUnitBanner->setTargetWindow(AdUnitTargetWindow::TOP);
+        $adUnitBanner->setApplicationId($applicationId);
+
+        $adUnitSizesBanner = [];
+        $adUnitSizeBanner = new AdUnitSize();
+        $adUnitSizeBanner->setSize(['width' => 300, 'height' => 50]);
+        $adUnitSizeBanner->setEnvironmentType('BROWSER');
+        $adUnitSizesBanner[] = $adUnitSizeBanner;
+        $adUnitSizeBanner1 = new AdUnitSize();
+        $adUnitSizeBanner1->setSize(['width' => 300, 'height' => 100]);
+        $adUnitSizeBanner1->setEnvironmentType('BROWSER');
+        $adUnitSizesBanner[] = $adUnitSizeBanner1;
+        $adUnitSizeBanner2 = new AdUnitSize();
+        $adUnitSizeBanner2->setSize(['width' => 300, 'height' => 250]);
+        $adUnitSizeBanner2->setEnvironmentType('BROWSER');
+        $adUnitSizesBanner[] = $adUnitSizeBanner2;
+        $adUnitSizeBanner3 = new AdUnitSize();
+        $adUnitSizeBanner3->setSize(['width' => 320, 'height' => 50]);
+        $adUnitSizeBanner3->setEnvironmentType('BROWSER');
+        $adUnitSizesBanner[] = $adUnitSizeBanner3;
+        $adUnitSizeBanner4 = new AdUnitSize();
+        $adUnitSizeBanner4->setSize(['width' => 320, 'height' => 100]);
+        $adUnitSizeBanner4->setEnvironmentType('BROWSER');
+        $adUnitSizesBanner[] = $adUnitSizeBanner4;
+        $adUnitSizeBanner5 = new AdUnitSize();
+        $adUnitSizeBanner5->setSize(['width' => 320, 'height' => 250]);
+        $adUnitSizeBanner5->setEnvironmentType('BROWSER');
+        $adUnitSizesBanner[] = $adUnitSizeBanner5;
+
+        $adUnitBanner->setAdUnitSizes($adUnitSizesBanner);
+
+
+        ///////////////////
+
+        // ad unit for Inter //
+        $adUnitInter = new AdUnit();
+        $adUnitInter->setName($package_name . ' - Inter');
+        $adUnitInter->setAdUnitCode($package_name . 'inter');
+        $adUnitInter->setParentId($effectiveRootAdUnitId);
+        $adUnitInter->setTargetWindow(AdUnitTargetWindow::TOP);
+        $adUnitInter->setApplicationId($applicationId);
+
+        $adUnitSizesInter = [];
+        $adUnitSizeInter = new AdUnitSize();
+        $adUnitSizeInter->setSize(['width' => 320, 'height' => 480]);
+        $adUnitSizeInter->setEnvironmentType('BROWSER');
+        $adUnitSizesInter[] = $adUnitSizeInter;
+        $adUnitSizeInter1 = new AdUnitSize();
+        $adUnitSizeInter1->setSize(['width' => 480, 'height' => 320]);
+        $adUnitSizeInter1->setEnvironmentType('BROWSER');
+        $adUnitSizesInter[] = $adUnitSizeInter1;
+        $adUnitSizeInter2 = new AdUnitSize();
+        $adUnitSizeInter2->setSize(['width' => 768, 'height' => 1024]);
+        $adUnitSizeInter2->setEnvironmentType('BROWSER');
+        $adUnitSizesInter[] = $adUnitSizeInter2;
+        $adUnitSizeInter3 = new AdUnitSize();
+        $adUnitSizeInter3->setSize(['width' => 1024, 'height' => 768]);
+        $adUnitSizeInter3->setEnvironmentType('BROWSER');
+        $adUnitSizesInter[] = $adUnitSizeInter3;
+
+        $adUnitInter->setAdUnitSizes($adUnitSizesInter);
+        /////////////////////
+
+        // ad unit for Native //
+        $adUnitNative = new AdUnit();
+        $adUnitNative->setName($package_name . ' - Native');
+        $adUnitNative->setAdUnitCode($package_name . 'native');
+        $adUnitNative->setParentId($effectiveRootAdUnitId);
+        $adUnitNative->setTargetWindow(AdUnitTargetWindow::TOP);
+        $adUnitNative->setApplicationId($applicationId);
+        $adUnitNative->setIsFluid(true);
+        $adUnitNative->setIsNative(true);
+
+        $adUnitSizesNative = [];
+        $adUnitSizeNative = new AdUnitSize();
+        $adUnitSizeNative->setSize(['width' => 1, 'height' => 1]);
+        $adUnitSizeNative->setEnvironmentType('BROWSER');
+        $adUnitSizesNative[] = $adUnitSizeNative;
+
+
+        $adUnitNative->setAdUnitSizes($adUnitSizesNative);
+
+        /////////////////////
+
+        // ad unit for openApp //
+        $adUnitOpenApp = new AdUnit();
+        $adUnitOpenApp->setName($package_name . ' - OpenApp');
+        $adUnitOpenApp->setAdUnitCode($package_name . 'openApp');
+        $adUnitOpenApp->setParentId($effectiveRootAdUnitId);
+        $adUnitOpenApp->setTargetWindow(AdUnitTargetWindow::TOP);
+        $adUnitOpenApp->setApplicationId($applicationId);
+
+        $adUnitSizesOpenApp = [];
+        $adUnitSizeOpenApp = new AdUnitSize();
+        $adUnitSizeOpenApp->setSize(['width' => 320, 'height' => 480]);
+        $adUnitSizeOpenApp->setEnvironmentType('BROWSER');
+        $adUnitSizesOpenApp[] = $adUnitSizeOpenApp;
+        $adUnitSizesOpenApp1 = new AdUnitSize();
+        $adUnitSizesOpenApp1->setSize(['width' => 480, 'height' => 320]);
+        $adUnitSizesOpenApp1->setEnvironmentType('BROWSER');
+        $adUnitSizesOpenApp[] = $adUnitSizesOpenApp1;
+        $adUnitSizesOpenApp2 = new AdUnitSize();
+        $adUnitSizesOpenApp2->setSize(['width' => 768, 'height' => 1024]);
+        $adUnitSizesOpenApp2->setEnvironmentType('BROWSER');
+        $adUnitSizesOpenApp[] = $adUnitSizesOpenApp2;
+        $adUnitSizesOpenApp3 = new AdUnitSize();
+        $adUnitSizesOpenApp3->setSize(['width' => 1024, 'height' => 768]);
+        $adUnitSizesOpenApp3->setEnvironmentType('BROWSER');
+        $adUnitSizesOpenApp[] = $adUnitSizesOpenApp3;
+
+        $adUnitOpenApp->setAdUnitSizes($adUnitSizesOpenApp);
+
+
+        $inventoryService->createAdUnits([$adUnitBanner, $adUnitInter, $adUnitNative, $adUnitOpenApp]);
+//        $inventoryService->createAdUnits([$adUnitNative]);
 
         return 'AdUnits created!';
 
     }
 
- //////////////////////////////////////////////////////////
+    ////////////////////////////////////
 
     public function CreatePlacements($id)
     {
@@ -653,7 +1069,7 @@ class GoogleAdsApiController extends Controller
 
 // Create a placement object
         $placement = new Placement();
-        $placement->setName('My Placement '.uniqid());
+        $placement->setName('My Placement ' . uniqid());
         $placement->setDescription('This is my placement.');
         $placement->setTargetedAdUnitIds(['AD_UNIT_ID']);
         $placement->set([$size]);

@@ -164,6 +164,7 @@ Route::middleware('auth:api')->group(function () {
     // Google AD Manager //
     Route::get('GoogleAdManagerGetAllNetwork', [GoogleAdManagerController::class, 'GoogleAdManagerGetAllNetwork']);
     Route::post('GoogleAdManagerSave', [GoogleAdManagerController::class, 'GoogleAdManagerSave']);
+    Route::post('saveNetwork', [GoogleAdsApiController::class, 'saveNetwork']);
     Route::get('checkGoogleResponse/{id}', [GoogleAdManagerController::class, 'checkGoogleResponse']);
     Route::get('GetAllNetwork/{id}', [GoogleAdsApiController::class, 'GetAllNetwork']);
     Route::post('selectNetwork', [GoogleAdsApiController::class, 'selectNetwork']);
@@ -305,15 +306,17 @@ Route::post('db3', [AllAppsController::class, 'db3']);
 
 Route::get('GetCurrentNetwork', [GoogleAdsApiController::class, 'GetCurrentNetwork']);
 Route::get('CreateOrders', [GoogleAdsApiController::class, 'CreateOrders']);
-Route::get('CreateLineItems', [GoogleAdsApiController::class, 'CreateLineItems']);
+Route::get('CreateLineItems/{orderId}/{id}/{placementId}/{web_property_code}', [GoogleAdsApiController::class, 'CreateLineItems']);
 Route::get('getLineItem', [GoogleAdsApiController::class, 'getLineItem']);
 Route::get('GetAllCreatives', [GoogleAdsApiController::class, 'GetAllCreatives']);
 Route::get('CreateCreatives', [GoogleAdsApiController::class, 'CreateCreatives']);
 Route::get('CreatePlacements/{id}', [GoogleAdsApiController::class, 'CreatePlacements']);
 Route::get('ApproveOrder', [GoogleAdsApiController::class, 'ApproveOrder']);
 Route::get('CreateMobileApplication', [GoogleAdsApiController::class, 'CreateMobileApplication']);
+Route::get('getAppSoreID/{id}/{package_name}', [GoogleAdsApiController::class, 'getAppSoreID']);
+Route::get('getAdUnit/{id}/{applicationId}', [GoogleAdsApiController::class, 'getAdUnit']);
 
-Route::get('createAdUnit/{id}', [GoogleAdsApiController::class, 'createAdUnit']);
+Route::get('createAdUnit/{id}/{package_name}/{applicationId}', [GoogleAdsApiController::class, 'createAdUnit']);
 
 
 

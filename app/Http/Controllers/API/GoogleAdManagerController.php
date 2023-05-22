@@ -50,8 +50,23 @@ class GoogleAdManagerController extends Controller
     {
         $googleAdManager = GoogleAdManager::find($id);
 
-        if ($googleAdManager->advertiseId) {
-            return response()->json(['status' => true, 'data' => $googleAdManager]);
+        $data = [
+            'id' => $googleAdManager->id,
+            'name' => $googleAdManager->name,
+            'jsonFilePath' => $googleAdManager->jsonFilePath,
+            'advertise_id' => $googleAdManager->advertise_id,
+            'order_id' => $googleAdManager->order_id,
+            'trafficker_id' => $googleAdManager->trafficker_id,
+            'web_property_code' => $googleAdManager->web_property_code,
+            'placementId' => $googleAdManager->placementId,
+            'lineItemId' => json_decode($googleAdManager->lineItemId),
+            'currentNetworkCode' => $googleAdManager->currentNetworkCode,
+            'created_at' => $googleAdManager->created_at,
+            'updated_at' => $googleAdManager->updated_at,
+        ];
+
+        if ($googleAdManager->advertise_id) {
+            return response()->json(['status' => true, 'data' => $data]);
         } else {
             return response()->json(['status' => false]);
         }
