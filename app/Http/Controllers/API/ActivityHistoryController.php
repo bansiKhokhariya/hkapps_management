@@ -13,7 +13,7 @@ use Spatie\Activitylog\Models\Activity;
 class ActivityHistoryController extends Controller
 {
     public function index(){
-        $activity = Activity::all();
+        $activity = Activity::latest()->get();
         return ActivityHistoryResource::collection($activity);
     }
 

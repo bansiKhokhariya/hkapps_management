@@ -19,7 +19,7 @@ class AdvertiseContoller extends Controller
 //        return AppAdResource::collection($advertise);
 
         $data = [];
-        $obj1 =(object)[
+        $obj1 = (object)[
             "ad_id" => 1,
             "app_name" => "My photo phone dialer",
             "app_packageName" => "com.judi.dialcolor",

@@ -77,18 +77,22 @@ class RoleTableSeeder extends Seeder
         Permission::create(['name' => 'commanMaster-store']);
         Permission::create(['name' => 'commanMaster-update']);
         Permission::create(['name' => 'commanMaster-delete']);
-        Permission::create(['name' => 'adsNetwork-view']);
-        Permission::create(['name' => 'adsNetwork-store']);
-        Permission::create(['name' => 'adsNetwork-update']);
-        Permission::create(['name' => 'adsNetwork-delete']);
         Permission::create(['name' => 'todo-view']);
         Permission::create(['name' => 'todo-store']);
         Permission::create(['name' => 'todo-update']);
         Permission::create(['name' => 'todo-delete']);
+        Permission::create(['name' => 'console-view']);
+        Permission::create(['name' => 'console-store']);
+        Permission::create(['name' => 'console-update']);
+        Permission::create(['name' => 'console-delete']);
         Permission::create(['name' => 'googleAdManager-view']);
         Permission::create(['name' => 'googleAdManager-store']);
         Permission::create(['name' => 'googleAdManager-update']);
         Permission::create(['name' => 'googleAdManager-delete']);
+        Permission::create(['name' => 'adsNetwork-view']);
+        Permission::create(['name' => 'adsNetwork-store']);
+        Permission::create(['name' => 'adsNetwork-update']);
+        Permission::create(['name' => 'adsNetwork-delete']);
 
 
         $role1 = Role::create(['name' => 'super_admin']);
@@ -152,25 +156,30 @@ class RoleTableSeeder extends Seeder
         $role1->givePermissionTo('commanMaster-store');
         $role1->givePermissionTo('commanMaster-update');
         $role1->givePermissionTo('commanMaster-delete');
-        $role1->givePermissionTo('adsNetwork-view');
-        $role1->givePermissionTo('adsNetwork-store');
-        $role1->givePermissionTo('adsNetwork-update');
-        $role1->givePermissionTo('adsNetwork-delete');
         $role1->givePermissionTo('todo-view');
         $role1->givePermissionTo('todo-store');
         $role1->givePermissionTo('todo-update');
         $role1->givePermissionTo('todo-delete');
+        $role1->givePermissionTo('console-view');
+        $role1->givePermissionTo('console-store');
+        $role1->givePermissionTo('console-update');
+        $role1->givePermissionTo('console-delete');
         $role1->givePermissionTo('googleAdManager-view');
         $role1->givePermissionTo('googleAdManager-store');
         $role1->givePermissionTo('googleAdManager-update');
         $role1->givePermissionTo('googleAdManager-delete');
+        $role1->givePermissionTo('adsNetwork-view');
+        $role1->givePermissionTo('adsNetwork-store');
+        $role1->givePermissionTo('adsNetwork-update');
+        $role1->givePermissionTo('adsNetwork-delete');
+
 
 
         $user = User::create([
             'name' => 'super admin',
             'email' => 'superadmin@gmail.com',
             'password' => bcrypt('12345678'),
-            'designation'=> 'superadmin',
+            'designation'=> 'Super Admin',
             'roles'=> 'super_admin'
         ]);
 

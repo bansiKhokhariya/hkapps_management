@@ -31,7 +31,7 @@ class CreateAllConsoleRequest extends FormRequest
     public function persist()
     {
         $allConsole = new AllConsole($this->validated());
-        $allConsole->manageBy = $this->manageBy;
+        $allConsole->manageBy_id = $this->manageBy_id;
         $allConsole->email = $this->email;
         $allConsole->password = $this->password;
         $allConsole->consoleName = $this->consoleName;

@@ -16,7 +16,7 @@ class AllConsole extends Model
 
     public function getDescriptionForEvent(string $eventName): string
     {
-        return "{$eventName} Console - ID:{$this->id}, ConsoleName:{$this->apikey_text}";
+        return "{$eventName} Console - ID:{$this->id}, ConsoleName:{$this->consoleName}";
     }
     public function manageBy()
     {

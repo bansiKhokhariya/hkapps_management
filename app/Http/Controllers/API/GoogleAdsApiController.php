@@ -689,6 +689,7 @@ class GoogleAdsApiController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
+//            'currentNetworkCode' => 'required',
             'package_name' => 'required',
         ]);
 
@@ -766,10 +767,12 @@ class GoogleAdsApiController extends Controller
 
                 $adUnitsArray = array();
 
+
                 foreach ($page->getResults() as $adUnit) {
                     $id = $adUnit->getId();
                     $getName = $adUnit->getName();
                     $getApplicationId = $adUnit->getApplicationId();
+                    $getApplicationId = $adUnit->getAdUnitCode();
 
                     $object = (object)array('id' => $id, 'name' => $getName, 'applicationId' => $getApplicationId);
                     array_push($adUnitsArray, $object);
@@ -783,9 +786,9 @@ class GoogleAdsApiController extends Controller
                 $checkArray = array_values($filteredArray);
 
                 if ($checkArray) {
-                    return response()->json('Mobile Application and adUnits both are created', 200);
+                    return response()->json(['message' => 'Mobile Application and adUnits both are created', 'data' => $checkArray], 200);
                 } else {
-                    return response()->json('Only Mobile Application is created AdUnits not created', 400);
+                    return response()->json(['message' => 'Only Mobile Application is created AdUnits not created'], 400);
                 }
             }
 

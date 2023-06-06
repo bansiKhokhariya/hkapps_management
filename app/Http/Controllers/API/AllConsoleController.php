@@ -40,7 +40,7 @@ class AllConsoleController extends Controller
     }
     public function getConsoleManager(){
 
-        $user = User::where('designation','consoleManager')->get();
+        $user = User::where('designation','consoleManager')->orWhere('designation','superadmin')->get();
         return $user;
 
     }

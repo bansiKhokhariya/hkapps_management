@@ -102,7 +102,7 @@ class RawDataController extends Controller
     }
 
 
-    public function paginate($items, $perPage = 1000, $page = null, $options = [])
+        public function paginate($items, $perPage = 1000, $page = null, $options = [])
     {
         $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
         $items = $items instanceof Collection ? $items : Collection::make($items);

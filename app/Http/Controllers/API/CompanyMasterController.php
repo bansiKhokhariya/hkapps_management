@@ -35,7 +35,6 @@ class CompanyMasterController extends Controller
 
     public function destroy(CompanyMaster $companyMaster)
     {
-
         $companyMaster->delete();
         return response('Company Master Deleted Successfully');
     }

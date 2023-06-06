@@ -1,17 +1,5 @@
 <?php
 
-use App\Http\Controllers\API\AdsNetworkConroller;
-use App\Http\Controllers\API\AllConsoleController;
-use App\Http\Controllers\API\CommanMasterController;
-use App\Http\Controllers\API\DashboardController;
-use App\Http\Controllers\API\GithubTokenController;
-use App\Http\Controllers\API\GoogleAdManagerController;
-use App\Http\Controllers\API\GoogleAdsApiController;
-use App\Http\Controllers\API\GooglePlayApiController;
-use App\Http\Controllers\API\SpyAppsController;
-use App\Http\Controllers\API\TelegramController;
-use App\Http\Controllers\API\TodoListController;
-use App\Http\Controllers\Services\CreateLineItems;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
@@ -20,6 +8,7 @@ use App\Http\Controllers\API\TaskController;
 use App\Http\Controllers\API\NotificationController;
 use App\Http\Controllers\API\AppsController;
 use App\Http\Controllers\API\AdvertiseContoller;
+use App\Http\Controllers\API\RedisController;
 use App\Http\Controllers\API\RawDataController;
 use App\Http\Controllers\API\AllAppsController;
 use App\Http\Controllers\API\PlatformController;
@@ -34,7 +23,17 @@ use App\Http\Controllers\API\PartyMasterController;
 use App\Http\Controllers\API\PermissionController;
 use App\Http\Controllers\API\AdsProVersionController;
 use App\Http\Controllers\API\CompanyMasterController;
-
+use App\Http\Controllers\API\GithubTokenController;
+use App\Http\Controllers\API\DashboardController;
+use App\Http\Controllers\API\SpyAppsController;
+use App\Http\Controllers\API\CommanMasterController;
+use App\Http\Controllers\API\AdsNetworkConroller;
+use App\Http\Controllers\API\GooglePlayApiController;
+use App\Http\Controllers\API\TodoListController;
+use App\Http\Controllers\API\AllConsoleController;
+use App\Http\Controllers\API\TelegramController;
+use App\Http\Controllers\API\GoogleAdManagerController;
+use App\Http\Controllers\API\GoogleAdsApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,7 +78,6 @@ Route::middleware('auth:api')->group(function () {
     Route::post('deleteLogoBanner', [TaskController::class, 'deleteLogoBanner']);
     Route::post('deleteScreenshots', [TaskController::class, 'deleteScreenshots']);
 
-
     // notification //
     Route::get('getAllNotification', [NotificationController::class, 'getAllNotification']);
     Route::get('getUnreadNotification', [NotificationController::class, 'getUnreadNotification']);
@@ -87,9 +85,12 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('deleteNotification/{id}', [NotificationController::class, 'deleteNotification']);
     Route::get('markAsReadSpecific/{id}', [NotificationController::class, 'markAsReadSpecific']);
 
+
     // apps //
     Route::resource('app', AppsController::class);
     Route::get('fetchAppData/{package_name}', [AppsController::class, 'fetchAppData']);
+    Route::post('searchApp', [AppsController::class, 'search']);
+
 
     // all apps //
     Route::resource('allApp', AllAppsController::class);
@@ -104,6 +105,9 @@ Route::middleware('auth:api')->group(function () {
     // test All Apps //
     Route::get('testAllApps/{testAllApp}', [AllAppsController::class, 'testShow']);
     Route::post('testAllApps/{testAllApp}', [AllAppsController::class, 'testUpdate']);
+
+    // platform //
+    Route::resource('platform', PlatformController::class);
 
     // apikey list //
     Route::resource('apikey_list', ApiKeyListController::class);
@@ -133,20 +137,14 @@ Route::middleware('auth:api')->group(function () {
     // AdsPro Version //
     Route::resource('adsProVersion', AdsProVersionController::class);
 
-    // Telegram //
-    Route::resource('telegram', TelegramController::class);
-
-    // github token  //
-    Route::resource('gitHubToken', GithubTokenController::class);
-
     // Company master //
     Route::resource('company_master', CompanyMasterController::class);
 
     // Comman master //
     Route::resource('comman_master', CommanMasterController::class);
 
-    // Plateform //
-    Route::resource('platform', PlatformController::class);
+    // github token  //
+    Route::resource('gitHubToken', GithubTokenController::class);
 
     // AdsNetwork //
     Route::resource('adsNetwork', AdsNetworkConroller::class);
@@ -161,21 +159,23 @@ Route::middleware('auth:api')->group(function () {
     Route::resource('console', AllConsoleController::class);
     Route::get('getConsoleManager', [AllConsoleController::class, 'getConsoleManager']);
 
+    // Telegram //
+    Route::resource('telegram', TelegramController::class);
+
     // Google AD Manager //
     Route::get('GoogleAdManagerGetAllNetwork', [GoogleAdManagerController::class, 'GoogleAdManagerGetAllNetwork']);
     Route::post('GoogleAdManagerSave', [GoogleAdManagerController::class, 'GoogleAdManagerSave']);
-    Route::post('saveNetwork', [GoogleAdsApiController::class, 'saveNetwork']);
     Route::get('checkGoogleResponse/{id}', [GoogleAdManagerController::class, 'checkGoogleResponse']);
     Route::get('GetAllNetwork/{id}', [GoogleAdsApiController::class, 'GetAllNetwork']);
-    Route::post('selectNetwork', [GoogleAdsApiController::class, 'selectNetwork']);
+    Route::post('saveNetwork', [GoogleAdsApiController::class, 'saveNetwork']);
     Route::get('GetAllPlacements/{id}', [GoogleAdsApiController::class, 'GetAllPlacements']);
     Route::get('GetAllUsers/{id}', [GoogleAdsApiController::class, 'GetAllUsers']);
+    Route::post('selectNetwork', [GoogleAdsApiController::class, 'selectNetwork']);
     Route::post('createMobileAppAdUnit/{id}', [GoogleAdsApiController::class, 'createMobileAppAdUnit']);
     Route::get('getAllApplication/{id}', [GoogleAdsApiController::class, 'getAllApplication']);
-
+    Route::get('getAdUnit/{id}/{applicationId}', [GoogleAdsApiController::class, 'getAdUnit']);
 
 });
-
 
 // app response //
 Route::post('viewAppRes', [AllAppsController::class, 'viewAppRes']);
@@ -190,19 +190,17 @@ Route::get('GetRedisData/{package_name}', [RawDataController::class, 'GetRedisDa
 // webcreon //
 Route::get('getList', [AppsController::class, 'getPackageList']);
 Route::get('getCurrentPackage/{package_name}', [AppsController::class, 'getCurrentPackage']);
-Route::post('copyDataFromTo', [AppsController::class, 'CopyDataFromTo']);
-Route::get('getWebCreonPackage', [AppsController::class, 'getWebCreonPackage']);
 Route::get('webCreon2List', [AppsController::class, 'webCreon2List']);
 
 
 // monetize setting //
 Route::put('store_monetize', [AllAppsController::class, 'store_monetize']);
 
-//generate packagename //
-Route::get('generatePackageName/{name}', [AllAppsController::class, 'generatePackageName']);
-
 // test monetize setting //
 Route::put('test_store_monetize', [AllAppsController::class, 'test_store_monetize']);
+
+//generate packagename //
+Route::get('generatePackageName/{name}',[AllAppsController::class,'generatePackageName']);
 
 // Activity History //
 Route::get('activity_history', [ActivityHistoryController::class, 'index']);
@@ -217,10 +215,12 @@ Route::get('dummyPackage/store/{package_name}', [DummyPackageController::class, 
 
 // redis db 6 data get //
 Route::get('webcreon2/{package_name}', [AppsController::class, 'getDB6Data']);
-Route::get('webcreon2Db2/{package_name}', [AppsController::class, 'getDB2Data']);
 Route::get('webcreon2', [AppsController::class, 'getDB6AllData']);
 Route::post('webcreonSetData', [AppsController::class, 'setData']);
-Route::post('getAppInfoWebCreon2/{packageName}', [AppsController::class, 'getAppInfoWebCreon2']);
+Route::post('copyDataFromTo', [AppsController::class, 'CopyDataFromTo']);
+Route::get('getWebCreonPackage', [AppsController::class, 'getWebCreonPackage']);
+Route::get('webcreon2Db2/{package_name}', [AppsController::class, 'getDB2Data']);
+Route::get('getAppInfoWebCreon2/{packageName}', [AppsController::class, 'getAppInfoWebCreon2']);
 
 // search package_name //
 Route::get('search/{package_name}', [AllAppsController::class, 'searchPackage']);
@@ -233,7 +233,7 @@ Route::post('setTestData', [AllAppsController::class, 'setTestData']);
 
 // get developer name //
 Route::get('getDeveloperName', [AllAppsController::class, 'getDeveloperName']);
-Route::get('searchAppByDeveloper/{developer}/{status}', [AllAppsController::class, 'searchAppByDeveloper']);
+Route::get('searchAppByDeveloper/{developer}/{status?}', [AllAppsController::class, 'searchAppByDeveloper']);
 
 // AdsPro Version //
 Route::get('getAdsProVersion', [AdsProVersionController::class, 'adsProVersion']);
@@ -253,81 +253,48 @@ Route::get('startSpyAppDetailsCron', [SettingController::class, 'startSpyAppDeta
 Route::get('stopSpyAppDetailsCron', [SettingController::class, 'stopSpyAppDetailsCron']);
 Route::get('refreshCheckStatus', [SettingController::class, 'refreshCheckStatus']);
 
+// store redis data//
 Route::get('storeRedisData/{cursor?}', [RawDataController::class, 'storeRedisData']);
 
-Route::get('getCount', [DashboardController::class, 'getCount']);
+// dashboard api //
+Route::get('getCount',[DashboardController::class,'getCount']);
 
-
-Route::get('connectQueue', function () {
+Route::get('connectQueue', function(){
     dispatch(new App\Jobs\StoreRedisDataJob());
     dd('done');
 });
 
 // spy app //
-Route::get('saveSpyApps', [SpyAppsController::class, 'saveSpyApps']);
-Route::post('saveSpyApp', [SpyAppsController::class, 'saveSpyApp']);
-Route::get('getSpyApps', [SpyAppsController::class, 'getSpyApps']);
-Route::get('getSpyApp/{packageName}', [SpyAppsController::class, 'getSpyApp']);
+Route::get('saveSpyApps',[SpyAppsController::class,'saveSpyApps']);
+Route::get('getSpyApps',[SpyAppsController::class,'getSpyApps']);
+Route::post('saveSpyApp',[SpyAppsController::class,'saveSpyApp']);
+Route::get('getSpyApp/{packageName}',[SpyAppsController::class,'getSpyApp']);
 Route::get('appStoreSpy/browse/{mode?}/{available?}/{query?}/{query_short?}/{query_description?}/{revenue?}/{downloads?}/{installs?}/{ipd?}/{size?}/{store?}/{type?}/{released?}/{ratings?}/{reviews?}/{updates?}/{dev?}/{similarapp?}/{builder?}/{address_country?}/{limit?}/{order?}/{dir?}/{bucket?}/{bucket_date?}/{wl?}/{inapp?}/{creatives?}/{website?}/{collection?}/{country?}/{category?}/{storepass?}/{wearos?}', [SpyAppsController::class, 'appBrowse']);
+
+
+// county //
+Route::get('getCountry',[CommanMasterController::class,'getCountry']);
 
 
 // expense revenue //
 Route::get('getAppInfoByPackage/{packageName}', [ExpenseRevenueController::class, 'getAppInfoByPackage']);
 
-
-// county //
-Route::get('getCountry', [CommanMasterController::class, 'getCountry']);
-
 // apikey redis db3 //
 Route::get('getRedisApiKey', [ApiKeyListController::class, 'getRedisApiKey']);
 Route::post('setRedisApiKey', [ApiKeyListController::class, 'setRedisApiKey']);
-
-
+Route::get('overrideDb2Or6/{app_name}/{package_name}', [ApiKeyListController::class, 'overrideDb2Or6']);
 
 
 //google play //
 
-Route::get('play/apps/{id}', [GooglePlayApiController::class, 'GetGooglePLayAppById']);
-Route::post('play/apps', [GooglePlayApiController::class, 'SearchGooglePlayAppsByQuery']);
-Route::post('play/apps/query', [GooglePlayApiController::class, 'SearchGooglePlayAppsByQueryPost']);
-Route::post('play/apps/{id}/reviews', [GooglePlayApiController::class, 'appReview']);
-Route::get('play/info/countries', [GooglePlayApiController::class, 'GetGooglePlayAppAvailableCountry']);
-Route::get('play/info/languages', [GooglePlayApiController::class, 'GetGooglePlayAppAvailableLanguage']);
-Route::post('play/developers/{id}', [GooglePlayApiController::class, 'getDeveloper']);
-Route::post('play/developers', [GooglePlayApiController::class, 'devSearch']);
-Route::post('play/esimates', [GooglePlayApiController::class, 'getAppsEsimates']);
-Route::post('play/suggestions', [GooglePlayApiController::class, 'getSuggest']);
-Route::post('play/liveops', [GooglePlayApiController::class, 'getEvents']);
-
-
-Route::post('db3', [AllAppsController::class, 'db3']);
-
-// google ads api //
-
-Route::get('GetCurrentNetwork', [GoogleAdsApiController::class, 'GetCurrentNetwork']);
-Route::get('CreateOrders', [GoogleAdsApiController::class, 'CreateOrders']);
-Route::get('CreateLineItems/{orderId}/{id}/{placementId}/{web_property_code}', [GoogleAdsApiController::class, 'CreateLineItems']);
-Route::get('getLineItem', [GoogleAdsApiController::class, 'getLineItem']);
-Route::get('GetAllCreatives', [GoogleAdsApiController::class, 'GetAllCreatives']);
-Route::get('CreateCreatives', [GoogleAdsApiController::class, 'CreateCreatives']);
-Route::get('CreatePlacements/{id}', [GoogleAdsApiController::class, 'CreatePlacements']);
-Route::get('ApproveOrder', [GoogleAdsApiController::class, 'ApproveOrder']);
-Route::get('CreateMobileApplication', [GoogleAdsApiController::class, 'CreateMobileApplication']);
-Route::get('getAppSoreID/{id}/{package_name}', [GoogleAdsApiController::class, 'getAppSoreID']);
-Route::get('getAdUnit/{id}/{applicationId}', [GoogleAdsApiController::class, 'getAdUnit']);
-
-Route::get('createAdUnit/{id}/{package_name}/{applicationId}', [GoogleAdsApiController::class, 'createAdUnit']);
-
-
-
-Route::get('index', [GoogleAdsApiController::class, 'index']);
-Route::get('sendTelegramMessage', [\App\Http\Controllers\GitController::class, 'sendTelegramMessage']);
-
-
-
-
-
-
-
-
-
+Route::get('play/apps/{id}',[GooglePlayApiController::class,'GetGooglePLayAppById']);
+Route::post('play/apps',[GooglePlayApiController::class,'SearchGooglePlayAppsByQuery']);
+Route::post('play/apps/query',[GooglePlayApiController::class,'SearchGooglePlayAppsByQueryPost']);
+Route::post('play/apps/{id}/reviews',[GooglePlayApiController::class,'appReview']);
+Route::get('play/info/countries',[GooglePlayApiController::class,'GetGooglePlayAppAvailableCountry']);
+Route::get('play/info/languages',[GooglePlayApiController::class,'GetGooglePlayAppAvailableLanguage']);
+Route::post('play/developers/{id}',[GooglePlayApiController::class,'getDeveloper']);
+Route::post('play/developers',[GooglePlayApiController::class,'devSearch']);
+Route::post('play/esimates',[GooglePlayApiController::class,'getAppsEsimates']);
+Route::post('play/suggestions',[GooglePlayApiController::class,'getSuggest']);
+Route::post('play/liveops',[GooglePlayApiController::class,'getEvents']);
