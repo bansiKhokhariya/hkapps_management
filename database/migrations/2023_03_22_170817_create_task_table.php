@@ -38,6 +38,7 @@ class CreateTaskTable extends Migration
             $table->string('logo')->nullable();
             $table->string('banner')->nullable();
             $table->text('screenshots')->nullable();
+            $table->string('apkFile')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

@@ -102,10 +102,6 @@ Route::middleware('auth:api')->group(function () {
     Route::get('getAppByStatus/{appType}', [AllAppsController::class, 'getAppByStatus']);
     Route::post('searchApplication', [AllAppsController::class, 'searchApplication']);
 
-    // test All Apps //
-    Route::get('testAllApps/{testAllApp}', [AllAppsController::class, 'testShow']);
-    Route::post('testAllApps/{testAllApp}', [AllAppsController::class, 'testUpdate']);
-
     // platform //
     Route::resource('platform', PlatformController::class);
 

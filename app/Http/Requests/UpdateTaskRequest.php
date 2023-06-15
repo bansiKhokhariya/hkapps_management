@@ -8,7 +8,7 @@ use App\Models\TodoList;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\URL;
 use App\Rules\DimensionRule;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 
 class UpdateTaskRequest extends FormRequest
@@ -48,6 +48,22 @@ class UpdateTaskRequest extends FormRequest
         $task->description = $this->description;
         $task->figmaLink = $this->figmaLink;
 
+        // .apk file //
+        if ($this->hasFile('apkFile')) {
+            $file = $this->file('apkFile');
+            $filename = $file->getClientOriginalName();
+            $apk = Storage::disk('public')->putFileAs('AndroidApk', $file, $filename);
+            $apkPath = URL::to('/') . '/storage/' . $apk;
+        } else {
+            $apkPath = null;
+        }
+
+        if (!$this->hasFile('apkFile')) {
+            $task->apkFile = $task->apkFile;
+        } else {
+            $task->apkFile = $apkPath;
+        }
+
         // logo //
         if ($this->hasFile('logo')) {
             $file = $this->file('logo');
@@ -57,9 +73,9 @@ class UpdateTaskRequest extends FormRequest
         } else {
             $logo = null;
         }
-        if(!$this->hasFile('logo')){
+        if (!$this->hasFile('logo')) {
             $task->logo = $task->logo;
-        }else{
+        } else {
             $task->logo = $logo;
         }
 
@@ -74,9 +90,9 @@ class UpdateTaskRequest extends FormRequest
         } else {
             $banner = null;
         }
-        if(!$this->hasFile('banner')){
+        if (!$this->hasFile('banner')) {
             $task->banner = $task->banner;
-        }else{
+        } else {
             $task->banner = $banner;
         }
 
@@ -101,7 +117,6 @@ class UpdateTaskRequest extends FormRequest
                 $myAttchArr1 = json_encode($file_path);
                 $task->screenshots = $myAttchArr1;
             }
-
         } else {
 
             if ($this->screenshots == null) {
@@ -130,8 +145,5 @@ class UpdateTaskRequest extends FormRequest
         event(new RedisDataEvent());
 
         return $task;
-
     }
 }
-
-

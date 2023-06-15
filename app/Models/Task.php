@@ -12,6 +12,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Spatie\Activitylog\Traits\LogsActivity;
+use App\Filters\TaskFilters;
 
 class Task extends Model
 
@@ -29,6 +30,12 @@ class Task extends Model
     public function getDescriptionForEvent(string $eventName): string
     {
         return "{$eventName} Task - ID:{$this->id}, Title:{$this->title}";
+    }
+
+
+    public function scopeFilter($query)
+    {
+        return resolve(TaskFilters::class)->apply($query);
     }
 
 

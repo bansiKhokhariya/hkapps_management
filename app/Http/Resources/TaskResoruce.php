@@ -69,6 +69,7 @@ class TaskResoruce extends JsonResource
             'figmaLink' => $this->figmaLink,
             'logo' => $this->logo,
             'banner' => $this->banner,
+            'apkFile' => $this->apkFile,
             'screenshots' => json_decode($this->screenshots),
             'deleted_at' => $this->deleted_at,
             'created_at' => $this->created_at->format('d-m-Y h:i:s'),

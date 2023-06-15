@@ -15,7 +15,7 @@ class CreateAppDetailsTable extends Migration
     {
         Schema::connection('mysql4')->create('app_details', function (Blueprint $table) {
             $table->increments('id');
-//            $table->string('app_packageName')->unsigned()->nullable();
+            $table->string('app_packageName')->unsigned()->nullable();
             $table->text('description')->nullable();
             $table->text('descriptionHTML')->nullable();
             $table->text('summary')->nullable();
@@ -62,13 +62,13 @@ class CreateAppDetailsTable extends Migration
             $table->timestamps();
         });
 
-//        Schema::table('app_details', function($table)
-//        {
-//            $table->foreign('app_packageName')->references('id')->on('all_apps');
-//        });
+        Schema::connection('mysql4')->table('app_details', function($table)
+        {
+            $table->foreign('app_packageName')->references('id')->on('all_apps');
+        });
     }
 
-     /**
+    /**
      * Reverse the migrations.
      *
      * @return void

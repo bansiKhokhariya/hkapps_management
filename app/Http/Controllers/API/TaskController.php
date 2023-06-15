@@ -21,15 +21,14 @@ class TaskController extends Controller
         $authUserDesignation = Auth::user()->designation;
         $authUserName = Auth::user()->name;
 
-
         if ($authUserDesignation == 'designer') {
-            $task = Task::where('designerStatus', 'pending')->orWhere('designerStatus', 'running')->get();
+            $task = Task::where('designerStatus', 'pending')->orWhere('designerStatus', 'running')->filter()->get();
         } elseif ($authUserDesignation == 'developer') {
-            $task = Task::where('developerStatus', 'pending')->orWhere('developerStatus', 'running')->get();
+            $task = Task::where('developerStatus', 'pending')->orWhere('developerStatus', 'running')->filter()->get();
         } elseif ($authUserDesignation == 'tester') {
-            $task = Task::where('des_testing', 'true')->orWhere('dev_testing', 'true')->get();
+            $task = Task::where('des_testing', 'true')->orWhere('dev_testing', 'true')->filter()->get();
         } else {
-            $task = Task::all();
+            $task = Task::filter()->get();
         }
 
         return TaskResoruce::collection($task);
@@ -108,8 +107,6 @@ class TaskController extends Controller
         } else {
             return response('Only the Designer , Developer , Tester and SuperAdmin can start a task!', 404);
         }
-
-
     }
 
     public function taskSendToTester($id)
@@ -121,8 +118,12 @@ class TaskController extends Controller
 
         if ($task->status == 'dev-running') {
             if ($authUserName == $task->assignDeveloperName) {
+                if ($task->apkFile) {
                 $task->status = 'test-pending';
                 $task->dev_testing = 'true';
+                }else{
+                    return response('You need to add Apk file before sending to tester!', 422);
+                }
             } else {
                 return response('Only the person who started this task can send to tester!', 404);
             }
@@ -143,7 +144,6 @@ class TaskController extends Controller
         event(new RedisDataEvent());
 
         return response('This task send to tester!', 200);
-
     }
 
     public function endTask($id)
@@ -245,7 +245,6 @@ class TaskController extends Controller
                     } else {
                         return response('you need to upload 1 logo , 1 banner and minimum 2 screenshots before task done!', 422);
                     }
-
                 } else {
                     return response('Only the person who started This Task can done it', 404);
                 }
@@ -343,7 +342,6 @@ class TaskController extends Controller
             $task = Task::where('status', 'completed')->get();
         }
         return TaskResoruce::collection($task);
-
     }
 
     public function deleteLogoBanner(Request $request)
@@ -354,7 +352,7 @@ class TaskController extends Controller
                 ->update([
                     'logo' => NULL
                 ]);
-        }elseif ($request->imageType == 'banner'){
+        } elseif ($request->imageType == 'banner') {
             Task::where('id', $id)
                 ->update([
                     'banner' => NULL
@@ -389,12 +387,6 @@ class TaskController extends Controller
 
         $task->save();
         return response()->json(['message' => 'Screenshot delete successfully!']);
-
     }
 
 }
-
-
-
-
-

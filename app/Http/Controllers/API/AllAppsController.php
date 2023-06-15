@@ -316,14 +316,9 @@ class AllAppsController extends Controller
             return response()->json(['data' => $app_setting, 'app_details' => $app_details]);
 
         } else {
-            return response()->json(['message' => 'This app Redis 6 data is null!'], 404);
+            return response()->json(['message' => 'This app Redis 2 data is null!'], 404);
         }
         // return AllAppResource::make($allApp);
-    }
-
-    public function testShow(TestAllApp $testAllApp)
-    {
-        return TestAllAppResource::make($testAllApp);
     }
 
     public function update(Request $request, $package_name)
@@ -615,7 +610,7 @@ class AllAppsController extends Controller
 
         $new_placement_array_filter = array_filter($new_placement_array);
 
-        $response = (object)["STATUS" => $db2_response->STATUS, "MSG" => $db2_response->MSG, "APP_SETTINGS" => $app_settings, "PLACEMENT" => $new_placement_array_filter,
+            $response = (object)["STATUS" => $db2_response->STATUS, "MSG" => $db2_response->MSG, "APP_SETTINGS" => $app_settings, "PLACEMENT" => $new_placement_array_filter,
             "Advertise_List" => $db2_response->Advertise_List, "MORE_APP_SPLASH" => $db2_response->MORE_APP_SPLASH, "MORE_APP_EXIT" => $db2_response->MORE_APP_EXIT, "EXTRA_DATA" => $db2_response->app_extra];
 
         return $response;
@@ -634,9 +629,11 @@ class AllAppsController extends Controller
 
     public function destroy(AllApps $allApp)
     {
-        $id = Auth::user()->id;
-        $auth_user = User::find($id);
-        $allApp->delete();
+        // $id = Auth::user()->id;
+        // $auth_user = User::find($id);
+         $redis = Redis::connection('RedisApp3');
+         $redis->del($allApp->app_packageName);
+         $allApp->forceDelete();
 
         // call event
         // event(new UserEvent($auth_user));
@@ -686,64 +683,6 @@ class AllAppsController extends Controller
         $api_key = $request->apikey;
         $redis2 = Redis::connection('RedisApp2');
         $response = $redis2->get($package_name);
-
-        // $res_obj = json_decode($response);
-
-        // $allApps = AllApps::Where('app_packageName', $package_name)->first();
-
-//         if ($res_obj) {
-//             $redis3 = Redis::connection('RedisApp3');
-//             $response3 = $redis3->get($package_name);
-//             $response3Convert = str_replace(["'"], '"', $response3);
-
-//             $meta_keywords = json_decode($response3Convert)->AFHJNTGDGD563200K;
-
-// //            $meta_keywords = explode(',', $res_obj->APP_SETTINGS->app_apikey);
-//             if ($api_key == $meta_keywords) {
-//                 $get_api_key = ApikeyList::where('apikey_packageName', $package_name)->where('apikey_text', $api_key)->first();
-//                 if ($get_api_key) {
-//                     $apikey_request_count = $get_api_key->apikey_request;
-//                     $apiKey = ApikeyList::find($get_api_key->id);
-//                     $apiKey->apikey_request = $apikey_request_count + 1;
-//                     $apiKey->save();
-//                 } else {
-//                     $apiKey = new ApikeyList();
-//                     $apiKey->apikey_packageName = $package_name;
-//                     $apiKey->apikey_text = $api_key;
-//                     if ($allApps) {
-//                         $apiKey->is_available = 1;
-//                     } else {
-//                         $apiKey->is_available = 0;
-//                     }
-//                     $apiKey->save();
-//                 }
-//             } else {
-//                 $apiKey = new ApikeyList();
-//                 $apiKey->apikey_packageName = $package_name;
-//                 $apiKey->apikey_text = $api_key;
-//                 if ($allApps) {
-//                     $apiKey->is_available = 1;
-//                 } else {
-//                     $apiKey->is_available = 0;
-//                 }
-//                 $apiKey->save();
-//             }
-//         } else {
-//             $apiKey = new ApikeyList();
-//             $apiKey->apikey_packageName = $package_name;
-//             $apiKey->apikey_text = $api_key;
-//             if ($allApps) {
-//                 $apiKey->is_available = 1;
-//             } else {
-//                 $apiKey->is_available = 0;
-//             }
-//             $apiKey->save();
-//         }
-
-
-        // call event
-        // event(new RedisDataEvent());
-
 
         return $response;
     }
@@ -1369,6 +1308,5 @@ class AllAppsController extends Controller
         }
 
     }
-
 
 }

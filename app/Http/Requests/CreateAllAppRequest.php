@@ -66,7 +66,7 @@ class CreateAllAppRequest extends FormRequest
                 $allApp->app_logo = $file_path_logo;
             }
             $allApp->app_apikey = $this->app_apikey;
-            if(Auth::user()->roles !== 'super_admin'){
+            if(Auth::user()->designation !== 'super_admin'){
                 $allApp->company_master_id = $user_company;
             }
             //
@@ -91,12 +91,12 @@ class CreateAllAppRequest extends FormRequest
 
 
 
-//            // ***************** view app response json ******************** //
-//            $getApp = new AllApps();
-//            $result = $getApp->viewResponse($this->app_packageName,$this->app_apikey);
-//
-//            $redis = Redis::connection('RedisApp10');
-//            $redis->set($this->app_packageName, json_encode($result));
+            // ***************** view app response json ******************** //
+            // $getApp = new AllApps();
+            // $result = $getApp->viewResponse($this->app_packageName,$this->app_apikey);
+
+            // $redis = Redis::connection('RedisApp10');
+            // $redis->set($this->app_packageName, json_encode($result));
 
 
             // **************** create app_details entry *************************** //
